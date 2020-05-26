@@ -17,60 +17,104 @@
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 from timeit import default_timer
-import socket
-import os
-# import donemusic
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 plt.close('all')
 start = default_timer()
 
 def main():
+    # ==========================================================================
+    # Settings and Setup
+    # ==========================================================================
+    # Set global variable for the animation functions
+    global file, Stride, AdvectLine, Index, positions
+    
     # Load file
     file = np.loadtxt("../data/results.csv", delimiter=",", usecols=range(1000))
     
     # sim info
-    length = 1.
-    size = len(file[0,:])
-    positions = np.linspace(0.,length,size)
+    SimPhysLength = 1.
+    SimNumCells = len(file[0,:])
+    SimNumSteps = len(file[:,0])
+    positions = np.linspace(0.,SimPhysLength,SimNumCells)
     
-    # Plotting info
-    numFrames = 100
-    delay = (10./numFrames)*1000
-    stride = len(file[:,0])//numFrames
+    # Animation Settings
+    Fps       = 60                          # Frames per second
+    FrameTime = (1./Fps) * 1000             # Frametime in milliseconds
+    Duration  = 5.                          # How long the gif is in seconds
+    TotFrames = int(Fps * Duration)         # Total number of frames (floor)
+    Stride    = int(SimNumSteps/TotFrames)  # Choose every n frames
+    dpi       = 300                         # Dots per inch
+    Color     = 'blue'                      # color of the solution
+    OutFile   = "top-hat-advection.mp4"     # Output filename
+    Index     = 0                           # Initialize index
     
-    # Find mins and maxes
+    # Find mins and maxes for setting the limits of the plot
     pad = np.max(np.abs([file.min(), file.max()])) * 0.05
     small = file.min() - pad
     large = file.max() + pad
+    # ==========================================================================
+    # End Settings and Setup
+    # ==========================================================================
     
+    # ==========================================================================
+    # Setup Plots
+    # ==========================================================================
+    f0 = plt.figure(num = 0)
+    plt.title(f"Advection of Initial Conditions")
     
-    name = 0
-    for i in range(0, len(file[:,0]), stride):
-        plt.figure(1)
-        plt.plot(positions,file[i,:],
-                 linestyle='-',
-                 color='blue')
-        
-        plt.ylim(small, large)
+    plt.ylim(small, large)
     
-        plt.xlabel("Position")
-        plt.ylabel("Value of a")
-        plt.title("Solution to top hat")
-        plt.tight_layout()
-        
-        plt.savefig(f'images/img{str(name).zfill(4)}.png',
-                    bbox='tight',
-                    dpi=150)
-        plt.close('all')
-        name += 1
-    if (socket.gethostname()[7:] == "crc.pitt.edu" ):
-        os.system("ffmpeg -f image2 -i images/img%04d.png images/video.avi")
-        os.system("ffmpeg -i images/video.avi -pix_fmt rgb24  animated.gif")
-        os.system("rm -f images/video.avi")
+    plt.xlabel("Position")
+    plt.ylabel("Value of a")
+    
+    plt.tight_layout()
+
+    plt.grid(True)
+
+    # Set plots
+    AdvectLine, = plt.plot(positions,
+                           file[0,:],
+                           linestyle = '-',
+                           color     = Color,
+                           label     = "Advection of Tophat" 
+                           )
+
+    # Create legend
+#    plt.legend()
+    # ==========================================================================
+    # End Setup Plots
+    # ==========================================================================
+
+    # ==========================================================================
+    # Make the animation
+    # ==========================================================================
+    simulation = animation.FuncAnimation(f0,
+                                         NewFrame,
+                                         blit = False,
+                                         frames = TotFrames,
+                                         interval = FrameTime,
+                                         repeat = False)
+    simulation.save(filename=OutFile, fps=Fps, dpi=dpi)
+
+    # ==========================================================================
+    # End Make the animation
+    # ==========================================================================
+
+def NewFrame(self):
+    """
+    This function generates the plotting for each individual frame
+    """
+    global Index
+    
+    AdvectLine.set_data(positions,file[Index,:])
+
+    Index += Stride
 
 main()
 print(f'\nTime to execute: {round(default_timer()-start,2)} seconds')
-# donemusic.nonstop() #other option available to the file? ~/')
-
