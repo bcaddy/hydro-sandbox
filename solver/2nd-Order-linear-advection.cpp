@@ -42,7 +42,7 @@ int main()
 {
     // Start timer and open file
     auto start = high_resolution_clock::now();
-    std::ofstream outFile("results.csv");
+    std::ofstream outFile("../data/results.csv");
 
     // Setup Initial conditions
     const  double length   = 1.;                                      // Length of problem in meters
@@ -53,7 +53,7 @@ int main()
     const  double CFLNum   = 0.4;                                     // CFL Number
     double vel             = 1.;                                      // Velocity in meters/second
     const double period    = length / vel;                            // Time for one period
-    const double maxTime   = 1.5*period;                              // Time to simlate to
+    const double maxTime   = 1.*period;                              // Time to simlate to
 
     // Conserved quantity
     std::vector<double> a(size); // Actual array

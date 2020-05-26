@@ -28,7 +28,7 @@ start = default_timer()
 
 def main():
     # Load file
-    file = np.loadtxt("results.csv", delimiter=",", usecols=range(1000))
+    file = np.loadtxt("../data/results.csv", delimiter=",", usecols=range(1000))
     
     # sim info
     length = 1.
