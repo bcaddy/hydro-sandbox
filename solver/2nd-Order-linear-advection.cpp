@@ -21,22 +21,7 @@ using namespace std::chrono;
 using std::cout;
 using std::endl;
 
-void saveArray(const std::vector<double>& arr, 
-               std::ofstream& fileName, 
-               const int& numGhosts)
-{
-    int size = arr.size();
-    
-    if (fileName.is_open())
-    {
-        for (int i = numGhosts; i < (size - numGhosts); i++)
-        {
-            fileName << arr[i] << ",";
-        }
-        fileName << endl;
-    }
-    else {cout << "File not open";}
-}
+#include "helper.h"
 
 int main()
 {
@@ -60,22 +45,7 @@ int main()
     std::vector<double> aTemp(size); // Array to store the updates in
 
     // Set initial conditions
-    // Top hat
-    for (size_t i = 0; i < size; i++)
-    {
-        if ( i <= (size/10))
-        {
-            a[i] = 0.;
-        }
-        else if ( ((size / 10) < i) && (i <= (2*size / 10)))
-        {
-            a[i] = 1.;
-        }
-        else
-        {
-            a[i] = 0.;
-        };
-    };
+    setInitialConditions(a, size, "top-hat");
     saveArray(a, outFile, numGhosts);
 
     //=== Begin the main evolution loop ========================================
@@ -98,7 +68,7 @@ int main()
             // Computer interface states and solve Riemann problem
             double LeftInterface;
             double RightInterface;
-            if (vel > 0.)
+            if (vel >= 0.)
             {
                 double derivA = (a[i+1] - a[i-1]) / (2*deltax);
                 RightInterface = a[i] + (deltax/2) * (1-(deltat/deltax)*vel) * derivA;
@@ -106,7 +76,7 @@ int main()
                 derivA = (a[i] - a[i - 2]) / (2 * deltax);
                 LeftInterface = a[i - 1] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
             }
-            else if (vel < 0.)
+            else// i.e. (vel < 0.)
             {
                 double derivA = (a[i + 2] - a[i]) / (2 * deltax);
                 RightInterface = a[i+1] - (deltax/2) * (1+(deltat/deltax)*vel) * derivA;
