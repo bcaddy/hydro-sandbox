@@ -32,7 +32,7 @@ def main():
     # Settings and Setup
     # ==========================================================================
     # Set global variable for the animation functions
-    global file, Stride, AdvectLine, Index, positions
+    global file, Stride, AdvectLine, Index, positions, InitFrames, InitIndex
     
     # Load file
     file = np.loadtxt("../data/results.csv", delimiter=",", usecols=range(1000))
@@ -44,15 +44,17 @@ def main():
     positions = np.linspace(0.,SimPhysLength,SimNumCells)
     
     # Animation Settings
-    Fps       = 60                          # Frames per second
-    FrameTime = (1./Fps) * 1000             # Frametime in milliseconds
-    Duration  = 5.                          # How long the gif is in seconds
-    TotFrames = int(Fps * Duration)         # Total number of frames (floor)
-    Stride    = int(SimNumSteps/TotFrames)  # Choose every n frames
-    dpi       = 300                         # Dots per inch
-    Color     = 'blue'                      # color of the solution
-    OutFile   = "top-hat-advection.mp4"     # Output filename
-    Index     = 0                           # Initialize index
+    Fps        = 60                          # Frames per second
+    FrameTime  = (1./Fps) * 1000             # Frametime in milliseconds
+    Duration   = 5.2088                      # How long the gif is in seconds
+    TotFrames  = int(Fps * Duration)         # Total number of frames (floor)
+    Stride     = int(SimNumSteps/TotFrames)  # Choose every n frames
+    dpi        = 300                         # Dots per inch
+    Color      = 'blue'                      # color of the solution
+    OutFile    = "top-hat-advection.mp4"     # Output filename
+    Index      = 0                           # Initialize index
+    InitFrames = 10                          # Number of frames for the initial conditions
+    InitIndex  = 0                           # Index for init frames
     
     # Find mins and maxes for setting the limits of the plot
     pad = np.max(np.abs([file.min(), file.max()])) * 0.05
@@ -97,7 +99,7 @@ def main():
     simulation = animation.FuncAnimation(f0,
                                          NewFrame,
                                          blit = False,
-                                         frames = TotFrames,
+                                         frames = TotFrames+InitFrames,
                                          interval = FrameTime,
                                          repeat = False)
     simulation.save(filename=OutFile, fps=Fps, dpi=dpi)
@@ -110,11 +112,13 @@ def NewFrame(self):
     """
     This function generates the plotting for each individual frame
     """
-    global Index
+    global Index, InitFrames, InitIndex
     
     AdvectLine.set_data(positions,file[Index,:])
 
-    Index += Stride
-
+    if InitIndex > InitFrames:
+        Index += Stride
+    else:
+        InitIndex += 1
 main()
 print(f'\nTime to execute: {round(default_timer()-start,2)} seconds')
