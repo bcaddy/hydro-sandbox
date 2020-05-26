@@ -2,6 +2,15 @@
 ##############################
 test.cpp
 test.h
+*.csv
+
+# Image & Video files #
+#######################
+*.png
+*.jpeg
+*.jpg
+*.gif
+*.mp4
 
 # Compiled source #
 ###################
