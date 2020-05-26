@@ -72,5 +72,5 @@ def main():
 
 main()
 print(f'\nTime to execute: {round(default_timer()-start,2)} seconds')
-# donemusic.nonstop() #other option availableto the file? ~/')
+# donemusic.nonstop() #other option available to the file? ~/')
 
