@@ -11,3 +11,8 @@ void saveArray(const std::vector<double> &arr,
 int setInitialConditions(std::vector<double> &arr, 
                           const int &size,
                           const std::string kind);
+
+double minModLimiter(const double &a0,
+                     const double &a1,
+                     const double &a2,
+                     const double &deltax);

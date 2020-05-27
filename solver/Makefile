@@ -1,5 +1,5 @@
 #.DEFAULT_GOAL := generate #choose the default goal instead of it being the first one
-.PHONY: all clean #tells make that these goals are not files but some other thing
+.PHONY: advection.exe all clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
 cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic

@@ -70,18 +70,18 @@ int main()
             double RightInterface;
             if (vel >= 0.)
             {
-                double derivA = (a[i+1] - a[i-1]) / (2*deltax);
-                RightInterface = a[i] + (deltax/2) * (1-(deltat/deltax)*vel) * derivA;
-                
-                derivA = (a[i] - a[i - 2]) / (2 * deltax);
+                double derivA = minModLimiter(a[i-1], a[i], a[i+1], deltax);
+                RightInterface = a[i] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
+
+                derivA = minModLimiter(a[i-2], a[i-1], a[i], deltax);
                 LeftInterface = a[i - 1] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
             }
             else// i.e. (vel < 0.)
             {
-                double derivA = (a[i + 2] - a[i]) / (2 * deltax);
+                double derivA = minModLimiter(a[i], a[i+1], a[i+2], deltax);
                 RightInterface = a[i+1] - (deltax/2) * (1+(deltat/deltax)*vel) * derivA;
-                
-                derivA = (a[i + 1] - a[i - 1]) / (2 * deltax);
+
+                derivA = minModLimiter(a[i-1], a[i], a[i+1], deltax);
                 LeftInterface = a[i] - (deltax / 2) * (1 + (deltat / deltax) * vel) * derivA;
             };
 
