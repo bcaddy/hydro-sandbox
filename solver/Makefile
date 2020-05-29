@@ -1,5 +1,5 @@
 #.DEFAULT_GOAL := generate #choose the default goal instead of it being the first one
-.PHONY: advection.exe all clean #tells make that these goals are not files but some other thing
+.PHONY: all clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
 cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic
@@ -7,10 +7,10 @@ cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 
 # list of binaries to clean as well
-binaries = tally.exe
+binaries = advection.exe
 
 Advect_SRC = 2nd-Order-linear-advection.cpp helper.cpp
-Advect_OJB = $(SRC:.cpp = .o)
+Advect_OJB = $(Advect_SRC:.cpp = .o)
 
 
 all:
