@@ -9,15 +9,15 @@ cppCompiler = ${cppDebug} #the version used
 # list of binaries to clean as well
 binaries = tally.exe
 
-SRC = 2nd-Order-linear-advection.cpp helper.cpp
-OJB = $(SRC:.cpp = .o)
+Advect_SRC = 2nd-Order-linear-advection.cpp helper.cpp
+Advect_OJB = $(SRC:.cpp = .o)
+
 
 all:
 	@echo "This does nothing. See Makefile"
 
-advection.exe: $(OBJ)
-	$(cppCompiler) $(SRC) -o advection.exe $(OBJ)
-
+advection: $(Advect_OBJ)
+	$(cppCompiler) $(Advect_SRC) -o advection.exe $(Advect_OBJ)
 
 clean:
 	@echo "Cleaning up..."
