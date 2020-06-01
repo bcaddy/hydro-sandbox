@@ -12,12 +12,18 @@ binaries = advection.exe
 Advect_SRC = 2nd-Order-linear-advection.cpp helper.cpp
 Advect_OJB = $(Advect_SRC:.cpp = .o)
 
+Burgers_SRC = burgers-solver.cpp helper.cpp
+Burgers_OJB = $(Burgers_SRC:.cpp = .o)
+
 
 all:
 	@echo "This does nothing. See Makefile"
 
 advection: $(Advect_OBJ)
 	$(cppCompiler) $(Advect_SRC) -o advection.exe $(Advect_OBJ)
+
+burgers: $(Burgers_OBJ)
+	$(cppCompiler) $(Burgers_SRC) -o burgers.exe $(Burgers_OBJ)
 
 clean:
 	@echo "Cleaning up..."
