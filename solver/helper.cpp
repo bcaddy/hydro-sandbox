@@ -75,7 +75,7 @@ int setInitialConditions(std::vector<double> &arr,
 
         for (int i = 0; i < (size / 2); i++)
         {
-            sine[i] = std::sin(twoPi * static_cast<double>(i) / sizeSine);
+            sine[i] = 1. + 0.5*std::sin(twoPi * static_cast<double>(i) / sizeSine);
         }
 
         int sineIndex = 0;
