@@ -51,7 +51,7 @@ def main():
     Stride     = int(SimNumSteps/TotFrames)  # Choose every n frames
     dpi        = 300                         # Dots per inch
     Color      = 'blue'                      # color of the solution
-    OutFile    = "top-hat-advection.mp4"     # Output filename
+    OutFile    = "plotter-output.mp4"        # Output filename
     Index      = 0                           # Initialize index
     InitFrames = 10                          # Number of frames for the initial conditions
     InitIndex  = 0                           # Index for init frames
