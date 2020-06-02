@@ -17,6 +17,7 @@
 #include <fstream>
 #include <chrono>
 #include <vector>
+#include <cmath>
 using namespace std::chrono;
 using std::cout;
 using std::endl;
@@ -36,9 +37,9 @@ int main()
     const  int numGhosts   = 2;                                       // Number of ghost cells
     const  int size        = PhysSize + 2 * numGhosts;                // total size of the array
     const  double CFLNum   = 0.4;                                     // CFL Number
-    double vel             = 1.;                                      // Velocity in meters/second
-    const double period    = length / vel;                            // Time for one period
-    const double maxTime   = 1.*period;                              // Time to simlate to
+    double vel             = -1.;                                     // Velocity in meters/second
+    const double period    = length / std::abs(vel);                  // Time for one period
+    const double maxTime   = 1.*period;                               // Time to simlate to
 
     // Conserved quantity
     std::vector<double> a(size); // Actual array
@@ -54,7 +55,7 @@ int main()
     while (time <= maxTime)
     {
         // Compute the time step using the CFL condition
-        double deltat = CFLNum * deltax / vel;
+        double deltat = CFLNum * deltax / std::abs(vel);
 
         for (int i = numGhosts; i < (size-numGhosts); i++)
         {
