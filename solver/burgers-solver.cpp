@@ -38,7 +38,7 @@ int main()
     const int numGhosts   = 2;                                       // Number of ghost cells
     const int size        = PhysSize + 2 * numGhosts;                // total size of the array
     const double CFLNum   = 0.8;                                     // CFL Number
-    const double maxTime  = 2.;                                      // Time to simlate to
+    const double maxTime  = .2;                                      // Time to simlate to
 
     // Conserved quantity
     std::vector<double> uVel(size);      // Actual array
