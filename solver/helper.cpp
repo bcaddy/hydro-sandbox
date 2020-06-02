@@ -15,9 +15,10 @@ void saveArray(const std::vector<double> &arr,
 
     if (fileName.is_open())
     {
-        for (int i = numGhosts; i < (size - numGhosts); i++)
+        fileName << arr[numGhosts];
+        for (int i = numGhosts+1; i < (size - numGhosts); i++)
         {
-            fileName << arr[i] << ",";
+            fileName << "," << arr[i];
         }
         fileName << endl;
     }
