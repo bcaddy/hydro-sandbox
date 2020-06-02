@@ -18,6 +18,7 @@
 #include <fstream>
 #include <chrono>
 #include <vector>
+#include <cmath>
 using namespace std::chrono;
 using std::cout;
 using std::endl;
@@ -37,15 +38,14 @@ int main()
     const int numGhosts   = 2;                                       // Number of ghost cells
     const int size        = PhysSize + 2 * numGhosts;                // total size of the array
     const double CFLNum   = 0.8;                                     // CFL Number
-    const double vel      = 1.;                                      // Velocity in meters/second
-    const double maxTime  = 2.;                               // Time to simlate to
+    const double maxTime  = 2.;                                      // Time to simlate to
 
     // Conserved quantity
     std::vector<double> uVel(size);      // Actual array
     std::vector<double> uVelTemp(size);  // Array to store the updates in
 
     // Set initial conditions
-    setInitialConditions(uVel, size, "top-hat");
+    setInitialConditions(uVel, size, "vel-step");
     saveArray(uVel, outFile, numGhosts);
 
     //=== Begin the main evolution loop ========================================
@@ -54,16 +54,16 @@ int main()
     while (time <= maxTime)
     {
         // Compute the time step using the CFL condition
-        double deltat = uVel[numGhosts];
+        double deltat = std::abs(uVel[numGhosts]);
         for (int i = numGhosts+1; i < (size - numGhosts); i++)
         {
-            double deltatTemp = CFLNum * deltax / uVel[i];
-            if (deltat < deltatTemp)
+            double deltatTemp = CFLNum * deltax / std::abs(uVel[i]);
+            if (deltat > deltatTemp)
             {
                 deltat = deltatTemp;
             }
         }
-
+        cout << deltat << endl;
         for (int i = numGhosts; i < (size-numGhosts); i++)
         {
             // Set boundary conditions (periodic)
@@ -74,28 +74,23 @@ int main()
             }
 
             // Computer interface states and solve Riemann problem
-            double LeftInterface;
-            double RightInterface;
-            if (vel >= 0.) // TODO vel
-            {
-                double derivA = minModLimiter(uVel[i-1], uVel[i], uVel[i+1], deltax);
-                RightInterface = uVel[i] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA; // TODO vel
-
-                derivA = minModLimiter(uVel[i-2], uVel[i-1], uVel[i], deltax);
-                LeftInterface = uVel[i - 1] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA; // TODO vel
-            }
-            else // i.e. (vel < 0.) // TODO vel
-            {
-                double derivA = minModLimiter(uVel[i], uVel[i+1], uVel[i+2], deltax);
-                RightInterface = uVel[i+1] - (deltax/2) * (1+(deltat/deltax)*vel) * derivA; // TODO vel
-
-                derivA = minModLimiter(uVel[i-1], uVel[i], uVel[i+1], deltax);
-                LeftInterface = uVel[i] - (deltax / 2) * (1 + (deltat / deltax) * vel) * derivA; // TODO vel
-            };
+            // TODO begin
+            double LeftInterface  = VelInterface(uVel[i-2], 
+                                                 uVel[i-1], 
+                                                 uVel[i],
+                                                 uVel[i+1], 
+                                                 deltax,
+                                                 deltat);
+            double RightInterface = VelInterface(uVel[i-1],
+                                                 uVel[i], 
+                                                 uVel[i+1],
+                                                 uVel[i+2], 
+                                                 deltax,
+                                                 deltat);
 
             // Compute conservative update
-            double LeftFlux  = LeftInterface * vel; // TODO vel
-            double RightFlux = RightInterface * vel; // TODO vel
+            double LeftFlux  = 0.5 * std::pow(LeftInterface, 2.) ;
+            double RightFlux = 0.5 * std::pow(RightInterface, 2.) ;
 
             double FluxDerivative = (LeftFlux - RightFlux)/deltax;
             uVelTemp[i] = (FluxDerivative * deltat) + uVel[i];
@@ -106,8 +101,8 @@ int main()
         {
             uVel[i] = uVelTemp[i];
         };
-
-        // Save
+        
+        // Save output
         saveArray(uVel, outFile, numGhosts);
 
         // Message
