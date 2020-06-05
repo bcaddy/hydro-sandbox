@@ -38,14 +38,15 @@ int main()
     const int numGhosts   = 2;                                       // Number of ghost cells
     const int size        = PhysSize + 2 * numGhosts;                // total size of the array
     const double CFLNum   = 0.8;                                     // CFL Number
-    const double maxTime  = .2;                                      // Time to simlate to
+    const double maxTime  = .25;                                     // Time to simlate to
 
     // Conserved quantity
     std::vector<double> uVel(size);      // Actual array
     std::vector<double> uVelTemp(size);  // Array to store the updates in
 
-    // Set initial conditions
+    // Set initial conditions, just comment out the one you don't want
     setInitialConditions(uVel, size, "vel-step");
+    //setInitialConditions(uVel, size, "vel-sine");
     saveArray(uVel, outFile, numGhosts);
 
     //=== Begin the main evolution loop ========================================
@@ -63,7 +64,7 @@ int main()
                 deltat = deltatTemp;
             }
         }
-        cout << deltat << endl;
+        
         for (int i = numGhosts; i < (size-numGhosts); i++)
         {
             // Set boundary conditions (periodic)
@@ -74,7 +75,6 @@ int main()
             }
 
             // Computer interface states and solve Riemann problem
-            // TODO begin
             double LeftInterface  = VelInterface(uVel[i-2], 
                                                  uVel[i-1], 
                                                  uVel[i],
@@ -106,7 +106,9 @@ int main()
         saveArray(uVel, outFile, numGhosts);
 
         // Message
-        cout << "Completeted step: " << step << endl;
+        cout << "Completeted step: " << step 
+        << ":   Time step = " << deltat 
+        << ":   Time = " << time << endl;
 
         // Update time and step number
         time += deltat;
