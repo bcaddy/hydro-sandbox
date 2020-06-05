@@ -45,8 +45,8 @@ int main()
     std::vector<double> uVelTemp(size);  // Array to store the updates in
 
     // Set initial conditions, just comment out the one you don't want
-    setInitialConditions(uVel, size, "vel-step");
-    //setInitialConditions(uVel, size, "vel-sine");
+    //setInitialConditions(uVel, size, "vel-step");
+    setInitialConditions(uVel, size, "vel-sine");
     saveArray(uVel, outFile, numGhosts);
 
     //=== Begin the main evolution loop ========================================
