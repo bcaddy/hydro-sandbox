@@ -23,6 +23,9 @@ using std::cout;
 using std::endl;
 
 #include "helper.h"
+#include "initial-conditions.h"
+#include "interface.h"
+#include "limiters.h"
 
 int main()
 {
@@ -37,7 +40,7 @@ int main()
     const  int numGhosts   = 2;                                       // Number of ghost cells
     const  int size        = PhysSize + 2 * numGhosts;                // total size of the array
     const  double CFLNum   = 0.4;                                     // CFL Number
-    double vel             = -1.;                                     // Velocity in meters/second
+    double vel             = 1.;                                      // Velocity in meters/second
     const double period    = length / std::abs(vel);                  // Time for one period
     const double maxTime   = 1.*period;                               // Time to simlate to
 

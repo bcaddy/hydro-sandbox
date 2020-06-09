@@ -19,11 +19,15 @@
 #include <chrono>
 #include <vector>
 #include <cmath>
+
+#include "helper.h"
+#include "initial-conditions.h"
+#include "interface.h"
+#include "limiters.h"
+
 using namespace std::chrono;
 using std::cout;
 using std::endl;
-
-#include "helper.h"
 
 int main()
 {
@@ -75,16 +79,16 @@ int main()
             }
 
             // Computer interface states and solve Riemann problem
-            double LeftInterface  = VelInterface(uVel[i-2], 
-                                                 uVel[i-1], 
+            double LeftInterface  = VelInterface(uVel[i-2],
+                                                 uVel[i-1],
                                                  uVel[i],
-                                                 uVel[i+1], 
+                                                 uVel[i+1],
                                                  deltax,
                                                  deltat);
             double RightInterface = VelInterface(uVel[i-1],
-                                                 uVel[i], 
+                                                 uVel[i],
                                                  uVel[i+1],
-                                                 uVel[i+2], 
+                                                 uVel[i+2],
                                                  deltax,
                                                  deltat);
 
