@@ -6,9 +6,9 @@
 # Dependencies:
 #   it2dl
 
-set -x #echo all commands
+# set -x #echo all commands
 
-if [ -z "${1}"]; then
+if [ -z "${1}" ]; then
     echo "No solver chosen"
     exit 1
 fi
@@ -19,12 +19,16 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 
 cd "${REPO_ROOT}/solver"
 
+echo -e "\nCompiling..."
 make $1
 
+echo -e "\nRunning..."
 "./${1}.exe"
 
 cd "${REPO_ROOT}/visualization"
 
+echo -e "\nGenerating Plot..."
 ./plotter.py
 
+echo "Downloading Plot..."
 "${HOME}/.iterm2/it2dl" output.mp4
