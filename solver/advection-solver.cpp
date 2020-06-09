@@ -33,16 +33,17 @@ int main()
     auto start = high_resolution_clock::now();
     std::ofstream outFile("../data/results.csv");
 
-    // Setup Initial conditions
-    const  double length   = 1.;                                      // Length of problem in meters
-    const  int    PhysSize = 1000;                                    //Size of the physical part of the array
-    const  double deltax   = length / static_cast<double>(PhysSize);  // Length of each cell in meters
-    const  int numGhosts   = 2;                                       // Number of ghost cells
-    const  int size        = PhysSize + 2 * numGhosts;                // total size of the array
-    const  double CFLNum   = 0.4;                                     // CFL Number
-    double vel             = 1.;                                      // Velocity in meters/second
-    const double period    = length / std::abs(vel);                  // Time for one period
-    const double maxTime   = 1.*period;                               // Time to simlate to
+    // Settings
+    const double length       = 1.;                                      // Length of problem in meters
+    const int    PhysSize     = 1000;                                    //Size of the physical part of the array
+    const double deltax       = length / static_cast<double>(PhysSize);  // Length of each cell in meters
+    const int numGhosts       = 2;                                       // Number of ghost cells
+    const int size            = PhysSize + 2 * numGhosts;                // total size of the array
+    const double CFLNum       = 0.4;                                     // CFL Number
+    const double vel          = 1.;                                      // Velocity in meters/second
+    const double period       = length / std::abs(vel);                  // Time for one period
+    const double maxTime      = 1.*period;                               // Time to simlate to
+    const std::string LimType = "minMod";                                // Limiter Type
 
     // Conserved quantity
     std::vector<double> a(size); // Actual array
@@ -74,18 +75,18 @@ int main()
             double RightInterface;
             if (vel >= 0.)
             {
-                double derivA = minModLimiter(a[i-1], a[i], a[i+1], deltax);
+                double derivA = SlopeLimiter(a[i - 1], a[i], a[i + 1], deltax, LimType);
                 RightInterface = a[i] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
 
-                derivA = minModLimiter(a[i-2], a[i-1], a[i], deltax);
+                derivA = SlopeLimiter(a[i - 2], a[i - 1], a[i], deltax, LimType);
                 LeftInterface = a[i - 1] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
             }
             else// i.e. (vel < 0.)
             {
-                double derivA = minModLimiter(a[i], a[i+1], a[i+2], deltax);
+                double derivA = SlopeLimiter(a[i], a[i + 1], a[i + 2], deltax, LimType);
                 RightInterface = a[i+1] - (deltax/2) * (1+(deltat/deltax)*vel) * derivA;
 
-                derivA = minModLimiter(a[i-1], a[i], a[i+1], deltax);
+                derivA = SlopeLimiter(a[i - 1], a[i], a[i + 1], deltax, LimType);
                 LeftInterface = a[i] - (deltax / 2) * (1 + (deltat / deltax) * vel) * derivA;
             };
 

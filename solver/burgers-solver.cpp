@@ -1,6 +1,6 @@
 /*
 ================================================================================
- Second order linear solver for Burgers' Equation with minmod limiting
+ Second order linear solver for Burgers' Equation with limiting
  Written by Robert Caddy.  Created on May 21, 2020
 
  Description: 
@@ -19,11 +19,11 @@
 #include <chrono>
 #include <vector>
 #include <cmath>
+#include <string>
 
 #include "helper.h"
 #include "initial-conditions.h"
 #include "interface.h"
-#include "limiters.h"
 
 using namespace std::chrono;
 using std::cout;
@@ -36,21 +36,23 @@ int main()
     std::ofstream outFile("../data/results.csv");
 
     // Setup Initial conditions
-    const double length   = 1.;                                      // Length of problem in meters
-    const int    PhysSize = 256;                                     // Size of the physical part of the array
-    const double deltax   = length / static_cast<double>(PhysSize);  // Length of each cell in meters
-    const int numGhosts   = 2;                                       // Number of ghost cells
-    const int size        = PhysSize + 2 * numGhosts;                // total size of the array
-    const double CFLNum   = 0.8;                                     // CFL Number
-    const double maxTime  = .25;                                     // Time to simlate to
+    const double length        = 1.;                                      // Length of problem in meters
+    const int    PhysSize      = 256;                                     // Size of the physical part of the array
+    const double deltax        = length / static_cast<double>(PhysSize);  // Length of each cell in meters
+    const int numGhosts        = 2;                                       // Number of ghost cells
+    const int size             = PhysSize + 2 * numGhosts;                // total size of the array
+    const double CFLNum        = 0.8;                                     // CFL Number
+    const double maxTime       = .25;                                     // Time to simlate to
+    const std::string LimType  = "minMod";                                // Limiter Type
+    const std::string InitType = "vel-sine";                              // Type of inital conditions
+    //const std::string InitType = "vel-step";  // Type of inital conditions
 
     // Conserved quantity
     std::vector<double> uVel(size);      // Actual array
     std::vector<double> uVelTemp(size);  // Array to store the updates in
 
     // Set initial conditions, just comment out the one you don't want
-    //setInitialConditions(uVel, size, "vel-step");
-    setInitialConditions(uVel, size, "vel-sine");
+    setInitialConditions(uVel, size, InitType);
     saveArray(uVel, outFile, numGhosts);
 
     //=== Begin the main evolution loop ========================================
@@ -84,13 +86,15 @@ int main()
                                                  uVel[i],
                                                  uVel[i+1],
                                                  deltax,
-                                                 deltat);
+                                                 deltat,
+                                                 LimType);
             double RightInterface = VelInterface(uVel[i-1],
                                                  uVel[i],
                                                  uVel[i+1],
                                                  uVel[i+2],
                                                  deltax,
-                                                 deltat);
+                                                 deltat,
+                                                 LimType);
 
             // Compute conservative update
             double LeftFlux  = 0.5 * std::pow(LeftInterface, 2.) ;

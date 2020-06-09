@@ -1,11 +1,13 @@
 #include "limiters.h"
 
+// =============================================================================
 double VelInterface(const double &a,
                     const double &b,
                     const double &c,
                     const double &d,
                     const double &deltax,
-                    const double &deltat)
+                    const double &deltat,
+                    const std::string &LimType)
 /* 
 a, b, c, and d are the four elements of the array that are needed to compute
 the interface where a has the lowest index and d has the higest. 
@@ -21,11 +23,11 @@ d = uVel[i+1];           | d = uVel[i+2];
 
     uL = b +
          0.5 * deltax * (1 - b * deltat / deltax) *
-             minModLimiter(a, b, c, deltax);
+             SlopeLimiter(a, b, c, deltax, LimType);
 
     uR = c -
          0.5 * deltax * (1 + c * deltat / deltax) *
-             minModLimiter(b, c, d, deltax);
+             SlopeLimiter(b, c, d, deltax, LimType);
 
     if (uL > uR)
     {
@@ -77,3 +79,4 @@ d = uVel[i+1];           | d = uVel[i+2];
 
     return Interface;
 }
+// =============================================================================

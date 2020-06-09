@@ -5,6 +5,7 @@
 using std::cout;
 using std::endl;
 
+// =============================================================================
 void saveArray(const std::vector<double> &arr,
                std::ofstream &fileName,
                const int &numGhosts)
@@ -25,3 +26,4 @@ void saveArray(const std::vector<double> &arr,
         cout << "File not open";
     }
 }
+// =============================================================================

@@ -1,5 +1,46 @@
 #include <cmath>
+#include <string>
+#include <iostream>
+using std::cout;
+using std::endl;
 
+namespace
+{
+    // This namespace effectively makes the listed function private to this
+    // file and they cannot be accessed elsewhere.
+    double minModLimiter(const double &a0,
+                         const double &a1,
+                         const double &a2,
+                         const double &deltax);
+}
+
+// =============================================================================
+double SlopeLimiter(const double &a0,
+                    const double &a1,
+                    const double &a2,
+                    const double &deltax,
+                    const std::string &kind)
+{
+    if (kind == "minMod")
+    {
+        return minModLimiter(a0, a1, a2, deltax);
+    }
+    // else if (kind == "MC")
+    // {
+        
+    // }
+    else
+    {
+        cout << "The limiter you chose is unavailble. Please check"
+             << "for typos or choose an available initial condition" << endl;
+        return 0.0;
+    }
+}
+// =============================================================================
+
+namespace
+{
+// =============================================================================
 double minModLimiter(const double &a0,
                      const double &a1,
                      const double &a2,
@@ -29,4 +70,6 @@ double minModLimiter(const double &a0,
     }
     
     return outValue;
+}
+// =============================================================================
 }
