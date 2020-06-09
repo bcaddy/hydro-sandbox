@@ -1,6 +1,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <algorithm>
 using std::cout;
 using std::endl;
 
@@ -12,6 +13,10 @@ namespace
                          const double &a1,
                          const double &a2,
                          const double &deltax);
+    double MCLimiter(const double &a0,
+                     const double &a1,
+                     const double &a2,
+                     const double &deltax);
 }
 
 // =============================================================================
@@ -25,10 +30,10 @@ double SlopeLimiter(const double &a0,
     {
         return minModLimiter(a0, a1, a2, deltax);
     }
-    // else if (kind == "MC")
-    // {
-        
-    // }
+    else if (kind == "MC")
+    {
+        return MCLimiter(a0, a1, a2, deltax);
+    }
     else
     {
         cout << "The limiter you chose is unavailble. Please check"
@@ -70,6 +75,36 @@ double minModLimiter(const double &a0,
     }
     
     return outValue;
+}
+// =============================================================================
+
+// =============================================================================
+double MCLimiter(const double &a0,
+                     const double &a1,
+                     const double &a2,
+                     const double &deltax)
+    /*
+    Implementation of the Monotonized Central Difference (MC) Limiter
+    */
+{
+    double xi = (a2 - a1) * (a1 - a0);
+
+    if (xi > 0)
+    {
+        double centerDif, forwardDif, backwardDif, sign;
+        centerDif   =     std::abs(a2 - a0) / (2 * deltax);
+        forwardDif  = 2 * std::abs(a2 - a1) / (deltax);
+        backwardDif = 2 * std::abs(a1 - a0) / (deltax);
+        
+        sign = ((a2-a0) < 0)? -1:1; // equivalent to sign(a2-a0)
+
+        return sign * std::min({centerDif, forwardDif, backwardDif});
+    }
+    else
+    {
+        return 0.;
+    }
+    
 }
 // =============================================================================
 }

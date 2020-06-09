@@ -43,7 +43,7 @@ int main()
     const double vel          = 1.;                                      // Velocity in meters/second
     const double period       = length / std::abs(vel);                  // Time for one period
     const double maxTime      = 1.*period;                               // Time to simlate to
-    const std::string LimType = "minMod";                                // Limiter Type
+    const std::string LimType = "MC";                                    // Limiter Type
 
     // Conserved quantity
     std::vector<double> a(size); // Actual array
