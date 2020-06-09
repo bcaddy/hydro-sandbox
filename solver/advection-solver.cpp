@@ -71,24 +71,22 @@ int main()
             }
 
             // Computer interface states and solve Riemann problem
-            double LeftInterface;
-            double RightInterface;
-            if (vel >= 0.)
-            {
-                double derivA = SlopeLimiter(a[i - 1], a[i], a[i + 1], deltax, LimType);
-                RightInterface = a[i] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
-
-                derivA = SlopeLimiter(a[i - 2], a[i - 1], a[i], deltax, LimType);
-                LeftInterface = a[i - 1] + (deltax / 2) * (1 - (deltat / deltax) * vel) * derivA;
-            }
-            else// i.e. (vel < 0.)
-            {
-                double derivA = SlopeLimiter(a[i], a[i + 1], a[i + 2], deltax, LimType);
-                RightInterface = a[i+1] - (deltax/2) * (1+(deltat/deltax)*vel) * derivA;
-
-                derivA = SlopeLimiter(a[i - 1], a[i], a[i + 1], deltax, LimType);
-                LeftInterface = a[i] - (deltax / 2) * (1 + (deltat / deltax) * vel) * derivA;
-            };
+            double LeftInterface = AdvectionInterface(a[i - 2],
+                                                      a[i - 1],
+                                                      a[i],
+                                                      a[i + 1],
+                                                      vel,
+                                                      deltax,
+                                                      deltat,
+                                                      LimType);
+            double RightInterface = AdvectionInterface(a[i - 1],
+                                                       a[i],
+                                                       a[i + 1],
+                                                       a[i + 2],
+                                                       vel,
+                                                       deltax,
+                                                       deltat,
+                                                       LimType);
 
             // Compute conservative update
             double LeftFlux  = LeftInterface * vel;
