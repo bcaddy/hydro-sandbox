@@ -44,7 +44,7 @@ int main()
     const double CFLNum        = 0.8;                                     // CFL Number
     const double maxTime       = .25;                                     // Time to simlate to
     const std::string LimType  = "MC";                                    // Limiter Type
-    const std::string InitType = "vel-sine";                              // Type of inital conditions
+    const std::string InitType = "vel-sine-pos";                          // Type of inital conditions
     //const std::string InitType = "vel-step";  // Type of inital conditions
 
     // Conserved quantity

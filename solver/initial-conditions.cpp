@@ -11,8 +11,8 @@ namespace
     // This namespace effectively makes the listed function private to this
     // file and they cannot be accessed elsewhere.
     void TopHat(std::vector<double> &arr, const int &size);
-    void VelStep(std::vector<double> &arr, const int &size);
-    void VelSine(std::vector<double> &arr, const int &size);
+    void VelStep(std::vector<double> &arr, const int &size, const double &sign);
+    void VelSine(std::vector<double> &arr, const int &size, const double &sign);
 }
 
 // =============================================================================
@@ -23,18 +23,12 @@ int setInitialConditions(std::vector<double> &arr,
 Set the initial conditions. Options are 'top-hat', 'vel-step', and 'vel-sine'
 */
 {
-    if (kind == "top-hat")
-    {
-        TopHat(arr, size);
-    }
-    else if (kind == "vel-step")
-    {
-        VelStep(arr, size);
-    }
-    else if (kind == "vel-sine")
-    {
-        VelSine(arr, size);
-    }
+    if (kind == "top-hat") {TopHat(arr, size);}
+
+    else if (kind == "vel-step-pos") {VelStep(arr, size, 1.);}
+    else if (kind == "vel-step-neg") {VelStep(arr, size, -1.);}
+    else if (kind == "vel-sine-pos") {VelSine(arr, size, 1.);}
+    else if (kind == "vel-sine-neg") {VelSine(arr, size, -1.);}
     else
     {
         cout << "The initial condition you chose is unavailble. Please check"
@@ -73,18 +67,19 @@ void TopHat(std::vector<double> &arr,
 
 // =============================================================================
 void VelStep(std::vector<double> &arr,
-            const int &size)
+             const int &size,
+             const double &sign)
 {
     // Velocity Step function. u=1 for left half and u=2 for right half
     for (int i = 0; i < size; i++)
     {
         if (i <= (size / 2))
         {
-            arr[i] = 1.;
+            arr[i] = sign;
         }
         else
         {
-            arr[i] = 2.;
+            arr[i] = 2. * sign;
         }
     }
 }
@@ -92,7 +87,8 @@ void VelStep(std::vector<double> &arr,
 
 // =============================================================================
 void VelSine(std::vector<double> &arr,
-            const int &size)
+             const int &size,
+             const double &sign)
 {
     // Velocity sine function. One full period in the middle half of the
     // simulation
@@ -110,12 +106,12 @@ void VelSine(std::vector<double> &arr,
     {
         if ((i > (size / 4)) && (i < (3 * size / 4)))
         {
-            arr[i] = sine[sineIndex];
+            arr[i] = sign * sine[sineIndex];
             sineIndex++;
         }
         else
         {
-            arr[i] = 1.;
+            arr[i] = sign;
         }
     }
 }
