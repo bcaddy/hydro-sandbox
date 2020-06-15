@@ -8,14 +8,14 @@ double VelInterface(const double &a,
                     const double &deltax,
                     const double &deltat,
                     const std::string &LimType)
-/* 
+/*
 a, b, c, and d are the four elements of the array that are needed to compute
-the interface where a has the lowest index and d has the higest. 
+the interface where a has the lowest index and d has the higest.
 
 For the i-1/2 interface  | For the i+1/2 interface
-a = uVel[i-2];           | a = uVel[i-1]; 
+a = uVel[i-2];           | a = uVel[i-1];
 b = uVel[i-1];           | b = uVel[i];
-c = uVel[i];             | c = uVel[i+1];  
+c = uVel[i];             | c = uVel[i+1];
 d = uVel[i+1];           | d = uVel[i+2];
 */
 {
@@ -90,14 +90,14 @@ double AdvectionInterface(const double &a,
                           const double &deltax,
                           const double &deltat,
                           const std::string &LimType)
-/* 
+/*
 a, b, c, and d are the four elements of the array that are needed to compute
-the interface where a has the lowest index and d has the higest. 
+the interface where a has the lowest index and d has the higest.
 
 For the i-1/2 interface  | For the i+1/2 interface
-a = uVel[i-2];           | a = uVel[i-1]; 
+a = uVel[i-2];           | a = uVel[i-1];
 b = uVel[i-1];           | b = uVel[i];
-c = uVel[i];             | c = uVel[i+1];  
+c = uVel[i];             | c = uVel[i+1];
 d = uVel[i+1];           | d = uVel[i+2];
 */
 {

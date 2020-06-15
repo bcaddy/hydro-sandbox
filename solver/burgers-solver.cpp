@@ -3,9 +3,9 @@
  Second order linear solver for Burgers' Equation with limiting
  Written by Robert Caddy.  Created on May 21, 2020
 
- Description: 
+ Description:
      This is a basic Second order Burgers' Equation solver. See exercises 6.2
-     in "Introduction to Computational Astrophysical Hydrodynamics" by Michael 
+     in "Introduction to Computational Astrophysical Hydrodynamics" by Michael &
      Zingale.
 
  Dependencies:
@@ -70,7 +70,7 @@ int main()
                 deltat = deltatTemp;
             }
         }
-        
+
         for (int i = numGhosts; i < (size-numGhosts); i++)
         {
             // Set boundary conditions (periodic)
@@ -109,7 +109,7 @@ int main()
         {
             uVel[i] = uVelTemp[i];
         };
-        
+
         // Save output
         saveArray(uVel, outFile, numGhosts);
 

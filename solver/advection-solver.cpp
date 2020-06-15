@@ -3,9 +3,9 @@
  Second order linear advection solver
  Written by Robert Caddy.  Created on May 21, 2020
 
- Description: 
-     This is a basic Second order linear advection solver. See exercises 5.1-5.4 
-     in "Introduction to Computational Astrophysical Hydrodynamics" by Michael 
+ Description:
+     This is a basic Second order linear advection solver. See exercises 5.1-5.4
+     in "Introduction to Computational Astrophysical Hydrodynamics" by Michael
      Zingale.
 
  Dependencies:
@@ -118,7 +118,7 @@ int main()
     // Close output file
     outFile.close();
 
-    // Stop timer and print execution time. Time options are nanoseconds, 
+    // Stop timer and print execution time. Time options are nanoseconds,
     // microseconds, milliseconds, seconds, minutes, hours. To pick one just
     // change `using FpTime` and the cout statement suitably.
     auto stop = high_resolution_clock::now();

@@ -17,6 +17,15 @@ namespace
                      const double &a1,
                      const double &a2,
                      const double &deltax);
+    double centeredDif(const double &a0,
+                       const double &a2,
+                       const double &deltax);
+    double forwardDif(const double &a1,
+                       const double &a2,
+                       const double &deltax);
+    double backwardDif(const double &a0,
+                       const double &a1,
+                       const double &deltax);
 }
 
 // =============================================================================
@@ -26,14 +35,11 @@ double SlopeLimiter(const double &a0,
                     const double &deltax,
                     const std::string &kind)
 {
-    if (kind == "minMod")
-    {
-        return minModLimiter(a0, a1, a2, deltax);
-    }
-    else if (kind == "MC")
-    {
-        return MCLimiter(a0, a1, a2, deltax);
-    }
+    if (kind == "minMod") {return minModLimiter(a0, a1, a2, deltax);}
+    else if (kind == "MC") {return MCLimiter(a0, a1, a2, deltax);}
+    else if (kind == "none-centered") {return centeredDif(a0, a2, deltax);}
+    else if (kind == "none-forward") {return forwardDif(a1, a2, deltax);}
+    else if (kind == "none-backward") {return backwardDif(a0, a1, deltax);}
     else
     {
         cout << "The limiter you chose is unavailble. Please check"
@@ -73,7 +79,7 @@ double minModLimiter(const double &a0,
     {
         outValue = 0.;
     }
-    
+
     return outValue;
 }
 // =============================================================================
@@ -95,7 +101,7 @@ double MCLimiter(const double &a0,
         centerDif   =     std::abs(a2 - a0) / (2 * deltax);
         forwardDif  = 2 * std::abs(a2 - a1) / (deltax);
         backwardDif = 2 * std::abs(a1 - a0) / (deltax);
-        
+
         sign = ((a2-a0) < 0)? -1:1; // equivalent to sign(a2-a0)
 
         return sign * std::min({centerDif, forwardDif, backwardDif});
@@ -104,7 +110,29 @@ double MCLimiter(const double &a0,
     {
         return 0.;
     }
-    
+
+}
+// =============================================================================
+
+// =============================================================================
+// Forward, backward, and centered diffs
+double centeredDif(const double &a0,
+                   const double &a2,
+                   const double &deltax)
+{
+    return (a2-a0)/deltax;
+}
+double forwardDif(const double &a1,
+                   const double &a2,
+                   const double &deltax)
+{
+    return (a2 - a1) / deltax;
+}
+double backwardDif(const double &a0,
+                   const double &a1,
+                   const double &deltax)
+{
+    return (a1 - a0) / deltax;
 }
 // =============================================================================
 }

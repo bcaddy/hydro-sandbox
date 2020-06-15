@@ -33,16 +33,16 @@ def main():
     # ==========================================================================
     # Set global variable for the animation functions
     global file, Stride, AdvectLine, Index, positions, InitFrames, InitIndex
-    
+
     # Load file
     file = np.loadtxt("../data/results.csv", delimiter=",")
-    
+
     # sim info
     SimPhysLength = 1.
     SimNumCells = len(file[0,:])
     SimNumSteps = len(file[:,0])
     positions = np.linspace(0.,SimPhysLength,SimNumCells)
-    
+
     # Animation Settings
     Duration   = 10.                         # How long the gif is in seconds
     Fps        = 60                          # Frames per second
@@ -62,7 +62,7 @@ def main():
         Fps       = TotFrames/Duration
         FrameTime = (1./Fps) * 1000
         Stride    = int(SimNumSteps/TotFrames)
-    
+
     # Find mins and maxes for setting the limits of the plot
     pad = np.max(np.abs([file.min(), file.max()])) * 0.05
     small = file.min() - pad
@@ -76,12 +76,12 @@ def main():
     # ==========================================================================
     f0 = plt.figure(num = 0)
     plt.title(f"Solution")
-    
+
     plt.ylim(small, large)
-    
+
     plt.xlabel("Position")
     plt.ylabel("Value")
-    
+
     plt.tight_layout()
 
     plt.grid(True)
@@ -109,7 +109,7 @@ def main():
                                          frames = TotFrames+InitFrames,
                                          interval = FrameTime,
                                          repeat = False)
-    
+
     simulation.save(filename=OutFile, fps=Fps, dpi=dpi)
 
     # ==========================================================================
@@ -121,7 +121,7 @@ def NewFrame(self):
     This function generates the plotting for each individual frame
     """
     global Index, InitFrames, InitIndex
-    
+
     AdvectLine.set_data(positions,file[Index,:])
 
     if InitIndex > InitFrames:
