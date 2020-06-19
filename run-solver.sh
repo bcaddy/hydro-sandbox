@@ -15,9 +15,9 @@ fi
 
 cd "${0%/*}"  # cd to hydro-sandbox directory
 
-REPO_ROOT=$(git rev-parse --show-toplevel) 
+REPO_ROOT=$(git rev-parse --show-toplevel)
 
-cd "${REPO_ROOT}/solver"
+cd "${REPO_ROOT}/basic-solvers"
 
 echo -e "\nCompiling..."
 make $1
