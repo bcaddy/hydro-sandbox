@@ -10,7 +10,7 @@
 
  Dependencies:
      Grid1D class
-     primitives class
+     Simulation1D class
 ================================================================================
 */
 
@@ -22,22 +22,20 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-#include "primitives.h"
+#include "Grid1D.h"
+// #include "Simulation1D"
 
 int main()
 {
     // Start timer
     auto start = high_resolution_clock::now();
 
+    Grid1D temp(10, 2, "/Users/Bob/Desktop/PhD-Research/hydro-sandbox/data/");
+    temp.velocity[6] = 3;
+    temp.density[6] = 4;
+    temp.inEnergy[6] = 2;
+    cout << temp.ComputeTotalEnergyElement(6);
 
-    primitives temp(10);
-
-    temp.velocity[3] = 13.;
-
-    for (size_t i = 0; i < 10; i++)
-    {
-        cout << temp.velocity[i] << endl;
-    }
 
 
     // Stop timer and print execution time. Time options are nanoseconds,
