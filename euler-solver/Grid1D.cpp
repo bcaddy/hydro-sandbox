@@ -48,6 +48,37 @@ std::vector<double> Grid1D::ComputeTotalEnergyVec()
 // =============================================================================
 
 // =============================================================================
+void Grid1D::UpdateBoundaries()
+    // Set boundary conditions (periodic)
+{
+    for (size_t j = 0; j < numGhostCells; j++)
+    {
+        // Compute indices
+        size_t const rightReal  = -(2 * numGhostCells - j);
+        size_t const rightGhost = -(numGhostCells - j);
+        size_t const leftReal   = j + numGhostCells;
+        size_t const leftGhost  = j;
+
+        // Update Velocity BC's
+        velocity[leftGhost] = velocity.end()[rightReal];
+        velocity.end()[rightGhost] = velocity[leftReal];
+
+        // Update Density BC's
+        density[leftGhost] = density.end()[rightReal];
+        density.end()[rightGhost] = density[leftReal];
+
+        // Update Pressure BC's
+        pressure[leftGhost] = pressure.end()[rightReal];
+        pressure.end()[rightGhost] = pressure[leftReal];
+
+        // Update Internal Energy BC's
+        inEnergy[leftGhost] = inEnergy.end()[rightReal];
+        inEnergy.end()[rightGhost] = inEnergy[leftReal];
+    }
+}
+// =============================================================================
+
+// =============================================================================
 void Grid1D::SaveState()
 {
     if (VelocitySaveFile.is_open() &&

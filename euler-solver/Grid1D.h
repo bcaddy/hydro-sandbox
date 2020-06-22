@@ -31,6 +31,9 @@ public:
     std::vector<double> ComputeMomentumVec();
     std::vector<double> ComputeTotalEnergyVec();
 
+    // Update the boundary conditions
+    void UpdateBoundaries();
+
     // Save the array
     void SaveState();
 
