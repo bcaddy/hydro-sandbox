@@ -1,4 +1,16 @@
-
+/*!
+ * \file euler-main.cpp
+ * \author Robert 'Bob' Caddy (rvc@pitt.edu)
+ * \brief Solves the Euler equations in 1D using a second order Gudonov Scheme
+ * \version 0.1
+ * \date 2020-06-23
+ *
+ * @copyright Copyright (c) 2020
+ *
+ * This program serves as a place for me to learn computational hydrodynamics
+ * and as a testbed for my future additions to [Cholla](https://github.com/cholla-hydro/cholla).
+ *
+ */
 
 #include <iostream>
 #include <string>
@@ -11,6 +23,18 @@ using std::endl;
 #include "Grid1D.h"
 // #include "Simulation1D"
 
+/*!
+ * \brief Main function that invokes class methods and provides user output.
+ *
+ * The main function provides all, or at least most, of the calls to class
+ * methods. The classes used here don't do much calling between member functions
+ * and so this function handles most if this. That is primarily for readability.
+ *
+ * Main also handles standard output and timing to inform the user about what is
+ * going on in the code.
+ *
+ * \return 0 on a successful run
+ */
 int main()
 {
     // Start clock

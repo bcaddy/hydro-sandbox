@@ -1,3 +1,17 @@
+/*!
+ * \file Grid1D.h
+ * \author Robert 'Bob' Caddy (rvc@pitt.edu)
+ * \brief The Grid1D class stores the grid and provides member functions to
+ * manipulate the grid
+ *
+ * \version 0.1
+ * \date 2020-06-23
+ *
+ * \copyright Copyright (c) 2020
+ *
+ * The Grid1D class stores the grid as a set of four arrays, one each for velocity,
+ * density, pressure, and specific internal energy
+ */
 #pragma once
 
 #include <vector>
