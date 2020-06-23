@@ -27,8 +27,9 @@ echo -e "\nRunning..."
 
 cd "${REPO_ROOT}/visualization"
 
-echo -e "\nGenerating Plot..."
-./plotter.py
+echo -e "\n\nGenerating Plot..."
+./basic-solvers-plotting.py
 
-echo "Downloading Plot..."
+echo -e "\nDownloading Plot..."
 "${HOME}/.iterm2/it2dl" output.mp4
+echo -e "Download Complete."
