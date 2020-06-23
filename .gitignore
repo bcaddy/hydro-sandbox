@@ -3,6 +3,7 @@
 test.cpp
 test.h
 *.csv
+doxygen-*
 
 # Image & Video files #
 #######################
