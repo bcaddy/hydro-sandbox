@@ -11,7 +11,7 @@ private:
     std::ofstream VelocitySaveFile;
     std::ofstream DensitySaveFile;
     std::ofstream PressureSaveFile;
-    std::ofstream inEnergySaveFile;
+    std::ofstream siEnergySaveFile;
 
 public:
     // Properties of the grid
@@ -23,13 +23,13 @@ public:
     std::vector<double> velocity;
     std::vector<double> density;
     std::vector<double> pressure;
-    std::vector<double> inEnergy; //Specific Internal Energy
+    std::vector<double> siEnergy; //Specific Internal Energy
 
     // Get the conserved variables
     double ComputeMomentumElement(size_t const &i);
-    double ComputeTotalEnergyElement(size_t const &i);
+    double ComputeTotalSpecEnergyElement(size_t const &i);
     std::vector<double> ComputeMomentumVec();
-    std::vector<double> ComputeTotalEnergyVec();
+    std::vector<double> ComputeTotalSpecEnergyVec();
 
     // Update the boundary conditions
     void UpdateBoundaries();

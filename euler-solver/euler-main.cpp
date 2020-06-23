@@ -1,18 +1,4 @@
-/*
-================================================================================
- Euler Equation Solver
- Written by Robert Caddy.  Created on June 22, 2020
 
- Description:
-     This program solves the Euler equations in 1D primarily through using the
-     member functions of the Grid1D class. The algorithm used is a second order
-     Godunov Method.
-
- Dependencies:
-     Grid1D class
-     Simulation1D class
-================================================================================
-*/
 
 #include <iostream>
 #include <string>
@@ -27,14 +13,14 @@ using std::endl;
 
 int main()
 {
-    // Start timer
+    // Start clock
     auto start = high_resolution_clock::now();
 
     Grid1D temp(10, 2, "/Users/Bob/Desktop/PhD-Research/hydro-sandbox/data/");
     temp.velocity[6] = 3;
     temp.density[6] = 4;
-    temp.inEnergy[6] = 2;
-    cout << temp.ComputeTotalEnergyElement(6);
+    temp.siEnergy[6] = 2;
+    cout << temp.ComputeTotalSpecEnergyElement(6);
 
 
 
