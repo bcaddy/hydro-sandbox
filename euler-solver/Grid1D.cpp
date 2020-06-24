@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * \file Grid1D.cpp
+ * \author Robert 'Bob' Caddy (rvc@pitt.edu)
+ * \brief Contains the implementation of the Grid1D struct.
+ *
+ * \date 2020-06-24
+ * 
+ * \copyright Copyright (c) 2020
+ * 
+ * \details
+ ******************************************************************************/
+
 #include <cmath>
 #include <iostream>
 using std::cout;
@@ -142,6 +154,7 @@ Grid1D::Grid1D(size_t const &reals,
     pressure.reserve(numTotCells);
     siEnergy.reserve(numTotCells);
 }
+
 Grid1D::~Grid1D()
 {
     VelocitySaveFile.close();

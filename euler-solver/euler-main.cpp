@@ -1,16 +1,16 @@
-/*!
+/*******************************************************************************
  * \file euler-main.cpp
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
  * \brief Solves the Euler equations in 1D using a second order Gudonov Scheme
- * \version 0.1
+ *
  * \date 2020-06-23
  *
- * @copyright Copyright (c) 2020
+ * \copyright Copyright (c) 2020
  *
- * This program serves as a place for me to learn computational hydrodynamics
+ * \details This program serves as a place for me to learn computational hydrodynamics
  * and as a testbed for my future additions to [Cholla](https://github.com/cholla-hydro/cholla).
  *
- */
+ ******************************************************************************/
 
 #include <iostream>
 #include <string>
