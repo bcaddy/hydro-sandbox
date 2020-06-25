@@ -21,7 +21,7 @@ using std::cin;
 using std::endl;
 
 #include "Grid1D.h"
-// #include "Simulation1D"
+#include "Simulation1D.h"
 
 /*!
  * \brief Main function that invokes class methods and provides user output.
@@ -40,13 +40,20 @@ int main()
     // Start clock
     auto start = high_resolution_clock::now();
 
-    Grid1D temp(10, 2, "/Users/Bob/Desktop/PhD-Research/hydro-sandbox/data/");
-    temp.velocity[6] = 3;
-    temp.density[6] = 4;
-    temp.siEnergy[6] = 2;
-    cout << temp.ComputeTotalSpecEnergyElement(6);
+    Simulation1D sim(3.,
+                     .4,
+                     10,
+                     2,
+                     "Sod",
+                     "MC",
+                     "here");
 
-
+    cout << sim.physLen << endl;
+    cout << sim.CFLnum << endl;
+    cout << sim.deltaX << endl;
+    cout << sim.limiterKind << endl;
+    cout << sim.initialConditionsKind << endl;
+    cout << sim.saveDir << endl;
 
     // Stop timer and print execution time. Time options are nanoseconds,
     // microseconds, milliseconds, seconds, minutes, hours. To pick one just

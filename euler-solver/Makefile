@@ -9,7 +9,7 @@ cppCompiler = ${cppDebug} #the version used
 # list of binaries to clean as well
 binaries = euler-solver.exe
 
-Helper_SRC = Grid1D.cpp #Simulation1D.cpp
+Helper_SRC = Grid1D.cpp Simulation1D.cpp
 Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 
 # To switch between compiling the whole program every time and only compiling
