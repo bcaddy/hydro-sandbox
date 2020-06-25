@@ -123,36 +123,42 @@ void Grid1D::SaveState()
 // =============================================================================
 
 // =============================================================================
-Grid1D::Grid1D(size_t const &reals,
-               size_t const &ghosts,
-               std::string const &saveDir)
+// Constructors and destructors along with Init function
+// =============================================================================
+void Grid1D::Init(size_t const &reals,
+          size_t const &ghosts,
+          std::string const &saveDir)
 {
     numGhostCells = ghosts;
     numRealCells = reals;
-    numTotCells = 2*numGhostCells + numRealCells;
+    numTotCells = 2 * numGhostCells + numRealCells;
 
     velocity.reserve(numTotCells);
     density.reserve(numTotCells);
     pressure.reserve(numTotCells);
     siEnergy.reserve(numTotCells);
 
-    VelocitySaveFile.open(saveDir + "Velocity.csv");
-    DensitySaveFile.open(saveDir + "Density.csv");
-    PressureSaveFile.open(saveDir + "Pressure.csv");
-    siEnergySaveFile.open(saveDir + "Internal-Energy.csv");
+    if (saveDir != "none")
+    {
+        VelocitySaveFile.open(saveDir + "Velocity.csv");
+        DensitySaveFile.open(saveDir + "Density.csv");
+        PressureSaveFile.open(saveDir + "Pressure.csv");
+        siEnergySaveFile.open(saveDir + "Internal-Energy.csv");
+    }
+    
+}
+
+Grid1D::Grid1D(size_t const &reals,
+                   size_t const &ghosts,
+                   std::string const &saveDir)
+{
+    Init(reals, ghosts, saveDir);
 }
 
 Grid1D::Grid1D(size_t const &reals,
                size_t const &ghosts)
 {
-    numGhostCells = ghosts;
-    numRealCells = reals;
-    numTotCells = 2*numGhostCells + numRealCells;
-
-    velocity.reserve(numTotCells);
-    density.reserve(numTotCells);
-    pressure.reserve(numTotCells);
-    siEnergy.reserve(numTotCells);
+    Init(reals, ghosts, "none");
 }
 
 Grid1D::~Grid1D()
