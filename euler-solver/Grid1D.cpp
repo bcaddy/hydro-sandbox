@@ -126,8 +126,8 @@ void Grid1D::SaveState()
 // Constructors and destructors along with Init function
 // =============================================================================
 void Grid1D::Init(size_t const &reals,
-          size_t const &ghosts,
-          std::string const &saveDir)
+                  size_t const &ghosts,
+                  std::string const &saveDir)
 {
     numGhostCells = ghosts;
     numRealCells = reals;
@@ -149,8 +149,8 @@ void Grid1D::Init(size_t const &reals,
 }
 
 Grid1D::Grid1D(size_t const &reals,
-                   size_t const &ghosts,
-                   std::string const &saveDir)
+               size_t const &ghosts,
+               std::string const &saveDir)
 {
     Init(reals, ghosts, saveDir);
 }
