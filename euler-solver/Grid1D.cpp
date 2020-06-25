@@ -138,7 +138,7 @@ void Grid1D::Init(size_t const &reals,
     pressure.reserve(numTotCells);
     siEnergy.reserve(numTotCells);
 
-    if (saveDir != "none")
+    if (saveDir != "no saving")
     {
         VelocitySaveFile.open(saveDir + "Velocity.csv");
         DensitySaveFile.open(saveDir + "Density.csv");
@@ -158,7 +158,7 @@ Grid1D::Grid1D(size_t const &reals,
 Grid1D::Grid1D(size_t const &reals,
                size_t const &ghosts)
 {
-    Init(reals, ghosts, "none");
+    Init(reals, ghosts, "no saving");
 }
 
 Grid1D::~Grid1D()

@@ -111,7 +111,7 @@ public:
      *
      * \param reals The number of real cells in the grid. Assigned to Grid1D numRealCells
      * \param ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
-     * \param saveDir The directory to save files to. If set to "none" then the
+     * \param saveDir The directory to save files to. If set to "no saving" then the
      * initialized grid will not be able to save itself to a file.
      *
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
