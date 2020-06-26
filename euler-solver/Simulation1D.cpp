@@ -38,15 +38,15 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
               size_t const &i)
 {
     // MC limiter
-    if (limiterKind == "MC")
+    if (_limiterKind == "MC")
     {
         // Declare variables
         double outValue;
         double leftDerive, rightDerive, leftRightProduct;
 
         // Compute the derivatives
-        leftDerive =  (primitive[i] - primitive[i-1]) / deltaX;
-        rightDerive = (primitive[i + 1] - primitive[i]) / deltaX;
+        leftDerive =  (primitive[i] - primitive[i-1]) / _deltaX;
+        rightDerive = (primitive[i + 1] - primitive[i]) / _deltaX;
         leftRightProduct = leftDerive * rightDerive;
 
         // Choose what value to output
@@ -76,16 +76,16 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
 // =============================================================================
 void Simulation1D::computeTimeStep()
 {
-    timeStep = std::abs(grid.velocity[grid.numGhostCells]);
+    _timeStep = std::abs(grid.velocity[grid.numGhostCells]);
 
     for (int i = grid.numGhostCells + 1;
          i < (grid.numTotCells - grid.numGhostCells); 
          i++)
     {
-        double deltatTemp = CFLnum * deltaX / std::abs(grid.velocity[i]);
-        if (timeStep > deltatTemp)
+        double deltatTemp = _cflNum * _deltaX / std::abs(grid.velocity[i]);
+        if (_timeStep > deltatTemp)
         {
-            timeStep = deltatTemp;
+            _timeStep = deltatTemp;
         }
     }
 }

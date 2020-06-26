@@ -48,13 +48,6 @@ int main()
                      "MC",
                      "here");
 
-    cout << sim.physLen << endl;
-    cout << sim.CFLnum << endl;
-    cout << sim.deltaX << endl;
-    cout << sim.limiterKind << endl;
-    cout << sim.initialConditionsKind << endl;
-    cout << sim.saveDir << endl;
-
     // Stop timer and print execution time. Time options are nanoseconds,
     // microseconds, milliseconds, seconds, minutes, hours. To pick one just
     // change `using FpTime` and the cout statement suitably.

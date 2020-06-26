@@ -23,10 +23,10 @@ struct Grid1D
 {
 private:
     // Output files
-    std::ofstream VelocitySaveFile;
-    std::ofstream DensitySaveFile;
-    std::ofstream PressureSaveFile;
-    std::ofstream siEnergySaveFile;
+    std::ofstream _velocitySaveFile;
+    std::ofstream _densitySaveFile;
+    std::ofstream _pressureSaveFile;
+    std::ofstream _siEnergySaveFile;
 
 public:
     /// The number of ghost cells on either side of the grid
@@ -51,7 +51,7 @@ public:
      * \param i The index of the cell to find the momentum of
      * \return double The value of the momentum in the ith cell.
      */
-    double ComputeMomentumElement(size_t const &i);
+    double computeMomentumElement(size_t const &i);
 
     /*!
      * \brief Compute the specific total energy in a cell.
@@ -59,7 +59,7 @@ public:
      * \param i The index of the cell in which to find the specific total energy.
      * \return double The value of the specific total energy in the ith cell.
      */
-    double ComputeTotalSpecEnergyElement(size_t const &i);
+    double computeTotalSpecEnergyElement(size_t const &i);
 
     /*!
      * \brief Compute the momentum for every cell in the grid. Uses
@@ -67,7 +67,7 @@ public:
      *
      * \return std::vector<double> An array of the momentum in each cell
      */
-    std::vector<double> ComputeMomentumVec();
+    std::vector<double> computeMomentumVec();
 
     /*!
      * \brief Compute the total specific energy for every cell in the grid. Uses
@@ -75,7 +75,7 @@ public:
      *
      * \return std::vector<double> An array of the momentum in each cell
      */
-    std::vector<double> ComputeTotalSpecEnergyVec();
+    std::vector<double> computeTotalSpecEnergyVec();
 
     /*!
      * \brief Applies the boundary conditions by updating the ghost cells
@@ -83,7 +83,7 @@ public:
      * \todo Currently this only uses periodic boundary conditions and I would
      * like to add outflow, reflective, inflow, and hydrostatic boundary conditions.
      */
-    void UpdateBoundaries();
+    void updateBoundaries();
 
     /*!
      * \brief Saves all the grid variables to their own csv files
@@ -94,7 +94,7 @@ public:
      * which opens a file for each vector and saves them in that directory.
      *
      */
-    void SaveState();
+    void saveState();
 
     /*!
      * \brief Construct a new Grid1D object
@@ -121,7 +121,7 @@ public:
      *      Constructor that instantiates variables and does provide the ability 
      *      to save the grid
      */
-    void Init(size_t const &reals,
+    void init(size_t const &reals,
               size_t const &ghosts,
               std::string const &saveDir);
 

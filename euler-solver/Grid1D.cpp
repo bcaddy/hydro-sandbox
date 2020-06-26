@@ -18,27 +18,27 @@ using std::endl;
 #include "Grid1D.h"
 
 // =============================================================================
-double Grid1D::ComputeMomentumElement(size_t const &i)
+double Grid1D::computeMomentumElement(size_t const &i)
 {
     return velocity[i] * density[i];
 }
 // =============================================================================
 
 // =============================================================================
-double Grid1D::ComputeTotalSpecEnergyElement(size_t const &i)
+double Grid1D::computeTotalSpecEnergyElement(size_t const &i)
 {
     return siEnergy[i] + 0.5 * std::pow(velocity[i], 2);
 }
 // =============================================================================
 
 // =============================================================================
-std::vector<double> Grid1D::ComputeMomentumVec()
+std::vector<double> Grid1D::computeMomentumVec()
 {
     std::vector<double> Momentum(numTotCells);
 
     for (size_t i = 0; i < numTotCells; i++)
     {
-        Momentum[i] = ComputeMomentumElement(i);
+        Momentum[i] = computeMomentumElement(i);
     }
 
     return Momentum;
@@ -46,13 +46,13 @@ std::vector<double> Grid1D::ComputeMomentumVec()
 // =============================================================================
 
 // =============================================================================
-std::vector<double> Grid1D::ComputeTotalSpecEnergyVec()
+std::vector<double> Grid1D::computeTotalSpecEnergyVec()
 {
     std::vector<double> TotEnergy(numTotCells);
 
     for (size_t i = 0; i < numTotCells; i++)
     {
-        TotEnergy[i] = ComputeTotalSpecEnergyElement(i);
+        TotEnergy[i] = computeTotalSpecEnergyElement(i);
     }
 
     return TotEnergy;
@@ -60,7 +60,7 @@ std::vector<double> Grid1D::ComputeTotalSpecEnergyVec()
 // =============================================================================
 
 // =============================================================================
-void Grid1D::UpdateBoundaries()
+void Grid1D::updateBoundaries()
     // Set boundary conditions (periodic)
 {
     for (size_t j = 0; j < numGhostCells; j++)
@@ -91,29 +91,29 @@ void Grid1D::UpdateBoundaries()
 // =============================================================================
 
 // =============================================================================
-void Grid1D::SaveState()
+void Grid1D::saveState()
 {
-    if (VelocitySaveFile.is_open() &&
-        DensitySaveFile.is_open() &&
-        PressureSaveFile.is_open() &&
-        siEnergySaveFile.is_open())
+    if (_velocitySaveFile.is_open() &&
+        _densitySaveFile.is_open() &&
+        _pressureSaveFile.is_open() &&
+        _siEnergySaveFile.is_open())
     {
-        VelocitySaveFile << velocity[numGhostCells];
-        DensitySaveFile  << density[numGhostCells];
-        PressureSaveFile << pressure[numGhostCells];
-        siEnergySaveFile << siEnergy[numGhostCells];
+        _velocitySaveFile << velocity[numGhostCells];
+        _densitySaveFile  << density[numGhostCells];
+        _pressureSaveFile << pressure[numGhostCells];
+        _siEnergySaveFile << siEnergy[numGhostCells];
 
         for (size_t i = numGhostCells; i < (numTotCells - numGhostCells); i++)
         {
-            VelocitySaveFile << "," << velocity[i];
-            DensitySaveFile  << "," << density[i];
-            PressureSaveFile << "," << pressure[i];
-            siEnergySaveFile << "," << siEnergy[i];
+            _velocitySaveFile << "," << velocity[i];
+            _densitySaveFile  << "," << density[i];
+            _pressureSaveFile << "," << pressure[i];
+            _siEnergySaveFile << "," << siEnergy[i];
         }
-        VelocitySaveFile << endl;
-        DensitySaveFile  << endl;
-        PressureSaveFile << endl;
-        siEnergySaveFile << endl;
+        _velocitySaveFile << endl;
+        _densitySaveFile  << endl;
+        _pressureSaveFile << endl;
+        _siEnergySaveFile << endl;
     }
     else
     {
@@ -125,7 +125,7 @@ void Grid1D::SaveState()
 // =============================================================================
 // Constructors and destructors along with Init function
 // =============================================================================
-void Grid1D::Init(size_t const &reals,
+void Grid1D::init(size_t const &reals,
                   size_t const &ghosts,
                   std::string const &saveDir)
 {
@@ -140,10 +140,10 @@ void Grid1D::Init(size_t const &reals,
 
     if (saveDir != "no saving")
     {
-        VelocitySaveFile.open(saveDir + "Velocity.csv");
-        DensitySaveFile.open(saveDir + "Density.csv");
-        PressureSaveFile.open(saveDir + "Pressure.csv");
-        siEnergySaveFile.open(saveDir + "Internal-Energy.csv");
+        _velocitySaveFile.open(saveDir + "Velocity.csv");
+        _densitySaveFile.open(saveDir + "Density.csv");
+        _pressureSaveFile.open(saveDir + "Pressure.csv");
+        _siEnergySaveFile.open(saveDir + "Internal-Energy.csv");
     }
     
 }
@@ -152,20 +152,20 @@ Grid1D::Grid1D(size_t const &reals,
                size_t const &ghosts,
                std::string const &saveDir)
 {
-    Init(reals, ghosts, saveDir);
+    init(reals, ghosts, saveDir);
 }
 
 Grid1D::Grid1D(size_t const &reals,
                size_t const &ghosts)
 {
-    Init(reals, ghosts, "no saving");
+    init(reals, ghosts, "no saving");
 }
 
 Grid1D::~Grid1D()
 {
-    VelocitySaveFile.close();
-    DensitySaveFile.close();
-    PressureSaveFile.close();
-    siEnergySaveFile.close();
+    _velocitySaveFile.close();
+    _densitySaveFile.close();
+    _pressureSaveFile.close();
+    _siEnergySaveFile.close();
 }
 // =============================================================================

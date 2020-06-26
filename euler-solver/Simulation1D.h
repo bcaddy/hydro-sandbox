@@ -15,14 +15,14 @@
 class Simulation1D
 {
 private:
-    std::string const limiterKind;
+    std::string const _limiterKind;
 
-    double const physLen;
-    double const CFLnum;
-    double const deltaX;
-    double timeStep;
+    double const _physLen;
+    double const _cflNum;
+    double const _deltaX;
+    double _timeStep;
 
-    Grid1D tempGrid;
+    Grid1D _tempGrid;
 
     void _setInitialConditions(std::string const &initialConditionsKind);
 
@@ -42,7 +42,7 @@ public:
 
     void updatedGrid();
 
-    double getTimeStep() {return timeStep;};
+    double getTimeStep() {return _timeStep;};
 
 
     Simulation1D(double const &physicalLength,
@@ -63,15 +63,15 @@ Simulation1D::Simulation1D(double const &physicalLength,
                            std::string const &limiterKindConstructor,
                            std::string const &saveDir)
 
-      // Start by initializing all the const member variables
-    : limiterKind(limiterKindConstructor),
-      physLen(physicalLength),
-      CFLnum(CFL),
-      deltaX( physLen / static_cast<double>(reals) )
+    // Start by initializing all the const member variables
+    : _limiterKind(limiterKindConstructor),
+      _physLen(physicalLength),
+      _cflNum(CFL),
+      _deltaX(_physLen / static_cast<double>(reals))
 {
     // Now we initialize the grids.
-    grid.Init(reals, ghosts, saveDir);
-    tempGrid.Init(reals, ghosts, "no saving");
+    grid.init(reals, ghosts, saveDir);
+    _tempGrid.init(reals, ghosts, "no saving");
 
     // And set the initial conditions
     _setInitialConditions(initialConditionsKind);
