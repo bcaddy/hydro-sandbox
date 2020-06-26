@@ -103,7 +103,7 @@ void Grid1D::SaveState()
         PressureSaveFile << pressure[numGhostCells];
         siEnergySaveFile << siEnergy[numGhostCells];
 
-        for (size_t i = numGhostCells + 1; i < (numTotCells - numGhostCells); i++)
+        for (size_t i = numGhostCells; i < (numTotCells - numGhostCells); i++)
         {
             VelocitySaveFile << "," << velocity[i];
             DensitySaveFile  << "," << density[i];
