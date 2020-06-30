@@ -69,11 +69,17 @@ public:
      */
     void computeTimeStep();
 
+    // This function should work on the ith element and only one primitive at a time
     void interfaceStates();
 
+    // This function should work on the ith element but do all the primitives at once if possible
     void solveRiemann();
 
+    // This function should compute the flux for all the primitives
     void computeFluxes();
+
+    // Performe the conservative update
+    void conservativeUpdate();
 
     /*!
      * \brief Update Simulation1D::grid to the new values that have been 
