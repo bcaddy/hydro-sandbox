@@ -76,8 +76,11 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
 // =============================================================================
 void Simulation1D::computeTimeStep()
 {
+    // Set the timestep to the value determined by the first real cell
     _timeStep = std::abs(grid.velocity[grid.numGhostCells]);
 
+    // Go through the entire grid, compute the time step for each cell, and
+    // choose the smallest one by setting _timeStep equal to it.
     for (int i = grid.numGhostCells + 1;
          i < (grid.numTotCells - grid.numGhostCells); 
          i++)
@@ -88,5 +91,12 @@ void Simulation1D::computeTimeStep()
             _timeStep = deltatTemp;
         }
     }
+}
+// =============================================================================
+
+// =============================================================================
+void updateGrid()
+{
+
 }
 // =============================================================================
