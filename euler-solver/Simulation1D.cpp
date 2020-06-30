@@ -95,8 +95,12 @@ void Simulation1D::computeTimeStep()
 // =============================================================================
 
 // =============================================================================
-void updateGrid()
+void Simulation1D::updateGrid()
 {
-
+    // Copy every real element in Simulation1D::_tempGrid to Simulation1D::grid
+    grid.velocity = _tempGrid.velocity;
+    grid.density  = _tempGrid.density;
+    grid.pressure = _tempGrid.pressure;
+    grid.siEnergy = _tempGrid.siEnergy;
 }
 // =============================================================================
