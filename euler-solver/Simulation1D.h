@@ -75,8 +75,17 @@ public:
 
     void computeFluxes();
 
-    void updatedGrid();
+    /*!
+     * \brief Update Simulation1D::grid to the new values that have been 
+     * computed. Basically this just copies the values of _tempGrid into grid.
+     */
+    void updateGrid();
 
+    /*!
+     * \brief Get the Time Step object
+     * 
+     * \return double The value of the time step
+     */
     double getTimeStep() {return _timeStep;};
 
     /*!
