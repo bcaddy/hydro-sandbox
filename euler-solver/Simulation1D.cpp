@@ -81,7 +81,7 @@ void Simulation1D::computeTimeStep()
 
     // Go through the entire grid, compute the time step for each cell, and
     // choose the smallest one by setting _timeStep equal to it.
-    for (int i = grid.numGhostCells + 1;
+    for (size_t i = grid.numGhostCells + 1;
          i < (grid.numTotCells - grid.numGhostCells); 
          i++)
     {
