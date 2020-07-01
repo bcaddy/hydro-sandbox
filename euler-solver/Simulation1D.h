@@ -30,6 +30,8 @@ private:
     double const _cflNum;
     /// The physical size of each cell in meters
     double const _deltaX;
+    /// The ratio of specific heats $\gamma$
+    double const _gamma;
     /// The time step for each interation
     double _timeStep;
 
@@ -69,16 +71,20 @@ public:
      */
     void computeTimeStep();
 
-    // This function should work on the ith element and only one primitive at a time
-    void interfaceStates();
+    // TODO Documentation
+    void interfaceStates(std::vector<double> const &primitive,
+                         size_t const &i,
+                         std::string const &side);
 
-    // This function should work on the ith element but do all the primitives at once if possible
+    // TODO Documentation
     void solveRiemann();
 
-    // This function should compute the flux for all the primitives
+
+    // TODO Documentation
     void computeFluxes();
 
-    // Performe the conservative update
+
+    // TODO Documentation
     void conservativeUpdate();
 
     /*!
@@ -102,6 +108,7 @@ public:
      * initial conditions of the grid.
      * 
      * \param physicalLength Physical length of the simulation in meters.
+     * \param gamma The ratio of specific heats
      * \param CFL The CFL Number
      * \param reals The number of real grid cells
      * \param ghosts The number of ghost cells
@@ -110,6 +117,7 @@ public:
      * \param saveDir The directory to save the grid to
      */
     Simulation1D(double const &physicalLength,
+                 double const &gamma,
                  double const &CFL,
                  size_t const &reals,
                  size_t const &ghosts,

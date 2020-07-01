@@ -98,6 +98,71 @@ void Simulation1D::computeTimeStep()
 // =============================================================================
 
 // =============================================================================
+// This function should work on the ith element and only one primitive at a time
+void Simulation1D::interfaceStates(std::vector<double> const &primitive,
+                                   size_t const &i,
+                                   std::string const &side)
+{
+    // If we're computing the right (i+1/2) state then we set the index to i but
+    // if we're computing the left (i-1/2) state then set the index to i-1
+    if (side == "right")
+    {
+        int const idx = i;
+    }
+    else if (side == "left")
+    {
+        int const idx = i+1;
+    }
+    else
+    {    
+    throw std::invalid_argument("Invalid value for which interface to compute.");
+    }
+
+    // Compute the eigenvalues and vectors
+    // first we have to find the speed of sound c
+    double c = std::sqrt(_gamma*grid.pressure[i]/grid.density[i]);
+
+    // Eigenvalues are lambda^-, lambda^0, lambda^+ in that order
+    std::vector<double> eigVal{ grid.velocity[i] - c,  
+                                grid.velocity[i],
+                                grid.velocity[i] + c}
+    std::vector<std::vector<double>> rEigVec, 
+    
+    //lEigVec; 
+
+    // Some common terms that I don't want to compute multiple times
+    double const dtOverDx = _timeStep / _deltaX;
+
+
+}
+// =============================================================================
+
+// =============================================================================
+// This function should work on the ith element but do all the primitives at 
+// once if possible
+void Simulation1D::solveRiemann()
+{
+    ;
+}
+// =============================================================================
+
+// =============================================================================
+// This function should compute the flux for all the primitives
+void Simulation1D::computeFluxes()
+{
+    ;
+}
+// =============================================================================
+
+// =============================================================================
+// Performe the conservative update
+void Simulation1D::conservativeUpdate()
+{
+    ;
+}
+// =============================================================================
+
+// =============================================================================
 void Simulation1D::updateGrid()
 {
     // Copy every real element in Simulation1D::_tempGrid to Simulation1D::grid
@@ -111,6 +176,7 @@ void Simulation1D::updateGrid()
 // =============================================================================
 // Constructor
 Simulation1D::Simulation1D(double const &physicalLength,
+                           double const &gamma,
                            double const &CFL,
                            size_t const &reals,
                            size_t const &ghosts,
@@ -119,8 +185,9 @@ Simulation1D::Simulation1D(double const &physicalLength,
                            std::string const &saveDir)
 
     // Start by initializing all the const member variables
-    : _limiterKind(limiterKindConstructor),
-      _physLen(physicalLength),
+    : _physLen(physicalLength),
+      _gamma(gamma),
+      _limiterKind(limiterKindConstructor),
       _cflNum(CFL),
       _deltaX(_physLen / static_cast<double>(reals))
 {
