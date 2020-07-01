@@ -107,3 +107,28 @@ void Simulation1D::updateGrid()
     grid.siEnergy = _tempGrid.siEnergy;
 }
 // =============================================================================
+
+// =============================================================================
+// Constructor
+Simulation1D::Simulation1D(double const &physicalLength,
+                           double const &CFL,
+                           size_t const &reals,
+                           size_t const &ghosts,
+                           std::string const &initialConditionsKind,
+                           std::string const &limiterKindConstructor,
+                           std::string const &saveDir)
+
+    // Start by initializing all the const member variables
+    : _limiterKind(limiterKindConstructor),
+      _physLen(physicalLength),
+      _cflNum(CFL),
+      _deltaX(_physLen / static_cast<double>(reals))
+{
+    // Now we initialize the grids.
+    grid.init(reals, ghosts, saveDir);
+    _tempGrid.init(reals, ghosts, "no saving");
+
+    // And set the initial conditions
+    _setInitialConditions(initialConditionsKind);
+}
+// =============================================================================
