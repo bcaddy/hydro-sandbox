@@ -40,13 +40,14 @@ int main()
     // Start clock
     auto start = high_resolution_clock::now();
 
-    Simulation1D sim(3.,
-                     .4,
-                     10,
-                     2,
-                     "Sod",
-                     "MC",
-                     "here");
+    // This is missing the gamma initialization
+    // Simulation1D sim(3., 
+    //                  .4,
+    //                  10,
+    //                  2,
+    //                  "Sod",
+    //                  "MC",
+    //                  "here");
 
     // Stop timer and print execution time. Time options are nanoseconds,
     // microseconds, milliseconds, seconds, minutes, hours. To pick one just

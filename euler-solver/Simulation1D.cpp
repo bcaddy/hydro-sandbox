@@ -74,6 +74,38 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
 // =============================================================================
 
 // =============================================================================
+void Simulation1D::_computeEigens(size_t const &idx,
+                                  std::vector<double> eigVal,
+                                  std::vector<std::vector<double> > rEigVec,
+                                  std::vector<std::vector<double> > lEigVec)
+{
+    // Compute the eigenvalues and vectors
+
+    // first we have to find the speed of sound c
+    double c = std::sqrt(_gamma * grid.pressure[idx] / grid.density[idx]);
+
+    // Compute a couple of common terms
+    double const cOverDensity = c/grid.density[idx];
+    double const cSquared = c*c;
+
+    // Eigenvalues are lambda^-, lambda^0, lambda^+ in that order
+    eigVal[0] = grid.velocity[idx] - c;
+    eigVal[1] = grid.velocity[idx];
+    eigVal[2] = grid.velocity[idx] + c;
+    
+    // Right Eigenvector
+    rEigVec[0][0] = 1.;            rEigVec[0][1] = 1.; rEigVec[0][2] = 1.;
+    rEigVec[1][0] = -cOverDensity; rEigVec[1][1] = 0.; rEigVec[1][2] = cOverDensity;
+    rEigVec[2][0] = cSquared;      rEigVec[2][1] = 0.; rEigVec[2][2] = cSquared;
+    
+    // Left Eigenvector
+    lEigVec[0][0] = 0.; lEigVec[0][1] = -0.5/cOverDensity; lEigVec[0][2] =  0.5/cSquared;
+    lEigVec[1][0] = 1.; lEigVec[1][1] =  0.;               lEigVec[1][2] = -1./cSquared;
+    lEigVec[2][0] = 0.; lEigVec[2][1] =  0.5/cOverDensity; lEigVec[2][2] =  0.5/cSquared;
+}
+// =============================================================================
+
+// =============================================================================
 void Simulation1D::computeTimeStep()
 {
     // I don't want to compute this in every iteration
@@ -99,41 +131,41 @@ void Simulation1D::computeTimeStep()
 
 // =============================================================================
 // This function should work on the ith element and only one primitive at a time
-void Simulation1D::interfaceStates(std::vector<double> const &primitive,
-                                   size_t const &i,
+void Simulation1D::interfaceStates(size_t const &i,
                                    std::string const &side)
 {
     // If we're computing the right (i+1/2) state then we set the index to i but
     // if we're computing the left (i-1/2) state then set the index to i-1
+    size_t idx;
     if (side == "right")
     {
-        int const idx = i;
+        idx = i;
     }
     else if (side == "left")
     {
-        int const idx = i+1;
+        idx = i+1;
     }
     else
     {    
-    throw std::invalid_argument("Invalid value for which interface to compute.");
+        throw std::invalid_argument("Invalid value for which interface to compute.");
     }
-
-    // Compute the eigenvalues and vectors
-    // first we have to find the speed of sound c
-    double c = std::sqrt(_gamma*grid.pressure[i]/grid.density[i]);
-
-    // Eigenvalues are lambda^-, lambda^0, lambda^+ in that order
-    std::vector<double> eigVal{ grid.velocity[i] - c,  
-                                grid.velocity[i],
-                                grid.velocity[i] + c}
-    std::vector<std::vector<double>> rEigVec, 
-    
-    //lEigVec; 
 
     // Some common terms that I don't want to compute multiple times
     double const dtOverDx = _timeStep / _deltaX;
 
+    // Declare eigenvalues and eigenvectors vectors
+    std::vector<double> eigVal(3);
+    std::vector<std::vector<double>> rEigVec(3, std::vector<double>(3));
+    std::vector<std::vector<double>> lEigVec(3, std::vector<double>(3));
 
+    // ===== Compute the left side of the interface ============================
+    // Compute eigenvalues and eigenvectors
+    _computeEigens(idx, eigVal, rEigVec, lEigVec);
+
+    // Compute the slopes
+    
+
+    // Compute lEigVec^nu dot slope
 }
 // =============================================================================
 

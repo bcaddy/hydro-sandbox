@@ -62,6 +62,12 @@ private:
     double _slope(std::vector<double> const &primitive,
                  size_t const &i);
 
+    // TODO Documentation
+    void _computeEigens(size_t const &idx,
+                        std::vector<double> eigVal,
+                        std::vector<std::vector<double>> rEigVec,
+                        std::vector<std::vector<double>> lEigVec);
+
 public:
     /// The primary grid
     Grid1D grid;
@@ -72,8 +78,7 @@ public:
     void computeTimeStep();
 
     // TODO Documentation
-    void interfaceStates(std::vector<double> const &primitive,
-                         size_t const &i,
+    void interfaceStates(size_t const &i,
                          std::string const &side);
 
     // TODO Documentation
