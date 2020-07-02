@@ -98,7 +98,20 @@ public:
      */
     void computeTimeStep();
 
-    // TODO Documentation
+    /*!
+     * \brief Compute the states on either side of the interface to the left or
+     *        right of a given cell.
+     * 
+     * \param[in] idxInput Which cell to find the possible interface states for
+     * \param[in] side Which side of the cell to find the interface states.
+     *                 Only options are "left" or "right"
+     * \param[out] leftSideOfInterface The state on the left side of the interface.
+     *                                 The order within the vector is density,
+     *                                 velocity, pressure.
+     * \param[out] rightSideOfInterface The state on the right side of the interface.
+     *                                  The order within the vector is density,
+     *                                  velocity, pressure.
+     */
     void interfaceStates(size_t const &idxInput,
                          std::string const &side,
                          std::vector<double> &leftSideOfInterface,
