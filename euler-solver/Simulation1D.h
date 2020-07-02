@@ -78,8 +78,10 @@ public:
     void computeTimeStep();
 
     // TODO Documentation
-    void interfaceStates(size_t const &i,
-                         std::string const &side);
+    void interfaceStates(size_t const &idxInput,
+                         std::string const &side,
+                         std::vector<double> &leftSideOfInterface,
+                         std::vector<double> &rightSideOfInterface);
 
     // TODO Documentation
     void solveRiemann();

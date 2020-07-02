@@ -1,5 +1,6 @@
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
 
 #include "Simulation1D.h"
 
@@ -35,7 +36,7 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
 
 // =============================================================================
 double Simulation1D::_slope(std::vector<double> const &primitive,
-              size_t const &i)
+                            size_t const &i)
 {
     // MC limiter
     if (_limiterKind == "MC")
@@ -131,19 +132,21 @@ void Simulation1D::computeTimeStep()
 
 // =============================================================================
 // This function should work on the ith element and only one primitive at a time
-void Simulation1D::interfaceStates(size_t const &i,
-                                   std::string const &side)
+void Simulation1D::interfaceStates(size_t const &idxInput,
+                                   std::string const &side,
+                                   std::vector<double> &leftSideOfInterface,
+                                   std::vector<double> &rightSideOfInterface)
 {
     // If we're computing the right (i+1/2) state then we set the index to i but
     // if we're computing the left (i-1/2) state then set the index to i-1
     size_t idx;
     if (side == "right")
     {
-        idx = i;
+        idx = idxInput;
     }
     else if (side == "left")
     {
-        idx = i+1;
+        idx = idxInput - 1;
     }
     else
     {    
@@ -158,14 +161,107 @@ void Simulation1D::interfaceStates(size_t const &i,
     std::vector<std::vector<double>> rEigVec(3, std::vector<double>(3));
     std::vector<std::vector<double>> lEigVec(3, std::vector<double>(3));
 
+    // Resize output vectors to make sure they're the right size
+    leftSideOfInterface.resize(3);
+    rightSideOfInterface.resize(3);
+
     // ===== Compute the left side of the interface ============================
     // Compute eigenvalues and eigenvectors
     _computeEigens(idx, eigVal, rEigVec, lEigVec);
 
-    // Compute the slopes
-    
+    // Compute the slopes. The order is density, velocity, pressure
+    std::vector<double> slopes({_slope(grid.density, idx),
+                                _slope(grid.velocity, idx),
+                                _slope(grid.pressure, idx)});
 
     // Compute lEigVec^nu dot slope
+    std::vector<double> lEigVecDotSlope(3,0);
+    for (size_t i = 0; i < 3; i++)
+    {
+        for (size_t j = 0; j < 3; j++)
+        {
+            lEigVecDotSlope[i] += lEigVec[j][i] * slopes[j];
+        }
+    }
+
+    // Compute the reference state
+    double coef = 0.5 * (1 - dtOverDx * std::max(0., eigVal[2]));
+    std::vector<double> refState({grid.density[idx] + coef*slopes[0],
+                                  grid.density[idx] + coef*slopes[0],
+                                  grid.density[idx] + coef*slopes[0]});
+
+    // To find the left side of the interface state we first compute the sum in
+    // the interface equation
+    std::vector<double> sum(3, 0);
+    for (size_t nu = 0; nu < 3; nu++) // loop over the elements in the sum
+    {
+        if (eigVal[nu] >= 0.)
+        {
+            for (size_t j = 0; j < 3; j++) // loop over primitives
+            {
+                sum[j] += (std::max(eigVal[2], 0.) - eigVal[nu]) 
+                          * lEigVecDotSlope[nu] 
+                          * rEigVec[j][nu];
+            }
+        }
+    }
+
+    // Now we compute the left side of the interface
+    for (size_t i = 0; i < 3; i++)
+    {
+        leftSideOfInterface[i] = refState[i] + 0.5 * dtOverDx * sum[i];
+    }
+    // ===== End computing the left side of the interface ======================
+
+    // ===== Compute the right side of the interface ===========================
+
+    // First increase the index to move to working on the right side of the interface
+    idx++;
+
+    // Compute eigenvalues and eigenvectors
+    _computeEigens(idx, eigVal, rEigVec, lEigVec);
+
+    // Compute the slopes. The order is density, velocity, pressure
+    slopes.assign({_slope(grid.density, idx),
+                   _slope(grid.velocity, idx),
+                   _slope(grid.pressure, idx)});
+
+    // Compute lEigVec^nu dot slope
+    lEigVecDotSlope.assign(3, 0.); // zero out the vector
+    for (size_t i = 0; i < 3; i++)
+    {
+        for (size_t j = 0; j < 3; j++)
+        {
+            lEigVecDotSlope[i] += lEigVec[j][i] * slopes[j];
+        }
+    }
+
+    // Compute the reference state
+    coef = 0.5 * (1 + dtOverDx * std::min(0., eigVal[0]));
+    refState.assign({grid.density[idx] - coef * slopes[0],
+                     grid.density[idx] - coef * slopes[0],
+                     grid.density[idx] - coef * slopes[0]});
+
+    // To find the right side of the interface state we first compute the sum in
+    // the interface equation
+    sum.assign(3, 0);
+    for (size_t nu = 0; nu < 3; nu++) // loop over the elements in the sum
+    {
+        if (eigVal[nu] <= 0.)
+        {
+            for (size_t j = 0; j < 3; j++) // loop over primitives
+            {
+                sum[j] += (std::min(eigVal[0], 0.) - eigVal[nu]) * lEigVecDotSlope[nu] * rEigVec[j][nu];
+            }
+        }
+    }
+
+    // Now we compute the left side of the interface
+    for (size_t i = 0; i < 3; i++)
+    {
+        rightSideOfInterface[i] = refState[i] + 0.5 * dtOverDx * sum[i];
+    }
+    // ===== End computing the right side of the interface =====================
 }
 // =============================================================================
 
