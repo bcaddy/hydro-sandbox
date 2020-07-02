@@ -48,7 +48,7 @@ public:
     /*!
      * \brief Compute the momentum in a cell
      *
-     * \param i The index of the cell to find the momentum of
+     * \param[in] i The index of the cell to find the momentum of
      * \return double The value of the momentum in the ith cell.
      */
     double computeMomentumElement(size_t const &i);
@@ -56,7 +56,7 @@ public:
     /*!
      * \brief Compute the specific total energy in a cell.
      *
-     * \param i The index of the cell in which to find the specific total energy.
+     * \param[in] i The index of the cell in which to find the specific total energy.
      * \return double The value of the specific total energy in the ith cell.
      */
     double computeTotalSpecEnergyElement(size_t const &i);
@@ -109,9 +109,9 @@ public:
      * - Opens save files for Grid1D::velocity, Grid1D::density,
      *   Grid1D::pressure, Grid1D::siEnergy
      *
-     * \param reals The number of real cells in the grid. Assigned to Grid1D numRealCells
-     * \param ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
-     * \param saveDir The directory to save files to. If set to "no saving" then the
+     * \param[in] reals The number of real cells in the grid. Assigned to Grid1D numRealCells
+     * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
+     * \param[in] saveDir The directory to save files to. If set to "no saving" then the
      * initialized grid will not be able to save itself to a file.
      *
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
@@ -138,9 +138,9 @@ public:
      * \details This constructor utilizes the Grid1D::Init() method to initialize
      *          a Grid1D object with the ability to save the gride to a file.
      *
-     * \param reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
-     * \param ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
-     * \param saveDir The directory to save files to
+     * \param[in] reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
+     * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
+     * \param[in] saveDir The directory to save files to
      *
      * \see Grid1D::Init() The initializing function used by this constructor
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
@@ -158,8 +158,8 @@ public:
      * \details This constructor utilizes the Grid1D::Init() method to initialize
      *          a Grid1D object with the ability to save the gride to a file.
      *
-     * \param reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
-     * \param ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
+     * \param[in] reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
+     * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
      *
      * \see Grid1D::Init() The initializing function used by this constructor
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts, std::string const &saveDir)

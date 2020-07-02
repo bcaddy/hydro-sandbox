@@ -43,7 +43,7 @@ private:
      * \brief Set the initial conditions. Currently only supports a Sod shock 
      * tube.
      * 
-     * \param initialConditionsKind The type of initial conditions to use. 
+     * \param[in] initialConditionsKind The type of initial conditions to use.
      * currently unused.
      * 
      * \todo Add more initial conditions. Make it a template?
@@ -55,18 +55,39 @@ private:
      * 
      * \todo Add other kinds of limiters. Templated?
      * 
-     * \param primitive The primitive variable to compute the slope of.
-     * \param i The cell in which to compute the slope.
+     * \param[in] primitive The primitive variable to compute the slope of.
+     * \param[in] i The cell in which to compute the slope.
      * \return double The limited slope.
      */
     double _slope(std::vector<double> const &primitive,
                  size_t const &i);
 
-    // TODO Documentation
+    /*!
+     * \brief Compute the eigenvalues and vectors of the Euler equations for a
+     * given cell.
+     * 
+     * \details The eigenvalues and vectors compute are given in *Introduction
+     * to Computational Astrophysical Hydrodynamics* by Zingale pages 96-97, 
+     * exercise 7.2 and 7.3. The eigenvector matrices are defined by equations
+     * 7.28 and 7.29.
+     * 
+     * \param[in] idx The cell in which to compute the eigenvalues and
+     *                eigenvectors
+     * \param[out] eigVal A std::vector containing the eigenvalues in the order
+     *                    \f$ \lambda^-, \lambda^0, \lambda^+ \f$.
+     * \param[out] rEigVec A 2D std::vector which contains the right eigenvectors.
+     *                     They are all column vectors and are arranged side by
+     *                     side in the same -, 0, + ordering as the eigenvalues. 
+     *                     Indices are [row][column].
+     * \param[out] lEigVec A 2D std::vector which contains the left eigenvectors.
+     *                     They are all row vectors and are arranged stacked in
+     *                     the same -, 0, + ordering as the eigenvalues.Indices 
+     *                     are [row][column].
+     */
     void _computeEigens(size_t const &idx,
-                        std::vector<double> eigVal,
-                        std::vector<std::vector<double>> rEigVec,
-                        std::vector<std::vector<double>> lEigVec);
+                        std::vector<double> &eigVal,
+                        std::vector<std::vector<double>> &rEigVec,
+                        std::vector<std::vector<double>> &lEigVec);
 
 public:
     /// The primary grid
@@ -114,14 +135,14 @@ public:
      * _deltaX). Initializes the grid and the temporary grid and then sets the 
      * initial conditions of the grid.
      * 
-     * \param physicalLength Physical length of the simulation in meters.
-     * \param gamma The ratio of specific heats
-     * \param CFL The CFL Number
-     * \param reals The number of real grid cells
-     * \param ghosts The number of ghost cells
-     * \param initialConditionsKind Which initial conditions to use
-     * \param limiterKindConstructor Which limiter to use
-     * \param saveDir The directory to save the grid to
+     * \param[in] physicalLength Physical length of the simulation in meters.
+     * \param[in] gamma The ratio of specific heats
+     * \param[in] CFL The CFL Number
+     * \param[in] reals The number of real grid cells
+     * \param[in] ghosts The number of ghost cells
+     * \param[in] initialConditionsKind Which initial conditions to use
+     * \param[in] limiterKindConstructor Which limiter to use
+     * \param[in] saveDir The directory to save the grid to
      */
     Simulation1D(double const &physicalLength,
                  double const &gamma,

@@ -76,9 +76,9 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
 
 // =============================================================================
 void Simulation1D::_computeEigens(size_t const &idx,
-                                  std::vector<double> eigVal,
-                                  std::vector<std::vector<double> > rEigVec,
-                                  std::vector<std::vector<double> > lEigVec)
+                                  std::vector<double> &eigVal,
+                                  std::vector<std::vector<double> > &rEigVec,
+                                  std::vector<std::vector<double> > &lEigVec)
 {
     // Compute the eigenvalues and vectors
 
