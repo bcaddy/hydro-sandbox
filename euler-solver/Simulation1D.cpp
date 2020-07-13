@@ -127,6 +127,24 @@ void Simulation1D::computeTimeStep()
             _timeStep = deltatTemp;
         }
     }
+    ////////////////////////////////////////////////////////////////////////////
+    // Find the maximum speed in the simulation
+    double vMaxTemp, vMax = 0.;
+
+    for (size_t i = grid.numGhostCells + 1;
+         i < (grid.numTotCells - grid.numGhostCells);
+         i++)
+    {
+        // TODO change this to call Riemann sound speed function
+        vMaxTemp = std::abs(grid.velocity[i]) + 
+                   std::sqrt(_gamma*grid.pressure[i] / grid.density[i]);
+        if (vMax < vMaxTemp)
+        {
+            vMax = vMaxTemp;
+        }
+    }
+
+    _timeStep = _cflNum * _deltaX / vMax;
 }
 // =============================================================================
 
