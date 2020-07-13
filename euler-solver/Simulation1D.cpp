@@ -297,7 +297,6 @@ void Simulation1D::updateGrid()
     grid.velocity = _tempGrid.velocity;
     grid.density  = _tempGrid.density;
     grid.pressure = _tempGrid.pressure;
-    grid.siEnergy = _tempGrid.siEnergy;
 }
 // =============================================================================
 

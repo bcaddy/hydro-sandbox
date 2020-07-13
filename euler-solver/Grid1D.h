@@ -9,9 +9,9 @@
  * \copyright Copyright (c) 2020
  *
  * \details The Grid1D struct stores the grid as a set of four arrays, one each
- * for velocity, density, pressure, and specific internal energy. There are
- * member functions for finding the momentum, total specific energy, saving the 
- * grid, and updating the ghost cells.
+ * for velocity, density, and pressure. There are member functions for finding
+ * the momentum, saving the grid, and updating the ghost
+ * cells.
  ******************************************************************************/
 #pragma once
 
@@ -26,7 +26,6 @@ private:
     std::ofstream _velocitySaveFile;
     std::ofstream _densitySaveFile;
     std::ofstream _pressureSaveFile;
-    std::ofstream _siEnergySaveFile;
 
 public:
     /// The number of ghost cells on either side of the grid
@@ -42,8 +41,6 @@ public:
     std::vector<double> density;
     /// The pressure in a cell. Measured in Pascals (Newtons per square meter)
     std::vector<double> pressure;
-    /// The Specific internal energy in a cell. Measured in Joules per kilogram
-    std::vector<double> siEnergy; //Specific Internal Energy
 
     /*!
      * \brief Compute the momentum in a cell
@@ -54,28 +51,12 @@ public:
     double computeMomentumElement(size_t const &i);
 
     /*!
-     * \brief Compute the specific total energy in a cell.
-     *
-     * \param[in] i The index of the cell in which to find the specific total energy.
-     * \return double The value of the specific total energy in the ith cell.
-     */
-    double computeTotalSpecEnergyElement(size_t const &i);
-
-    /*!
      * \brief Compute the momentum for every cell in the grid. Uses
      * Grid1D::ComputeMomentumElement to compute the momentum in each cell
      *
      * \return std::vector<double> An array of the momentum in each cell
      */
     std::vector<double> computeMomentumVec();
-
-    /*!
-     * \brief Compute the total specific energy for every cell in the grid. Uses
-     * Grid1D::ComputeTotalSpecEnergyElement to compute the total specific energy in each cell
-     *
-     * \return std::vector<double> An array of the momentum in each cell
-     */
-    std::vector<double> computeTotalSpecEnergyVec();
 
     /*!
      * \brief Applies the boundary conditions by updating the ghost cells
@@ -88,7 +69,7 @@ public:
     /*!
      * \brief Saves all the grid variables to their own csv files
      * \details Calling this functions saves Grid1D::velocity, Grid1D::density,
-     * Grid1D::pressure, and Grid1D::siEnergy each to their own CSV files. The
+     * and Grid1D::pressure each to their own CSV files. The
      * files are stored in the directory given to the constructor
      * Grid1D::Grid1D(size_t const &reals,size_t const &ghosts,std::string const &saveDir)
      * which opens a file for each vector and saves them in that directory.
@@ -104,10 +85,10 @@ public:
      * at a later time. It does the following:
      * - initializes Grid1D::numGhostCells, Grid1D::numRealCells, and 
      *   Grid1D::numTotCells.
-     * - Reserves the memory for Grid1D::velocity, Grid1D::density,
-     *   Grid1D::pressure, Grid1D::siEnergy
-     * - Opens save files for Grid1D::velocity, Grid1D::density,
-     *   Grid1D::pressure, Grid1D::siEnergy
+     * - Reserves the memory for Grid1D::velocity, Grid1D::density, and
+     *   Grid1D::pressure
+     * - Opens save files for Grid1D::velocity, Grid1D::density, and
+     *   Grid1D::pressure
      *
      * \param[in] reals The number of real cells in the grid. Assigned to Grid1D numRealCells
      * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells

@@ -25,13 +25,6 @@ double Grid1D::computeMomentumElement(size_t const &i)
 // =============================================================================
 
 // =============================================================================
-double Grid1D::computeTotalSpecEnergyElement(size_t const &i)
-{
-    return siEnergy[i] + 0.5 * std::pow(velocity[i], 2);
-}
-// =============================================================================
-
-// =============================================================================
 std::vector<double> Grid1D::computeMomentumVec()
 {
     std::vector<double> Momentum(numTotCells);
@@ -42,20 +35,6 @@ std::vector<double> Grid1D::computeMomentumVec()
     }
 
     return Momentum;
-};
-// =============================================================================
-
-// =============================================================================
-std::vector<double> Grid1D::computeTotalSpecEnergyVec()
-{
-    std::vector<double> TotEnergy(numTotCells);
-
-    for (size_t i = 0; i < numTotCells; i++)
-    {
-        TotEnergy[i] = computeTotalSpecEnergyElement(i);
-    }
-
-    return TotEnergy;
 };
 // =============================================================================
 
@@ -82,10 +61,6 @@ void Grid1D::updateBoundaries()
         // Update Pressure BC's
         pressure[leftGhost] = pressure.end()[rightReal];
         pressure.end()[rightGhost] = pressure[leftReal];
-
-        // Update Internal Energy BC's
-        siEnergy[leftGhost] = siEnergy.end()[rightReal];
-        siEnergy.end()[rightGhost] = siEnergy[leftReal];
     }
 }
 // =============================================================================
@@ -95,25 +70,21 @@ void Grid1D::saveState()
 {
     if (_velocitySaveFile.is_open() &&
         _densitySaveFile.is_open() &&
-        _pressureSaveFile.is_open() &&
-        _siEnergySaveFile.is_open())
+        _pressureSaveFile.is_open())
     {
         _velocitySaveFile << velocity[numGhostCells];
         _densitySaveFile  << density[numGhostCells];
         _pressureSaveFile << pressure[numGhostCells];
-        _siEnergySaveFile << siEnergy[numGhostCells];
 
         for (size_t i = numGhostCells; i < (numTotCells - numGhostCells); i++)
         {
             _velocitySaveFile << "," << velocity[i];
             _densitySaveFile  << "," << density[i];
             _pressureSaveFile << "," << pressure[i];
-            _siEnergySaveFile << "," << siEnergy[i];
         }
         _velocitySaveFile << endl;
         _densitySaveFile  << endl;
         _pressureSaveFile << endl;
-        _siEnergySaveFile << endl;
     }
     else
     {
@@ -136,14 +107,12 @@ void Grid1D::init(size_t const &reals,
     velocity.reserve(numTotCells);
     density.reserve(numTotCells);
     pressure.reserve(numTotCells);
-    siEnergy.reserve(numTotCells);
 
     if (saveDir != "no saving")
     {
         _velocitySaveFile.open(saveDir + "Velocity.csv");
         _densitySaveFile.open(saveDir + "Density.csv");
         _pressureSaveFile.open(saveDir + "Pressure.csv");
-        _siEnergySaveFile.open(saveDir + "Internal-Energy.csv");
     }
     
 }
@@ -166,6 +135,5 @@ Grid1D::~Grid1D()
     _velocitySaveFile.close();
     _densitySaveFile.close();
     _pressureSaveFile.close();
-    _siEnergySaveFile.close();
 }
 // =============================================================================
