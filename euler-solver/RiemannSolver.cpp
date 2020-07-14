@@ -10,6 +10,7 @@
  */
 
 #include <cmath>
+#include <algorithm>
 #include <stdexcept>
 
 #include "RiemannSolver.h"
@@ -67,7 +68,25 @@ double RiemannSolver::_computePressureStar()
 // =============================================================================
 double RiemannSolver::_guessPressureStar()
 {
-    ;
+    // Compute min and maximum pressures of the two sides of the interface
+    double pMin = std::min(_pressureL, _pressureR);
+    double pMax = std::max(_pressureL, _pressureR);
+
+    // First compute the primitive variable approximation
+    double pPrim = 0.5   * (_pressureL + _pressureR) -
+                   0.125 * (_velocityR - _velocityL) 
+                         * (_densityL + _densityR) 
+                         * (_cL + _cR);
+    // Make sure it's not negative
+    pPrim = std::max(_tol, pPrim);
+
+    // Check to see if we should use the primitive variable approximation or not
+    // TODO Stopped at cell with equation 9
+    if ( ((pMax/pMin) <= 2.0) && (pMin < ) && () )
+    {
+        /* code */
+    }
+    
 }
 // =============================================================================
 
