@@ -284,8 +284,7 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
 // =============================================================================
 
 // =============================================================================
-// This function should work on the ith element but do all the primitives at 
-// once if possible
+// TODO Implement
 void Simulation1D::solveRiemann()
 {
     ;
@@ -293,6 +292,7 @@ void Simulation1D::solveRiemann()
 // =============================================================================
 
 // =============================================================================
+// TODO Implement
 // Performe the conservative update
 void Simulation1D::conservativeUpdate()
 {
