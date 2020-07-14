@@ -322,11 +322,12 @@ Simulation1D::Simulation1D(double const &physicalLength,
                            std::string const &saveDir)
 
     // Start by initializing all the const member variables
-    : _physLen(physicalLength),
-      _gamma(gamma),
-      _limiterKind(limiterKindConstructor),
+    : _limiterKind(limiterKindConstructor),
+      _physLen(physicalLength),
       _cflNum(CFL),
-      _deltaX(_physLen / static_cast<double>(reals))
+      _deltaX(_physLen / static_cast<double>(reals)),
+      _gamma(gamma),
+      currentTime(0.0)
 {
     // Now we initialize the grids.
     grid.init(reals, ghosts, saveDir);

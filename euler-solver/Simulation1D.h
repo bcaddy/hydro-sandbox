@@ -93,10 +93,26 @@ public:
     /// The primary grid
     Grid1D grid;
 
+    /// The current time in the simulation
+    double currentTime;
+
     /*!
      * \brief Compute the time step using the CFL condition
      */
     void computeTimeStep();
+
+    /*!
+     * \brief Get the Time Step object
+     * 
+     * \return double The value of the time step
+     */
+    double getTimeStep() { return _timeStep; };
+
+    /*!
+     * \brief Increases the current time by the value of Simulation1D::_timeStep
+     * 
+     */
+    void updateCurrentTime() { currentTime += _timeStep; };
 
     /*!
      * \brief Compute the states on either side of the interface to the left or
@@ -129,13 +145,6 @@ public:
      * computed. Basically this just copies the values of _tempGrid into grid.
      */
     void updateGrid();
-
-    /*!
-     * \brief Get the Time Step object
-     * 
-     * \return double The value of the time step
-     */
-    double getTimeStep() {return _timeStep;};
 
     /*!
      * \brief Construct a new Simulation1D object.
