@@ -122,10 +122,6 @@ public:
 
 
     // TODO Documentation
-    void computeFluxes();
-
-
-    // TODO Documentation
     void conservativeUpdate();
 
     /*!

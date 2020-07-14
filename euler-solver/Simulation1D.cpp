@@ -293,14 +293,6 @@ void Simulation1D::solveRiemann()
 // =============================================================================
 
 // =============================================================================
-// This function should compute the flux for all the primitives
-void Simulation1D::computeFluxes()
-{
-    ;
-}
-// =============================================================================
-
-// =============================================================================
 // Performe the conservative update
 void Simulation1D::conservativeUpdate()
 {
