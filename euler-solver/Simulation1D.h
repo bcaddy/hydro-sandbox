@@ -16,14 +16,13 @@
  * \brief Solves the Euler equations
  * \details This class handles all the heavy lifting of running a 1D hydro 
  * simulation. It uses the Grid1D class for the grid and then computes time steps,
- * interface steps, solves the Riemann problem, etc. 
+ * interface steps, solves the Riemann problem using the RiemannSolver class,
+ * does the conservative update, keeps track of the time, etc.
  * 
  */
 class Simulation1D
 {
 private:
-    /// The type of limiter used
-    std::string const _limiterKind;
     /// The physical length of the simulation in meters
     double const _physLen;
     /// Courant–Friedrichs–Lewy (CFL) Number
@@ -168,7 +167,6 @@ public:
                  size_t const &reals,
                  size_t const &ghosts,
                  std::string const &initialConditionsKind,
-                 std::string const &limiterKindConstructor,
                  std::string const &saveDir);
     /*!
      * \brief Destroy the Simulation1D object. Uses the default constructor

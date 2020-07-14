@@ -38,39 +38,32 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
 double Simulation1D::_slope(std::vector<double> const &primitive,
                             size_t const &i)
 {
-    // MC limiter
-    if (_limiterKind == "MC")
+    // MC Limiter
+
+    // Declare variables
+    double outValue;
+    double leftDerive, rightDerive, leftRightProduct;
+
+    // Compute the derivatives
+    leftDerive =  (primitive[i] - primitive[i-1]) / _deltaX;
+    rightDerive = (primitive[i + 1] - primitive[i]) / _deltaX;
+    leftRightProduct = leftDerive * rightDerive;
+
+    // Choose what value to output
+    if ((std::abs(leftDerive) < std::abs(rightDerive)) && (leftRightProduct > 0.))
     {
-        // Declare variables
-        double outValue;
-        double leftDerive, rightDerive, leftRightProduct;
-
-        // Compute the derivatives
-        leftDerive =  (primitive[i] - primitive[i-1]) / _deltaX;
-        rightDerive = (primitive[i + 1] - primitive[i]) / _deltaX;
-        leftRightProduct = leftDerive * rightDerive;
-
-        // Choose what value to output
-        if ((std::abs(leftDerive) < std::abs(rightDerive)) && (leftRightProduct > 0.))
-        {
-            outValue = leftDerive;
-        }
-        else if ((std::abs(leftDerive) > std::abs(rightDerive)) && (leftRightProduct > 0.))
-        {
-            outValue = rightDerive;
-        }
-        else
-        {
-            outValue = 0.;
-        }
-
-        return outValue;
+        outValue = leftDerive;
+    }
+    else if ((std::abs(leftDerive) > std::abs(rightDerive)) && (leftRightProduct > 0.))
+    {
+        outValue = rightDerive;
     }
     else
     {
-        throw std::invalid_argument("Nonexistant limiter kind used.");
+        outValue = 0.;
     }
-    
+
+    return outValue;
 }
 // =============================================================================
 
@@ -318,12 +311,10 @@ Simulation1D::Simulation1D(double const &physicalLength,
                            size_t const &reals,
                            size_t const &ghosts,
                            std::string const &initialConditionsKind,
-                           std::string const &limiterKindConstructor,
                            std::string const &saveDir)
 
     // Start by initializing all the const member variables
-    : _limiterKind(limiterKindConstructor),
-      _physLen(physicalLength),
+    : _physLen(physicalLength),
       _cflNum(CFL),
       _deltaX(_physLen / static_cast<double>(reals)),
       _gamma(gamma),
