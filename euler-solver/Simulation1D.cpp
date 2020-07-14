@@ -1,3 +1,14 @@
+/*!
+ * \file Simulation1D.cpp
+ * \author Robert 'Bob' Caddy (rvc@pitt.edu)
+ * \brief Implementation of Simulation1D Class
+ * \version 0.1
+ * \date 2020-07-14
+ * 
+ * \copyright Copyright (c) 2020
+ * 
+ */
+
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
