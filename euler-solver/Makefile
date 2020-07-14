@@ -2,14 +2,15 @@
 .PHONY: clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
-cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic
+# Remove -fanalyzer if it has issues, it's still experimental
+cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic -fanalyzer
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 
 # list of binaries to clean as well
 binaries = euler-solver.exe
 
-Helper_SRC = Grid1D.cpp Simulation1D.cpp
+Helper_SRC = Grid1D.cpp Simulation1D.cpp RiemannSolver.cpp
 Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 
 # To switch between compiling the whole program every time and only compiling
