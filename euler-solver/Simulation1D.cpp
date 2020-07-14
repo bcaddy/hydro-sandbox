@@ -318,6 +318,7 @@ Simulation1D::Simulation1D(double const &physicalLength,
       _cflNum(CFL),
       _deltaX(_physLen / static_cast<double>(reals)),
       _gamma(gamma),
+      _riemannSolver(gamma),
       currentTime(0.0)
 {
     // Now we initialize the grids.

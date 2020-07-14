@@ -11,6 +11,7 @@
 
 #include <string>
 #include "Grid1D.h"
+#include "RiemannSolver.h"
 
 /*!
  * \brief Solves the Euler equations
@@ -37,6 +38,10 @@ private:
     /// The temporary grid used for storing the next time step while it's being
     /// computed
     Grid1D _tempGrid;
+
+    /// The object used to solve the Riemann Problem. See RiemannSolver for the
+    /// full documentation.
+    RiemannSolver _riemannSolver;
 
     /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock 
