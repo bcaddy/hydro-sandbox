@@ -56,11 +56,8 @@ private:
     /// The sound speeds on the left side of the interface
     double _cL;
 
-    /// The position
-    double _position;
-
-    /// The time
-    double _time;
+    /// The position divided by the time.
+    double _posOverT;
 
     /// The energy flux
     double _energyFlux;
@@ -102,8 +99,8 @@ private:
                             double const &pSide,
                             double const &dSide,
                             double const &cSide,
-                            double f,
-                            double df);
+                            double &f,
+                            double &df);
 
     // =========================================================================
     // End declaring all the private methods
@@ -121,11 +118,8 @@ public:
      * \param[in] densityL The density on the left side of the interface 
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
-     * \param[in] position The position, always equal to zero for numerical
-     *            algorithms
-     * \param[in] time The time, only used in the context of position/time so 
-     *            usually irrelevant. Just make sure to set it to some non-zero 
-     *            value
+     * \param[in] posOverT The value of the position divided by the current time.
+     * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] massFlux The mass flux that is being solved for
@@ -136,12 +130,10 @@ public:
                      double const &densityL,
                      double const &velocityL,
                      double const &pressureL,
-                     double const &position,
-                     double const &time,
+                     double const &posOverT,
                      double const &energyFlux,
                      double const &momentumFlux,
                      double const &massFlux);
-
 
     /*!
      * \brief Construct a new Riemann Solver object

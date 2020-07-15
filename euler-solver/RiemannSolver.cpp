@@ -23,8 +23,7 @@ void RiemannSolver::riemannMain(double const &densityR,
                                 double const &densityL,
                                 double const &velocityL,
                                 double const &pressureL,
-                                double const &position,
-                                double const &time,
+                                double const &posOverT,
                                 double const &energyFlux,
                                 double const &momentumFlux,
                                 double const &massFlux)
@@ -36,8 +35,7 @@ void RiemannSolver::riemannMain(double const &densityR,
     _densityL     = densityL;
     _velocityL    = velocityL;
     _pressureL    = pressureL;
-    _position     = position;
-    _time         = time;
+    _posOverT     = posOverT;
     _energyFlux   = energyFlux;
     _momentumFlux = momentumFlux;
     _massFlux     = massFlux;
@@ -56,6 +54,14 @@ void RiemannSolver::riemannMain(double const &densityR,
     // Figure out the pressure in the star region. This requires a good initial
     // guess then refining that guess with Newton-Raphson iterations
     _pressureStar = _computePressureStar();
+
+    // Compute the velocity in the star region
+    {
+        double fL = 0, fR = 0, df = 0;
+        _pressureFunctions(_pressureStar, _pressureL, _densityL, _cL, fL, df);
+        _pressureFunctions(_pressureStar, _pressureR, _densityR, _cR, fR, df);
+        _velocityStar = 0.5 * (_velocityL + _velocityR + fR - fL);
+    }
 }
 // =============================================================================
 
@@ -67,7 +73,7 @@ double RiemannSolver::_computePressureStar()
 
     // Perform the Newton-Raphson iterations
     size_t i = 0, maxIters = 20;
-    double pTemp, fL, fR, dfL, dfR;
+    double pTemp, fL = 0, fR = 0, dfL = 0, dfR = 0;
 
     while (true)
     {
@@ -175,8 +181,8 @@ void RiemannSolver::_pressureFunctions(double const &pGuess,
                                        double const &pSide,
                                        double const &dSide,
                                        double const &cSide,
-                                       double f,
-                                       double df)
+                                       double &f,
+                                       double &df)
 {
     if (pGuess > pSide)
     {
