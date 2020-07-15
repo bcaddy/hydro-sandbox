@@ -62,6 +62,90 @@ void RiemannSolver::riemannMain(double const &densityR,
         _pressureFunctions(_pressureStar, _pressureR, _densityR, _cR, fR, df);
         _velocityStar = 0.5 * (_velocityL + _velocityR + fR - fL);
     }
+
+    // Determine if we're in the L/L_* state or the R/R_* state
+    if (_velocityStar >= _posOverT)
+    {
+        // We're in the L or L_* state
+        if (_pressureStar > _pressureL)
+        {
+            // The Left non-linear wave is a shockwave
+            double shockSpeed = _computeShockSpeed("left");
+
+            // Decide between L and L_* state
+            if (shockSpeed > 0.0)
+            {
+                // We're in the L state
+            }
+            else
+            {
+                // We're in the L_* state
+            }
+            
+        }
+        else
+        {
+            // The Left non-linear wave is a rarefaction
+            double rareSpeedHead=0, rareSpeedTail=0;
+            _computeRareFactionSpeeds(rareSpeedHead, rareSpeedTail, "left");
+
+            if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
+            {
+                // We're in the L state
+            }
+            else if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
+            {
+                // We're in the L_* state
+            }
+            else
+            {
+                // We're somewhere in the fan itself
+            }
+            
+        }
+        
+    }
+    else
+    {
+        // We're in the R or R_* state
+        if (_pressureStar > _pressureR)
+        {
+            // The Left non-linear wave is a shockwave
+            double shockSpeed = _computeShockSpeed("right");
+
+            // Decide between L and L_* state
+            if (shockSpeed <= 0.0)
+            {
+                // We're in the R state
+            }
+            else
+            {
+                // We're in the R_* state
+            }
+            
+        }
+        else
+        {
+            // The Left non-linear wave is a rarefaction
+            double rareSpeedHead=0, rareSpeedTail=0;
+            _computeRareFactionSpeeds(rareSpeedHead, rareSpeedTail, "right");
+
+            if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
+            {
+                // We're in the R state
+            }
+            else if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
+            {
+                // We're in the R_* state
+            }
+            else
+            {
+                // We're somewhere in the fan itself
+            }
+            
+        }
+    }
+    
 }
 // =============================================================================
 
