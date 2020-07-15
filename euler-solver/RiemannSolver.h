@@ -88,6 +88,22 @@ private:
      */
     double _guessPressureStar();
 
+    /*!
+     * \brief Compute the pressure functions. See Toro section 4.3.2 for more
+     * 
+     * \param[in] pGuess The current guess for the pressure in the star region
+     * \param[in] pSide The pressure on whichever side we're computing
+     * \param[in] dSide The density on whichver side we're computing
+     * \param[in] cSide The sound speed on whichver side we're computing
+     * \param[out] f The output of the pressure function
+     * \param[out] df The output of the derivative of the pressure function
+     */
+    void _pressureFunctions(double const &pGuess,
+                            double const &pSide,
+                            double const &dSide,
+                            double const &cSide,
+                            double f,
+                            double df);
 
     // =========================================================================
     // End declaring all the private methods

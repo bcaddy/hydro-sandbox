@@ -61,7 +61,10 @@ void RiemannSolver::riemannMain(double const &densityR,
 // =============================================================================
 double RiemannSolver::_computePressureStar()
 {
-    ;
+    // Guess a value for the pressure in the star region
+    double pStar = _guessPressureStar();
+
+
 }
 // =============================================================================
 
@@ -125,6 +128,37 @@ double RiemannSolver::_guessPressureStar()
     
 
 
+}
+// =============================================================================
+
+// =============================================================================
+void RiemannSolver::_pressureFunctions(double const &pGuess,
+                                       double const &pSide,
+                                       double const &dSide,
+                                       double const &cSide,
+                                       double f,
+                                       double df)
+{
+    if (pGuess > pSide)
+    {
+        // Shock
+        f = (pGuess - pSide) * std::sqrt(2 /
+            (dSide * ( pGuess * (_gamma + 1) + pSide * (_gamma - 1))));
+
+        df = (1 -
+        ( (pGuess - pSide) / (2 * (pSide * ((_gamma-1)/(_gamma+1)) + pGuess ))))
+        * std::sqrt(2 / (dSide * (pGuess * (_gamma + 1) + pSide * (_gamma - 1))));
+    }
+    else
+    {
+        // Rarefaction
+        f = (2 * cSide / (_gamma - 1)) *
+            (std::pow(pGuess/pSide , (_gamma - 1)/(2 * _gamma)) - 1);
+
+        df = (1 / (pSide * cSide)) * 
+             std::pow( pGuess/pSide, (1 - _gamma) / (2 * _gamma) );
+    }
+    
 }
 // =============================================================================
 
