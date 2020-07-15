@@ -81,12 +81,50 @@ double RiemannSolver::_guessPressureStar()
     pPrim = std::max(_tol, pPrim);
 
     // Check to see if we should use the primitive variable approximation or not
-    // TODO Stopped at cell with equation 9
-    if ( ((pMax/pMin) <= 2.0) && (pMin < ) && () )
+    if ( ((pMax/pMin) <= 2.0) && (pMin < pPrim) && (pPrim < pMax) )
     {
-        /* code */
+        // Return pPrim and terminate this function
+        return pPrim;
+    }
+
+    // If the previous statement was false then
+    // Choose between 2-shock or 2-rarefaction approximations
+    if (pPrim < pMin)
+    {
+        // 2-Rarefaction Approximation
+        double p2Rare = // Equation on next lines for readability
+        std::pow(
+                // Numerator
+                ( _cL + _cR - 0.5 * (_gamma - 1) * (_velocityR - _velocityL) )
+                /
+                // Denominator
+                ( std::pow(_cL/_pressureL, (_gamma - 1)/(2*_gamma) )
+                + std::pow(_cR/_pressureR, (_gamma - 1)/(2*_gamma) ) )
+                // Exponent
+                , 2*_gamma/(_gamma-1));
+
+        return std::max(_tol, p2Rare);
+    }
+    else
+    {
+        // 2-Shock Approximation
+        double gL = std::sqrt( 2 / ( (_gamma + 1) * _densityL *
+                    (pPrim + _pressureL * ( (_gamma-1)/(_gamma+1) )) ) );
+        double gR = std::sqrt( 2 / ( (_gamma + 1) * _densityR *
+                    (pPrim + _pressureR * ( (_gamma-1)/(_gamma+1) )) ) );
+
+        double p2Shock = // Equation on next lines for readability
+        // Numerator
+        (gL * _pressureL + gR * _pressureR - (_velocityR - _velocityL)) 
+        / 
+        // Denominator
+        (gL + gR);
+
+        return std::max(_tol, p2Shock);
     }
     
+
+
 }
 // =============================================================================
 
