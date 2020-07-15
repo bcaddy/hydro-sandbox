@@ -12,6 +12,7 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 
 #include "RiemannSolver.h"
 
@@ -63,6 +64,44 @@ double RiemannSolver::_computePressureStar()
 {
     // Guess a value for the pressure in the star region
     double pStar = _guessPressureStar();
+
+    // Perform the Newton-Raphson iterations
+    size_t i = 0, maxIters = 20;
+    double pTemp, fL, fR, dfL, dfR;
+
+    while (true)
+    {
+        // Compute pressure functions
+        _pressureFunctions(pStar, _pressureL, _densityL, _cL, fL, dfL);
+        _pressureFunctions(pStar, _pressureR, _densityR, _cR, fR, dfR);
+
+        // Compute new value of pStar
+        pTemp = pStar - ( (fR + fL - (_velocityR - _velocityL)) / (dfL + dfR) );
+
+        // Check for positivity and for convergence
+        if (pTemp < 0.0)
+        {
+            pStar = _tol;
+        }
+        else if ( (std::abs(pTemp - pStar) / (0.5 * (pTemp + pStar))) < _tol)
+        {
+            // Change is below tolerance so we're done
+            return pTemp;
+        }
+
+        // Check for iteration limit
+        i++; // Increment counter
+        if (i >= maxIters)
+        {
+            std::cout << "Max iterations reached in Newton-Raphson iterations"
+                      << std::endl;
+            return pTemp;
+        }
+
+        // Copy pTemp to pStar
+        pStar = pTemp;
+    }
+    
 
 
 }
