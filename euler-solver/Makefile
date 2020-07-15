@@ -2,8 +2,7 @@
 .PHONY: clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
-# Remove -fanalyzer if it has issues, it's still experimental
-cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic -fanalyzer
+cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 
