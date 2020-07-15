@@ -108,42 +108,6 @@ void RiemannSolver::riemannMain(double const &densityR,
     else
     {
         // We're in the R or R_* state
-        if (_pressureStar > _pressureR)
-        {
-            // The Left non-linear wave is a shockwave
-            double shockSpeed = _computeShockSpeed("right");
-
-            // Decide between L and L_* state
-            if (shockSpeed <= 0.0)
-            {
-                // We're in the R state
-            }
-            else
-            {
-                // We're in the R_* state
-            }
-            
-        }
-        else
-        {
-            // The Left non-linear wave is a rarefaction
-            double rareSpeedHead=0, rareSpeedTail=0;
-            _computeRareFactionSpeeds(rareSpeedHead, rareSpeedTail, "right");
-
-            if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
-            {
-                // We're in the R state
-            }
-            else if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
-            {
-                // We're in the R_* state
-            }
-            else
-            {
-                // We're somewhere in the fan itself
-            }
-            
-        }
     }
     
 }
