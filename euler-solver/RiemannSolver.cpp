@@ -92,20 +92,39 @@ void RiemannSolver::riemannMain(double const &densityR,
         else
         {
             // The Left non-linear wave is a rarefaction
-            double rareSpeedHead=0, rareSpeedTail=0;
-            _computeRareFactionSpeeds(rareSpeedHead, rareSpeedTail, "left");
+            double rareSpeedHead, rareSpeedTail, cRare;
+            cRare = _cL * std::pow(_pressureStar/_pressureL , (_gamma - 1)/(2 * _gamma));
+            rareSpeedTail = _velocityStar - cRare;
+            rareSpeedHead = _velocityL - _cL;
 
             if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
             {
                 // We're in the L state
+                _pressureState = _pressureL;
+                _velocityState = _velocityL;
+                _densityState  = _densityL;
             }
             else if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
             {
                 // We're in the L_* state
+                _pressureState = _pressureStar;
+                _velocityState = _velocityStar;
+                _densityState  = _densityRare("left");
             }
             else
             {
                 // We're somewhere in the fan itself
+                _velocityState = (2 / (_gamma + 1))
+                                 * (
+                                 _cL
+                                 + _velocityL * ((_gamma - 1) / 2)
+                                 + _posOverT);
+
+                double coef = (2 / (_gamma + 1))
+                              + (_gamma - 1) / ((_gamma + 1) * _cL)
+                              * (_velocityL - _posOverT);
+                _pressureState = _pressureL * std::pow(coef, 2 * _gamma / (_gamma - 1));
+                _densityState  = _densityL * std::pow(coef, 2 / (_gamma - 1));;
             }
 
         }
@@ -317,6 +336,31 @@ double RiemannSolver::_densityShock(std::string const &side)
            /
            (_gamma+1)) * (_pressureStar/pressureSide)-1) )
            );
+}
+// =============================================================================
+
+// =============================================================================
+double RiemannSolver::_densityRare(std::string const &side)
+{
+    // Figure out which variables to use
+    double densitySide, pressureSide;
+    if (side == "left")
+    {
+        densitySide  = _densityL;
+        pressureSide = _pressureL;
+    }
+    else if (side == "right")
+    {
+        densitySide  = _densityR;
+        pressureSide = _pressureR;
+    }
+    else
+    {
+        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_densityShock");
+    }
+
+    // Compute and return the rarefaction density
+    return densitySide * std::pow(_pressureStar/pressureSide, 1/_gamma);
 }
 // =============================================================================
 

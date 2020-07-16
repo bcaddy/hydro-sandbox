@@ -45,8 +45,6 @@ private:
     /// The pressure on the left side of the interface
     double _pressureL;
 
-    /// The density in the star region
-    double _densityStar;
     /// The velocity in the star region
     double _velocityStar;
     /// The pressure in the star region
@@ -126,6 +124,14 @@ private:
      * \return double The density next to the shock
      */
     double _densityShock(std::string const &side);
+
+    /*!
+     * \brief Compute the density of the star region next to a rarefaction
+     *
+     * \param side Which side to compute the density on
+     * \return double The density next to the rarefaction
+     */
+    double _densityRare(std::string const &side);
     // =========================================================================
     // End declaring all the private methods
     // Start declargin all the public members
