@@ -4,15 +4,17 @@
  * \brief Contains the RiemannSolver class for solving the Riemann Problem.
  * \version 0.1
  * \date 2020-07-14
- * 
+ *
  * \copyright Copyright (c) 2020
- * 
+ *
  */
 
 #pragma once
 
+#include <string>
+
 /*!
- * \brief Solves the Riemann problem exactly using the same exact Riemann solver 
+ * \brief Solves the Riemann problem exactly using the same exact Riemann solver
  *        as in Toro "Riemann Solver and Numerical Methods for Fluid Dynamics 3ed"
  */
 class RiemannSolver
@@ -71,23 +73,23 @@ private:
     // Start declargin all the private methods
     // =========================================================================
     /*!
-     * \brief Compute the pressure in the star region using the 
+     * \brief Compute the pressure in the star region using the
      * RiemannSolver::_guessPressureStar function and Newton-Raphson iterations
-     * 
+     *
      * \return double The pressure in the star region
      */
     double _computePressureStar();
 
     /*!
      * \brief Provide an estimate of the pressure in the star region
-     * 
+     *
      * \return double An estimate of the pressure in the star region
      */
     double _guessPressureStar();
 
     /*!
      * \brief Compute the pressure functions. See Toro section 4.3.2 for more
-     * 
+     *
      * \param[in] pGuess The current guess for the pressure in the star region
      * \param[in] pSide The pressure on whichever side we're computing
      * \param[in] dSide The density on whichver side we're computing
@@ -102,6 +104,13 @@ private:
                             double &f,
                             double &df);
 
+    /*!
+     * \brief Compute the speed of a shockwave
+     *
+     * \param side Which side to compute the shock on
+     * \return double The speed of the shock wave
+     */
+    double _shockSpeed(std::string const &side);
     // =========================================================================
     // End declaring all the private methods
     // Start declargin all the public members
@@ -111,11 +120,11 @@ public:
      * \brief Solves the Riemann problem exactly by calling and organizing member
      * functions. Uses the same exact Riemann solver as in Toro "Riemann Solvers
      * and Numerical Methods for Fluid Dynamics 3ed"
-     * 
-     * \param[in] densityR  The density on the right side of the interface 
+     *
+     * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
      * \param[in] pressureR The pressure on the right side of the interface
-     * \param[in] densityL The density on the left side of the interface 
+     * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
      * \param[in] posOverT The value of the position divided by the current time.
@@ -137,13 +146,13 @@ public:
 
     /*!
      * \brief Construct a new Riemann Solver object
-     * 
+     *
      * \param[in] gamma The ratio of specific heats
      */
     RiemannSolver(double const &gamma);
     /*!
      * \brief Destroy the Riemann Solver object. Uses default destructors
-     * 
+     *
      */
     ~RiemannSolver() = default;
 };

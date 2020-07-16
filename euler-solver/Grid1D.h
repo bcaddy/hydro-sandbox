@@ -80,10 +80,10 @@ public:
     /*!
      * \brief Construct a new Grid1D object
      *
-     * \details This method provides the actual construction of the object so 
-     * that the object can either be constructed immediately upon declaration or 
+     * \details This method provides the actual construction of the object so
+     * that the object can either be constructed immediately upon declaration or
      * at a later time. It does the following:
-     * - initializes Grid1D::numGhostCells, Grid1D::numRealCells, and 
+     * - initializes Grid1D::numGhostCells, Grid1D::numRealCells, and
      *   Grid1D::numTotCells.
      * - Reserves the memory for Grid1D::velocity, Grid1D::density, and
      *   Grid1D::pressure
@@ -96,10 +96,10 @@ public:
      * initialized grid will not be able to save itself to a file.
      *
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
-     *      Constructor that instantiates variables but does not provide the 
+     *      Constructor that instantiates variables but does not provide the
      *      ability to save the grid
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts, std::string const &saveDir)
-     *      Constructor that instantiates variables and does provide the ability 
+     *      Constructor that instantiates variables and does provide the ability
      *      to save the grid
      */
     void init(size_t const &reals,
@@ -153,7 +153,7 @@ public:
 
     /*!
      * \brief Destroy the Grid1D object
-     * 
+     *
      * \details Closes any open files and then allows all other objects to use
      * their destructors.
      */

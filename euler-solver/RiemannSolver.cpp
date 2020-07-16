@@ -4,9 +4,9 @@
  * \brief Implementation of the RiemannSolver class
  * \version 0.1
  * \date 2020-07-14
- * 
+ *
  * \copyright Copyright (c) 2020
- * 
+ *
  */
 
 #include <cmath>
@@ -70,7 +70,7 @@ void RiemannSolver::riemannMain(double const &densityR,
         if (_pressureStar > _pressureL)
         {
             // The Left non-linear wave is a shockwave
-            double shockSpeed = _computeShockSpeed("left");
+            double shockSpeed = _shockSpeed("left");
 
             // Decide between L and L_* state
             if (shockSpeed > 0.0)
@@ -81,7 +81,7 @@ void RiemannSolver::riemannMain(double const &densityR,
             {
                 // We're in the L_* state
             }
-            
+
         }
         else
         {
@@ -101,15 +101,15 @@ void RiemannSolver::riemannMain(double const &densityR,
             {
                 // We're somewhere in the fan itself
             }
-            
+
         }
-        
+
     }
     else
     {
         // We're in the R or R_* state
     }
-    
+
 }
 // =============================================================================
 
@@ -155,7 +155,7 @@ double RiemannSolver::_computePressureStar()
         // Copy pTemp to pStar
         pStar = pTemp;
     }
-    
+
 
 
 }
@@ -170,8 +170,8 @@ double RiemannSolver::_guessPressureStar()
 
     // First compute the primitive variable approximation
     double pPrim = 0.5   * (_pressureL + _pressureR) -
-                   0.125 * (_velocityR - _velocityL) 
-                         * (_densityL + _densityR) 
+                   0.125 * (_velocityR - _velocityL)
+                         * (_densityL + _densityR)
                          * (_cL + _cR);
     // Make sure it's not negative
     pPrim = std::max(_tol, pPrim);
@@ -211,14 +211,14 @@ double RiemannSolver::_guessPressureStar()
 
         double p2Shock = // Equation on next lines for readability
         // Numerator
-        (gL * _pressureL + gR * _pressureR - (_velocityR - _velocityL)) 
-        / 
+        (gL * _pressureL + gR * _pressureR - (_velocityR - _velocityL))
+        /
         // Denominator
         (gL + gR);
 
         return std::max(_tol, p2Shock);
     }
-    
+
 
 
 }
@@ -248,10 +248,40 @@ void RiemannSolver::_pressureFunctions(double const &pGuess,
         f = (2 * cSide / (_gamma - 1)) *
             (std::pow(pGuess/pSide , (_gamma - 1)/(2 * _gamma)) - 1);
 
-        df = (1 / (pSide * cSide)) * 
+        df = (1 / (pSide * cSide)) *
              std::pow( pGuess/pSide, (1 - _gamma) / (2 * _gamma) );
     }
-    
+
+}
+// =============================================================================
+
+// =============================================================================
+double RiemannSolver::_shockSpeed(std::string const &side)
+{
+    // Figure out which variables to use
+    double velocitySide, cSide, pressureSide;
+    if (side == "left")
+    {
+        velocitySide = _velocityL;
+        cSide        = -_cL;  // note the extra negative sign
+        pressureSide = _pressureL;
+    }
+    else if (side == "right")
+    {
+        velocitySide = _velocityR;
+        cSide        = _cR;
+        pressureSide = _pressureR;
+    }
+    else
+    {
+        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_shockSpeed");
+    }
+
+    // Compute and return the shock speed
+    return velocitySide + cSide * std::sqrt(
+           (_pressureStar/pressureSide) * ((_gamma+1)/(2*_gamma))
+           + ((_gamma-1)/(2*_gamma))
+           );
 }
 // =============================================================================
 

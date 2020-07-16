@@ -4,9 +4,9 @@
  * \brief Contains the implementation of the Grid1D struct.
  *
  * \date 2020-06-24
- * 
+ *
  * \copyright Copyright (c) 2020
- * 
+ *
  * \details
  ******************************************************************************/
 
@@ -114,7 +114,7 @@ void Grid1D::init(size_t const &reals,
         _densitySaveFile.open(saveDir + "Density.csv");
         _pressureSaveFile.open(saveDir + "Pressure.csv");
     }
-    
+
 }
 
 Grid1D::Grid1D(size_t const &reals,

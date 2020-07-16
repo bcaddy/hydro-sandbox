@@ -41,7 +41,7 @@ int main()
     auto start = high_resolution_clock::now();
 
     // This is missing the gamma initialization
-    // Simulation1D sim(3., 
+    // Simulation1D sim(3.,
     //                  .4,
     //                  10,
     //                  2,

@@ -4,9 +4,9 @@
  * \brief Implementation of Simulation1D Class
  * \version 0.1
  * \date 2020-07-14
- * 
+ *
  * \copyright Copyright (c) 2020
- * 
+ *
  */
 
 #include <cmath>
@@ -24,8 +24,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
     size_t const half  = grid.numTotCells / 2;
 
     // Iterate over just the real cells on the left side
-    for (size_t i = grid.numGhostCells; 
-         i < half; 
+    for (size_t i = grid.numGhostCells;
+         i < half;
          i++)
     {
         grid.velocity[i] = 0.;
@@ -97,12 +97,12 @@ void Simulation1D::_computeEigens(size_t const &idx,
     eigVal[0] = grid.velocity[idx] - c;
     eigVal[1] = grid.velocity[idx];
     eigVal[2] = grid.velocity[idx] + c;
-    
+
     // Right Eigenvector
     rEigVec[0][0] = 1.;            rEigVec[0][1] = 1.; rEigVec[0][2] = 1.;
     rEigVec[1][0] = -cOverDensity; rEigVec[1][1] = 0.; rEigVec[1][2] = cOverDensity;
     rEigVec[2][0] = cSquared;      rEigVec[2][1] = 0.; rEigVec[2][2] = cSquared;
-    
+
     // Left Eigenvector
     lEigVec[0][0] = 0.; lEigVec[0][1] = -0.5/cOverDensity; lEigVec[0][2] =  0.5/cSquared;
     lEigVec[1][0] = 1.; lEigVec[1][1] =  0.;               lEigVec[1][2] = -1./cSquared;
@@ -122,7 +122,7 @@ void Simulation1D::computeTimeStep()
     // Go through the entire grid, compute the time step for each cell, and
     // choose the smallest one by setting _timeStep equal to it.
     for (size_t i = grid.numGhostCells + 1;
-         i < (grid.numTotCells - grid.numGhostCells); 
+         i < (grid.numTotCells - grid.numGhostCells);
          i++)
     {
         double deltatTemp = cflTimesDeltaX / std::abs(grid.velocity[i]);
@@ -140,7 +140,7 @@ void Simulation1D::computeTimeStep()
          i++)
     {
         // TODO change this to call Riemann sound speed function
-        vMaxTemp = std::abs(grid.velocity[i]) + 
+        vMaxTemp = std::abs(grid.velocity[i]) +
                    std::sqrt(_gamma*grid.pressure[i] / grid.density[i]);
         if (vMax < vMaxTemp)
         {
@@ -171,7 +171,7 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
         idx = idxInput - 1;
     }
     else
-    {    
+    {
         throw std::invalid_argument("Invalid value for which interface to compute.");
     }
 
@@ -221,8 +221,8 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
         {
             for (size_t j = 0; j < 3; j++) // loop over primitives
             {
-                sum[j] += (std::max(eigVal[2], 0.) - eigVal[nu]) 
-                          * lEigVecDotSlope[nu] 
+                sum[j] += (std::max(eigVal[2], 0.) - eigVal[nu])
+                          * lEigVecDotSlope[nu]
                           * rEigVec[j][nu];
             }
         }

@@ -3,9 +3,9 @@
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
  * \brief Contains the Simulation1D class for solving the 1D Euler equations.
  * \date 2020-06-25
- * 
+ *
  * \copyright Copyright (c) 2020
- * 
+ *
  */
 #pragma once
 
@@ -15,11 +15,11 @@
 
 /*!
  * \brief Solves the Euler equations
- * \details This class handles all the heavy lifting of running a 1D hydro 
+ * \details This class handles all the heavy lifting of running a 1D hydro
  * simulation. It uses the Grid1D class for the grid and then computes time steps,
  * interface steps, solves the Riemann problem using the RiemannSolver class,
  * does the conservative update, keeps track of the time, etc.
- * 
+ *
  */
 class Simulation1D
 {
@@ -44,21 +44,21 @@ private:
     RiemannSolver _riemannSolver;
 
     /*!
-     * \brief Set the initial conditions. Currently only supports a Sod shock 
+     * \brief Set the initial conditions. Currently only supports a Sod shock
      * tube.
-     * 
+     *
      * \param[in] initialConditionsKind The type of initial conditions to use.
      * currently unused.
-     * 
+     *
      * \todo Add more initial conditions. Make it a template?
      */
     void _setInitialConditions(std::string const &initialConditionsKind);
 
     /*!
      * \brief Compute the MC limited slope of a given primitive variable
-     * 
+     *
      * \todo Add other kinds of limiters. Templated?
-     * 
+     *
      * \param[in] primitive The primitive variable to compute the slope of.
      * \param[in] i The cell in which to compute the slope.
      * \return double The limited slope.
@@ -69,23 +69,23 @@ private:
     /*!
      * \brief Compute the eigenvalues and vectors of the Euler equations for a
      * given cell.
-     * 
+     *
      * \details The eigenvalues and vectors compute are given in *Introduction
-     * to Computational Astrophysical Hydrodynamics* by Zingale pages 96-97, 
+     * to Computational Astrophysical Hydrodynamics* by Zingale pages 96-97,
      * exercise 7.2 and 7.3. The eigenvector matrices are defined by equations
      * 7.28 and 7.29.
-     * 
+     *
      * \param[in] idx The cell in which to compute the eigenvalues and
      *                eigenvectors
      * \param[out] eigVal A std::vector containing the eigenvalues in the order
      *                    \f$ \lambda^-, \lambda^0, \lambda^+ \f$.
      * \param[out] rEigVec A 2D std::vector which contains the right eigenvectors.
      *                     They are all column vectors and are arranged side by
-     *                     side in the same -, 0, + ordering as the eigenvalues. 
+     *                     side in the same -, 0, + ordering as the eigenvalues.
      *                     Indices are [row][column].
      * \param[out] lEigVec A 2D std::vector which contains the left eigenvectors.
      *                     They are all row vectors and are arranged stacked in
-     *                     the same -, 0, + ordering as the eigenvalues.Indices 
+     *                     the same -, 0, + ordering as the eigenvalues.Indices
      *                     are [row][column].
      */
     void _computeEigens(size_t const &idx,
@@ -107,21 +107,21 @@ public:
 
     /*!
      * \brief Get the Time Step object
-     * 
+     *
      * \return double The value of the time step
      */
     double getTimeStep() { return _timeStep; };
 
     /*!
      * \brief Increases the current time by the value of Simulation1D::_timeStep
-     * 
+     *
      */
     void updateCurrentTime() { currentTime += _timeStep; };
 
     /*!
      * \brief Compute the states on either side of the interface to the left or
      *        right of a given cell.
-     * 
+     *
      * \param[in] idxInput Which cell to find the possible interface states for
      * \param[in] side Which side of the cell to find the interface states.
      *                 Only options are "left" or "right"
@@ -145,18 +145,18 @@ public:
     void conservativeUpdate();
 
     /*!
-     * \brief Update Simulation1D::grid to the new values that have been 
+     * \brief Update Simulation1D::grid to the new values that have been
      * computed. Basically this just copies the values of _tempGrid into grid.
      */
     void updateGrid();
 
     /*!
      * \brief Construct a new Simulation1D object.
-     * 
+     *
      * \details Sets the private const variables (_limiterKind, _physLen, _cflNum,
-     * _deltaX). Initializes the grid and the temporary grid and then sets the 
+     * _deltaX). Initializes the grid and the temporary grid and then sets the
      * initial conditions of the grid.
-     * 
+     *
      * \param[in] physicalLength Physical length of the simulation in meters.
      * \param[in] gamma The ratio of specific heats
      * \param[in] CFL The CFL Number
