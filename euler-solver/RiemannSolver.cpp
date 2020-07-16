@@ -24,9 +24,9 @@ void RiemannSolver::riemannMain(double const &densityR,
                                 double const &velocityL,
                                 double const &pressureL,
                                 double const &posOverT,
-                                double const &energyFlux,
-                                double const &momentumFlux,
-                                double const &massFlux)
+                                double &energyFlux,
+                                double &momentumFlux,
+                                double &massFlux)
 {
     // Copy arguments to member variables
     _densityR     = densityR;
@@ -36,10 +36,6 @@ void RiemannSolver::riemannMain(double const &densityR,
     _velocityL    = velocityL;
     _pressureL    = pressureL;
     _posOverT     = posOverT;
-    _energyFlux   = energyFlux;
-    _momentumFlux = momentumFlux;
-    _massFlux     = massFlux;
-
 
     // Compute the sound speeds
     _cR = std::sqrt(_gamma * pressureR / densityR);
@@ -126,15 +122,80 @@ void RiemannSolver::riemannMain(double const &densityR,
                 _pressureState = _pressureL * std::pow(coef, 2 * _gamma / (_gamma - 1));
                 _densityState  = _densityL * std::pow(coef, 2 / (_gamma - 1));;
             }
-
         }
 
     }
     else
     {
         // We're in the R or R_* state
+        if (_pressureStar > _pressureL)
+        {
+            // The Right non-linear wave is a shockwave
+            double shockSpeed = _shockSpeed("right");
+
+            // Decide between R and R_* state
+            if (shockSpeed <= 0.0)
+            {
+                // We're in the R state
+                _pressureState = _pressureR;
+                _velocityState = _velocityR;
+                _densityState  = _densityR;
+            }
+            else
+            {
+                // We're in the R_* state
+                _pressureState = _pressureStar;
+                _velocityState = _velocityStar;
+                _densityState  = _densityShock("right");
+            }
+
+        }
+        else
+        {
+            // The Right non-linear wave is a rarefaction
+            double rareSpeedHead, rareSpeedTail, cRare;
+            cRare = _cR * std::pow(_pressureStar/_pressureR , (_gamma - 1)/(2 * _gamma));
+            rareSpeedTail = _velocityStar + cRare;
+            rareSpeedHead = _velocityL + _cR;
+
+            if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
+            {
+                // We're in the R state
+                _pressureState = _pressureR;
+                _velocityState = _velocityR;
+                _densityState  = _densityR;
+            }
+            else if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
+            {
+                // We're in the R_* state
+                _pressureState = _pressureStar;
+                _velocityState = _velocityStar;
+                _densityState  = _densityRare("right");
+            }
+            else
+            {
+                // We're somewhere in the fan itself
+                _velocityState = (2 / (_gamma + 1))
+                                 * (
+                                 -_cR
+                                 + _velocityR * ((_gamma - 1) / 2)
+                                 + _posOverT);
+
+                double coef = (2 / (_gamma + 1))
+                              - (_gamma - 1) / ((_gamma + 1) * _cR)
+                              * (_velocityR - _posOverT);
+                _pressureState = _pressureL * std::pow(coef, 2 * _gamma / (_gamma - 1));
+                _densityState  = _densityL * std::pow(coef, 2 / (_gamma - 1));;
+            }
+        }
     }
 
+    // Compute and return the fluxes
+    massFlux = _densityState * _velocityState;
+    momentumFlux = _densityState * std::pow(_velocityState, 2) + _pressureState;
+    energyFlux = _velocityState * _pressureState / (_gamma - 1)
+                 + 0.5 * _densityState * std::pow(_velocityState, 3)
+                 + _velocityState * _pressureState;
 }
 // =============================================================================
 

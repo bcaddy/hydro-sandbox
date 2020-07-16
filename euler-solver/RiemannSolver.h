@@ -66,13 +66,6 @@ private:
     /// The position divided by the time.
     double _posOverT;
 
-    /// The energy flux
-    double _energyFlux;
-    /// The momentum flux
-    double _momentumFlux;
-    /// The mass flux
-    double _massFlux;
-
     // =========================================================================
     // End declaring all the private variables
     // Start declargin all the private methods
@@ -161,9 +154,9 @@ public:
                      double const &velocityL,
                      double const &pressureL,
                      double const &posOverT,
-                     double const &energyFlux,
-                     double const &momentumFlux,
-                     double const &massFlux);
+                     double &energyFlux,
+                     double &momentumFlux,
+                     double &massFlux);
 
     /*!
      * \brief Construct a new Riemann Solver object
