@@ -288,7 +288,6 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
 // =============================================================================
 
 // =============================================================================
-// TODO Implement
 void Simulation1D::solveRiemann(double const &densityR,
                                 double const &velocityR,
                                 double const &pressureR,
@@ -314,11 +313,38 @@ void Simulation1D::solveRiemann(double const &densityR,
 // =============================================================================
 
 // =============================================================================
-// TODO Implement
 // Performe the conservative update
-void Simulation1D::conservativeUpdate()
+void Simulation1D::conservativeUpdate(size_t const &idxInput,
+                                      double const &massFluxL,
+                                      double const &momentumFluxL,
+                                      double const &energyFluxL,
+                                      double const &massFluxR,
+                                      double const &momentumFluxR,
+                                      double const &energyFluxR)
 {
-    ;
+    // Density update
+    _tempGrid.density[idxInput] = grid.density[idxInput]
+                           + (_timeStep / _deltaX) * ( massFluxL - massFluxR );
+
+    // Velocity update
+    _tempGrid.velocity[idxInput] = (1 / _tempGrid.density[idxInput]) * (
+                     (grid.density[idxInput] * grid.velocity[idxInput] )
+                     + (_timeStep / _deltaX) * ( momentumFluxL - momentumFluxR )
+                     );
+
+    // Pressure update. This one is more complicated since I have to project into
+    // energy space, compute the update, and project back.
+    double currentEnergy = (grid.pressure[idxInput] / ((_gamma - 1)*grid.density[idxInput]))
+                           + 0.5 * std::pow(grid.velocity[idxInput], 2);
+    double nextEnergy = (1 / _tempGrid.density[idxInput]) * (
+                        (grid.density[idxInput] * currentEnergy )
+                        + (_timeStep / _deltaX) * ( energyFluxL - energyFluxR )
+                        );
+    _tempGrid.pressure[idxInput] = (_gamma - 1)
+                                   * (_tempGrid.density[idxInput] * nextEnergy
+                                   + 0.5 * _tempGrid.density[idxInput]
+                                   * std::pow( _tempGrid.velocity[idxInput], 2)
+                                   );
 }
 // =============================================================================
 

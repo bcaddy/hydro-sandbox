@@ -165,8 +165,24 @@ public:
                       double &massFlux);
 
 
-    // TODO Documentation
-    void conservativeUpdate();
+    /*!
+     * \brief Performs the conservative update
+     *
+     * \param[in] idxInput Which cell we're computing the conservative update for
+     * \param[in] massFluxL The mass flux on the left side
+     * \param[in] momentumFluxL The momentum flux on the left side
+     * \param[in] energyFluxL The energy flux on the left side
+     * \param[in] massFluxR The mass flux on the left side
+     * \param[in] momentumFluxR The momentum flux on the left side
+     * \param[in] energyFluxR The energy flux on the left side
+     */
+    void conservativeUpdate(size_t const &idxInput,
+                            double const &massFluxL,
+                            double const &momentumFluxL,
+                            double const &energyFluxL,
+                            double const &massFluxR,
+                            double const &momentumFluxR,
+                            double const &energyFluxR);
 
     /*!
      * \brief Update Simulation1D::grid to the new values that have been
