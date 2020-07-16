@@ -52,6 +52,13 @@ private:
     /// The pressure in the star region
     double _pressureStar;
 
+    /// The density of the found state
+    double _densityState;
+    /// The velocity of the found state
+    double _velocityState;
+    /// The pressure of the found state
+    double _pressureState;
+
     /// The sound speeds on the right side of the interface
     double _cR;
 
@@ -111,6 +118,14 @@ private:
      * \return double The speed of the shock wave
      */
     double _shockSpeed(std::string const &side);
+
+    /*!
+     * \brief Compute the density of the star region next to a shock
+     *
+     * \param side Which side to compute the density on
+     * \return double The density next to the shock
+     */
+    double _densityShock(std::string const &side);
     // =========================================================================
     // End declaring all the private methods
     // Start declargin all the public members

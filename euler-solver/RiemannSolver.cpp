@@ -76,10 +76,16 @@ void RiemannSolver::riemannMain(double const &densityR,
             if (shockSpeed > 0.0)
             {
                 // We're in the L state
+                _pressureState = _pressureL;
+                _velocityState = _velocityL;
+                _densityState  = _densityL;
             }
             else
             {
                 // We're in the L_* state
+                _pressureState = _pressureStar;
+                _velocityState = _velocityStar;
+                _densityState  = _densityShock("left");
             }
 
         }
@@ -281,6 +287,35 @@ double RiemannSolver::_shockSpeed(std::string const &side)
     return velocitySide + cSide * std::sqrt(
            (_pressureStar/pressureSide) * ((_gamma+1)/(2*_gamma))
            + ((_gamma-1)/(2*_gamma))
+           );
+}
+// =============================================================================
+
+// =============================================================================
+double RiemannSolver::_densityShock(std::string const &side)
+{
+    // Figure out which variables to use
+    double densitySide, pressureSide;
+    if (side == "left")
+    {
+        densitySide  = _densityL;
+        pressureSide = _pressureL;
+    }
+    else if (side == "right")
+    {
+        densitySide  = _densityR;
+        pressureSide = _pressureR;
+    }
+    else
+    {
+        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_densityShock");
+    }
+
+    // Compute and return the shock density
+    return densitySide * (
+           ( (_pressureStar/pressureSide) + ((_gamma-1)/(_gamma+1)) / (((_gamma-1)
+           /
+           (_gamma+1)) * (_pressureStar/pressureSide)-1) )
            );
 }
 // =============================================================================
