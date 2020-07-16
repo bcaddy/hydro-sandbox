@@ -289,9 +289,27 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
 
 // =============================================================================
 // TODO Implement
-void Simulation1D::solveRiemann()
+void Simulation1D::solveRiemann(double const &densityR,
+                                double const &velocityR,
+                                double const &pressureR,
+                                double const &densityL,
+                                double const &velocityL,
+                                double const &pressureL,
+                                double const &posOverT,
+                                double &energyFlux,
+                                double &momentumFlux,
+                                double &massFlux)
 {
-    ;
+    _riemannSolver.riemannMain(densityR,
+                               velocityR,
+                               pressureR,
+                               densityL,
+                               velocityL,
+                               pressureL,
+                               posOverT,
+                               energyFlux,
+                               momentumFlux,
+                               massFlux);
 }
 // =============================================================================
 

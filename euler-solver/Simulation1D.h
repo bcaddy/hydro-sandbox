@@ -137,8 +137,32 @@ public:
                          std::vector<double> &leftSideOfInterface,
                          std::vector<double> &rightSideOfInterface);
 
-    // TODO Documentation
-    void solveRiemann();
+    /*!
+     * \brief Solves the Riemann problem exactly by calling the main function of
+     * the RiemannSolver class
+     *
+     * \param[in] densityR  The density on the right side of the interface
+     * \param[in] velocityR The velocity on the right side of the interface
+     * \param[in] pressureR The pressure on the right side of the interface
+     * \param[in] densityL The density on the left side of the interface
+     * \param[in] velocityL The velocity on the left side of the interface
+     * \param[in] pressureL The pressure on the left side of the interface
+     * \param[in] posOverT The value of the position divided by the current time.
+     * Alway equal to zero for numerical solutions
+     * \param[out] energyFlux The energy flux that is being solved for
+     * \param[out] momentumFlux The momentum flux that is being solved for
+     * \param[out] massFlux The mass flux that is being solved for
+     */
+    void solveRiemann(double const &densityR,
+                      double const &velocityR,
+                      double const &pressureR,
+                      double const &densityL,
+                      double const &velocityL,
+                      double const &pressureL,
+                      double const &posOverT,
+                      double &energyFlux,
+                      double &momentumFlux,
+                      double &massFlux);
 
 
     // TODO Documentation
