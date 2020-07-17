@@ -42,7 +42,7 @@ void RiemannSolver::riemannMain(double const &densityR,
     _cL = std::sqrt(_gamma * pressureL / densityL);
 
     // Check for a vacuum
-    if ((2 / (_gamma - 1)) * (_cL + _cR) >= (_velocityR - _velocityL))
+    if ((2 / (_gamma - 1)) * (_cL + _cR) < (_velocityR - _velocityL))
     {
         throw std::runtime_error("Vacuum Detected. Exiting.");
     }

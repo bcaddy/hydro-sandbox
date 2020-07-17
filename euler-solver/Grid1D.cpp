@@ -12,40 +12,71 @@
 
 
 #include <iostream>
+#include <stdexcept>
 
 #include "Grid1D.h"
 
 // =============================================================================
 void Grid1D::updateBoundaries()
 {
-    // Set boundary conditions (periodic)
-    for (size_t j = 0; j < numGhostCells; j++)
+    if (boundaryConditionKind == "sod")
     {
-        // Compute indices
-        int rightReal  = numTotCells - (2 * numGhostCells) + j;
-        int rightGhost = numTotCells - numGhostCells + j;
-        int leftReal   = j + numGhostCells;
-        int leftGhost  = j;
+        for (size_t j = 0; j < numGhostCells; j++)
+        {
+            // Compute indices
+            int rightGhost = numTotCells - numGhostCells + j;
+            int leftGhost  = j;
 
-        std::cout
-        << rightReal << " "
-        << leftGhost << " "
-        << leftReal << " "
-        << rightGhost<<std::endl;
+            // Update Velocity BC's
+            velocity[leftGhost]  = 0.0;
+            velocity[rightGhost] = 0.0;
 
+            // Update Density BC's
+            density[leftGhost]  = 1.0;
+            density[rightGhost] = 0.125;
 
-        // Update Velocity BC's
-        velocity[leftGhost] = velocity[rightReal];
-        velocity[rightGhost] = velocity[leftReal];
+            // Update Pressure BC's
+            pressure[leftGhost]  = 1.0;
+            pressure[rightGhost] = 0.1;
+        }
 
-        // Update Density BC's
-        density[leftGhost] = density[rightReal];
-        density[rightGhost] = density[leftReal];
-
-        // Update Pressure BC's
-        pressure[leftGhost] = pressure[rightReal];
-        pressure[rightGhost] = pressure[leftReal];
     }
+    else if (boundaryConditionKind == "periodic")
+    {
+        // Set boundary conditions (periodic)
+        for (size_t j = 0; j < numGhostCells; j++)
+        {
+            // Compute indices
+            int rightReal  = numTotCells - (2 * numGhostCells) + j;
+            int rightGhost = numTotCells - numGhostCells + j;
+            int leftReal   = j + numGhostCells;
+            int leftGhost  = j;
+
+            std::cout
+            << rightReal << " "
+            << leftGhost << " "
+            << leftReal << " "
+            << rightGhost<<std::endl;
+
+
+            // Update Velocity BC's
+            velocity[leftGhost] = velocity[rightReal];
+            velocity[rightGhost] = velocity[leftReal];
+
+            // Update Density BC's
+            density[leftGhost] = density[rightReal];
+            density[rightGhost] = density[leftReal];
+
+            // Update Pressure BC's
+            pressure[leftGhost] = pressure[rightReal];
+            pressure[rightGhost] = pressure[leftReal];
+        }
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid kind of boundary conditions");
+    }
+
 }
 // =============================================================================
 
@@ -82,11 +113,13 @@ void Grid1D::saveState()
 // =============================================================================
 void Grid1D::init(size_t const &reals,
                   size_t const &ghosts,
-                  std::string const &saveDir)
+                  std::string const &saveDir,
+                  std::string const &boundaryConditions)
 {
     numGhostCells = ghosts;
     numRealCells = reals;
     numTotCells = 2 * numGhostCells + numRealCells;
+    boundaryConditionKind = boundaryConditions;
 
     velocity.reserve(numTotCells);
     density.reserve(numTotCells);
@@ -103,15 +136,16 @@ void Grid1D::init(size_t const &reals,
 
 Grid1D::Grid1D(size_t const &reals,
                size_t const &ghosts,
-               std::string const &saveDir)
+               std::string const &saveDir,
+               std::string const &boundaryConditions)
 {
-    init(reals, ghosts, saveDir);
+    init(reals, ghosts, saveDir, boundaryConditions);
 }
 
 Grid1D::Grid1D(size_t const &reals,
                size_t const &ghosts)
 {
-    init(reals, ghosts, "no saving");
+    init(reals, ghosts, "no bc", "no saving");
 }
 
 Grid1D::~Grid1D()

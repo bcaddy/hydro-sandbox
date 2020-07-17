@@ -42,6 +42,9 @@ public:
     /// The pressure in a cell. Measured in Pascals (Newtons per square meter)
     std::vector<double> pressure;
 
+    /// The type of boundary conditions to use
+    std::string boundaryConditionKind;
+
     /*!
      * \brief Applies the boundary conditions by updating the ghost cells
      *
@@ -78,6 +81,7 @@ public:
      * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
      * \param[in] saveDir The directory to save files to. If set to "no saving" then the
      * initialized grid will not be able to save itself to a file.
+     * \param[in] boundaryConditions What kind of boundary conditions to use
      *
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
      *      Constructor that instantiates variables but does not provide the
@@ -88,7 +92,8 @@ public:
      */
     void init(size_t const &reals,
               size_t const &ghosts,
-              std::string const &saveDir);
+              std::string const &saveDir,
+              std::string const &boundaryConditions);
 
     // Constructors and Destructor =============================================
     /*!
@@ -106,6 +111,7 @@ public:
      * \param[in] reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
      * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
      * \param[in] saveDir The directory to save files to
+     * \param[in] boundaryConditions What kind of boundary conditions to use
      *
      * \see Grid1D::Init() The initializing function used by this constructor
      * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
@@ -115,7 +121,8 @@ public:
      */
     Grid1D(size_t const &reals,
            size_t const &ghosts,
-           std::string const &saveDir);
+           std::string const &saveDir,
+           std::string const &boundaryConditions);
 
     /*!
      * \brief Construct a new Grid1D object that cannot save itself to a file

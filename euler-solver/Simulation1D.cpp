@@ -373,6 +373,7 @@ Simulation1D::Simulation1D(double const &physicalLength,
                            size_t const &reals,
                            size_t const &ghosts,
                            std::string const &initialConditionsKind,
+                           std::string const &boundaryConditions,
                            std::string const &saveDir)
 
     // Start by initializing all the const member variables
@@ -384,8 +385,8 @@ Simulation1D::Simulation1D(double const &physicalLength,
       currentTime(0.0)
 {
     // Now we initialize the grids.
-    grid.init(reals, ghosts, saveDir);
-    _tempGrid.init(reals, ghosts, "no saving");
+    grid.init(reals, ghosts, saveDir, boundaryConditions);
+    _tempGrid.init(reals, ghosts, "no saving", "no bc");
 
     // And set the initial conditions
     _setInitialConditions(initialConditionsKind);

@@ -212,6 +212,7 @@ public:
                  size_t const &reals,
                  size_t const &ghosts,
                  std::string const &initialConditionsKind,
+                 std::string const &boundaryConditions,
                  std::string const &saveDir);
     /*!
      * \brief Destroy the Simulation1D object. Uses the default constructor

@@ -15,7 +15,6 @@
 #include <iostream>
 #include <string>
 #include <chrono>
-using namespace std::chrono;
 using std::cout;
 using std::cin;
 using std::endl;
@@ -38,7 +37,7 @@ using std::endl;
 int main()
 {
     // Start clock
-    auto start = high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
 
     // ===== Settings ==========================================================
     double const physicalLength        = 1.;
@@ -48,6 +47,7 @@ int main()
     size_t const numRealCells          = 10;
     size_t const numGhostCells         = 2;
     std::string  initialConditionsKind = "sod";
+    std::string  boundaryConditions    = "sod";
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
 
@@ -58,6 +58,7 @@ int main()
                      numRealCells,
                      numGhostCells,
                      initialConditionsKind,
+                     boundaryConditions,
                      saveDir);
 
     //=== Begin the main evolution loop ========================================
@@ -75,16 +76,7 @@ int main()
             // Set boundary conditions (periodic)
             sim.grid.updateBoundaries();
 
-            for (size_t j = 0; j < 14; j++)
-            {
-                cout << sim.grid.velocity[j] << "  "
-                     << sim.grid.density[j] << "  "
-                     << sim.grid.pressure[j] << "  " <<
-                endl;
-            }
-
-
-            // Computer interface states on the left side.
+            // Compute interface states on the left side.
             //   note that the order within vectors is density, velocity, pressure
             std::vector<double> leftSideOfInterface, rightSideOfInterface;
             sim.interfaceStates(i,
@@ -105,7 +97,7 @@ int main()
                              leftMomentumFlux,
                              leftMassFlux);
 
-            // Computer interface states on the right side.
+            // Compute interface states on the right side.
             //   note that the order within vectors is density, velocity, pressure
             sim.interfaceStates(i,
                                 "right",
@@ -158,9 +150,9 @@ int main()
     // Stop timer and print execution time. Time options are nanoseconds,
     // microseconds, milliseconds, seconds, minutes, hours. To pick one just
     // change `using FpTime` and the cout statement suitably.
-    auto stop = high_resolution_clock::now();
-    using FpTime = duration<float, seconds::period>;
-    static_assert(treat_as_floating_point<FpTime::rep>::value,"Rep required to be floating point");
+    auto stop = std::chrono::high_resolution_clock::now();
+    using FpTime = std::chrono::duration<float, std::chrono::seconds::period>;
+    static_assert(std::chrono::treat_as_floating_point<FpTime::rep>::value,"Rep required to be floating point");
     auto duration = FpTime(stop - start);
     cout << "Time to execute: " << duration.count() << " seconds";
     return 0;
