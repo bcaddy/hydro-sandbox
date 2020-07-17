@@ -10,37 +10,42 @@
  * \details
  ******************************************************************************/
 
-#include <cmath>
+
 #include <iostream>
-using std::cout;
-using std::endl;
 
 #include "Grid1D.h"
 
 // =============================================================================
 void Grid1D::updateBoundaries()
 {
-    // // Set boundary conditions (periodic)
-    // for (size_t j = 0; j < numGhostCells; j++)
-    // {
-    //     // Compute indices
-    //     size_t const rightReal  = -(2 * numGhostCells - j);
-    //     size_t const rightGhost = -(numGhostCells - j);
-    //     size_t const leftReal   = j + numGhostCells;
-    //     size_t const leftGhost  = j;
+    // Set boundary conditions (periodic)
+    for (size_t j = 0; j < numGhostCells; j++)
+    {
+        // Compute indices
+        int rightReal  = numTotCells - (2 * numGhostCells) + j;
+        int rightGhost = numTotCells - numGhostCells + j;
+        int leftReal   = j + numGhostCells;
+        int leftGhost  = j;
 
-    //     // Update Velocity BC's
-    //     velocity[leftGhost] = velocity.end()[rightReal];
-    //     velocity.end()[rightGhost] = velocity[leftReal];
+        std::cout
+        << rightReal << " "
+        << leftGhost << " "
+        << leftReal << " "
+        << rightGhost<<std::endl;
 
-    //     // Update Density BC's
-    //     density[leftGhost] = density.end()[rightReal];
-    //     density.end()[rightGhost] = density[leftReal];
 
-    //     // Update Pressure BC's
-    //     pressure[leftGhost] = pressure.end()[rightReal];
-    //     pressure.end()[rightGhost] = pressure[leftReal];
-    // }
+        // Update Velocity BC's
+        velocity[leftGhost] = velocity[rightReal];
+        velocity[rightGhost] = velocity[leftReal];
+
+        // Update Density BC's
+        density[leftGhost] = density[rightReal];
+        density[rightGhost] = density[leftReal];
+
+        // Update Pressure BC's
+        pressure[leftGhost] = pressure[rightReal];
+        pressure[rightGhost] = pressure[leftReal];
+    }
 }
 // =============================================================================
 
@@ -61,13 +66,13 @@ void Grid1D::saveState()
             _densitySaveFile  << "," << density[i];
             _pressureSaveFile << "," << pressure[i];
         }
-        _velocitySaveFile << endl;
-        _densitySaveFile  << endl;
-        _pressureSaveFile << endl;
+        _velocitySaveFile << std::endl;
+        _densitySaveFile  << std::endl;
+        _pressureSaveFile << std::endl;
     }
     else
     {
-        cout << "File not open";
+        std::cout << "File not open";
     }
 }
 // =============================================================================
