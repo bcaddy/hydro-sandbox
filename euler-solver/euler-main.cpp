@@ -18,6 +18,7 @@
 using std::cout;
 using std::cin;
 using std::endl;
+#include <cmath> // TODO Remove
 
 #include "Grid1D.h"
 #include "Simulation1D.h"
