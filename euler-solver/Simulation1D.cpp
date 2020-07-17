@@ -21,26 +21,33 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
     // Set up Sod initial conditions
     // TODO Add other kinds of initial conditions
 
-    size_t const half  = grid.numTotCells / 2;
-
-    // Iterate over just the real cells on the left side
-    for (size_t i = grid.numGhostCells;
-         i < half;
-         i++)
+    if (initialConditionsKind == "sod")
     {
-        grid.velocity[i] = 0.;
-        grid.density[i]  = 1.;
-        grid.pressure[i] = 1.;
+        size_t const half  = grid.numTotCells / 2;
+
+        // Iterate over just the real cells on the left side
+        for (size_t i = grid.numGhostCells;
+            i < half;
+            i++)
+        {
+            grid.velocity[i] = 0.;
+            grid.density[i]  = 1.;
+            grid.pressure[i] = 1.;
+        }
+
+        // Iterate over the real cells on the right side
+        for (size_t i = half;
+            i < (grid.numTotCells - grid.numGhostCells);
+            i++)
+        {
+            grid.velocity[i] = 0;
+            grid.density[i]  = 0.125;  // 1/8th
+            grid.pressure[i] = 0.1;
+        }
     }
-
-    // Iterate over the real cells on the right side
-    for (size_t i = half;
-         i < (grid.numTotCells - grid.numGhostCells);
-         i++)
+    else
     {
-        grid.velocity[i] = 0;
-        grid.density[i]  = 0.125;  // 1/8th
-        grid.pressure[i] = 0.1;
+        throw std::invalid_argument("Invalid kind of initial conditions");
     }
 }
 // =============================================================================

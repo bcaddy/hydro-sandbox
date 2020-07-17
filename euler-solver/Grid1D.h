@@ -43,22 +43,6 @@ public:
     std::vector<double> pressure;
 
     /*!
-     * \brief Compute the momentum in a cell
-     *
-     * \param[in] i The index of the cell to find the momentum of
-     * \return double The value of the momentum in the ith cell.
-     */
-    double computeMomentumElement(size_t const &i);
-
-    /*!
-     * \brief Compute the momentum for every cell in the grid. Uses
-     * Grid1D::ComputeMomentumElement to compute the momentum in each cell
-     *
-     * \return std::vector<double> An array of the momentum in each cell
-     */
-    std::vector<double> computeMomentumVec();
-
-    /*!
      * \brief Applies the boundary conditions by updating the ghost cells
      *
      * \todo Currently this only uses periodic boundary conditions and I would

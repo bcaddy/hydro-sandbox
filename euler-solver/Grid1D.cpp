@@ -18,50 +18,29 @@ using std::endl;
 #include "Grid1D.h"
 
 // =============================================================================
-double Grid1D::computeMomentumElement(size_t const &i)
-{
-    return velocity[i] * density[i];
-}
-// =============================================================================
-
-// =============================================================================
-std::vector<double> Grid1D::computeMomentumVec()
-{
-    std::vector<double> Momentum(numTotCells);
-
-    for (size_t i = 0; i < numTotCells; i++)
-    {
-        Momentum[i] = computeMomentumElement(i);
-    }
-
-    return Momentum;
-};
-// =============================================================================
-
-// =============================================================================
 void Grid1D::updateBoundaries()
-    // Set boundary conditions (periodic)
 {
-    for (size_t j = 0; j < numGhostCells; j++)
-    {
-        // Compute indices
-        size_t const rightReal  = -(2 * numGhostCells - j);
-        size_t const rightGhost = -(numGhostCells - j);
-        size_t const leftReal   = j + numGhostCells;
-        size_t const leftGhost  = j;
+    // // Set boundary conditions (periodic)
+    // for (size_t j = 0; j < numGhostCells; j++)
+    // {
+    //     // Compute indices
+    //     size_t const rightReal  = -(2 * numGhostCells - j);
+    //     size_t const rightGhost = -(numGhostCells - j);
+    //     size_t const leftReal   = j + numGhostCells;
+    //     size_t const leftGhost  = j;
 
-        // Update Velocity BC's
-        velocity[leftGhost] = velocity.end()[rightReal];
-        velocity.end()[rightGhost] = velocity[leftReal];
+    //     // Update Velocity BC's
+    //     velocity[leftGhost] = velocity.end()[rightReal];
+    //     velocity.end()[rightGhost] = velocity[leftReal];
 
-        // Update Density BC's
-        density[leftGhost] = density.end()[rightReal];
-        density.end()[rightGhost] = density[leftReal];
+    //     // Update Density BC's
+    //     density[leftGhost] = density.end()[rightReal];
+    //     density.end()[rightGhost] = density[leftReal];
 
-        // Update Pressure BC's
-        pressure[leftGhost] = pressure.end()[rightReal];
-        pressure.end()[rightGhost] = pressure[leftReal];
-    }
+    //     // Update Pressure BC's
+    //     pressure[leftGhost] = pressure.end()[rightReal];
+    //     pressure.end()[rightGhost] = pressure[leftReal];
+    // }
 }
 // =============================================================================
 
