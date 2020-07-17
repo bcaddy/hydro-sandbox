@@ -125,7 +125,6 @@ int main()
                                    rightMassFlux,
                                    rightMomentumFlux,
                                    rightEnergyFlux);
-
         }; // End of loop to interate through array
 
         // Copy values from uVelTemp to a

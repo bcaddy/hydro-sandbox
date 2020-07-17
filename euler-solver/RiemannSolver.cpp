@@ -221,9 +221,9 @@ double RiemannSolver::_computePressureStar()
         // Check for positivity and for convergence
         if (pTemp < 0.0)
         {
-            pStar = _tol;
+            pTemp = _tol;
         }
-        else if ( (std::abs(pTemp - pStar) / (0.5 * (pTemp + pStar))) < _tol)
+        else if ( (std::abs(pTemp - pStar) / (0.5 * (pTemp + pStar))) <= _tol)
         {
             // Change is below tolerance so we're done
             return pTemp;
@@ -233,8 +233,7 @@ double RiemannSolver::_computePressureStar()
         i++; // Increment counter
         if (i >= maxIters)
         {
-            std::cout << "Max iterations reached in Newton-Raphson iterations"
-                      << std::endl;
+            std::cout << "Max iterations reached in Newton-Raphson iterations";
             return pTemp;
         }
 
@@ -321,18 +320,19 @@ void RiemannSolver::_pressureFunctions(double const &pGuess,
     if (pGuess > pSide)
     {
         // Shock
-        f = (pGuess - pSide) * std::sqrt(2 /
-            (dSide * ( pGuess * (_gamma + 1) + pSide * (_gamma - 1))));
+        double const aSide = 2/ (dSide * (_gamma + 1));
+        double const bSide = pSide * ((_gamma - 1) / (_gamma + 1));
+        f = (pGuess - pSide) * std::sqrt(aSide / (pGuess + bSide));
 
-        df = (1 -
-        ( (pGuess - pSide) / (2 * (pSide * ((_gamma-1)/(_gamma+1)) + pGuess ))))
-        * std::sqrt(2 / (dSide * (pGuess * (_gamma + 1) + pSide * (_gamma - 1))));
+        df = std::sqrt(aSide / (pGuess + bSide)) * (
+             1 - ((pGuess - pSide) / (2 * (bSide + pGuess)))
+             );
     }
     else
     {
         // Rarefaction
         f = (2 * cSide / (_gamma - 1)) *
-            (std::pow(pGuess/pSide , (_gamma - 1)/(2 * _gamma)) - 1);
+            (std::pow(pGuess/pSide, (_gamma - 1)/(2 * _gamma)) - 1);
 
         df = (1 / (pSide * cSide)) *
              std::pow( pGuess/pSide, (1 - _gamma) / (2 * _gamma) );
