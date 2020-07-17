@@ -233,7 +233,8 @@ double RiemannSolver::_computePressureStar()
         i++; // Increment counter
         if (i >= maxIters)
         {
-            std::cout << "Max iterations reached in Newton-Raphson iterations";
+            std::cout << "Max iterations reached in Newton-Raphson iterations"
+                      << std::endl;
             return pTemp;
         }
 

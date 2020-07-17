@@ -359,9 +359,14 @@ void Simulation1D::conservativeUpdate(size_t const &idxInput,
 void Simulation1D::updateGrid()
 {
     // Copy every real element in Simulation1D::_tempGrid to Simulation1D::grid
-    grid.velocity = _tempGrid.velocity;
-    grid.density  = _tempGrid.density;
-    grid.pressure = _tempGrid.pressure;
+    for (size_t i = grid.numGhostCells;
+             i < (grid.numTotCells-grid.numGhostCells);
+             i++)
+    {
+        grid.velocity[i] = _tempGrid.velocity[i];
+        grid.density[i]  = _tempGrid.density[i];
+        grid.pressure[i] = _tempGrid.pressure[i];
+    }
 }
 // =============================================================================
 

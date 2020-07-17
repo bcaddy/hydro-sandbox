@@ -40,11 +40,11 @@ int main()
     auto start = std::chrono::high_resolution_clock::now();
 
     // ===== Settings ==========================================================
-    double const physicalLength        = 1.;
+    double const physicalLength        = 100.;
     double const gamma                 = 5./3.;
     double const cfl                   = 0.8;
-    double const maxTime               = 1.;
-    size_t const numRealCells          = 10;
+    double const maxTime               = 10.;
+    size_t const numRealCells          = 1000;
     size_t const numGhostCells         = 2;
     std::string  initialConditionsKind = "sod";
     std::string  boundaryConditions    = "sod";
