@@ -51,7 +51,7 @@ def main():
     Stride     = int(SimNumSteps/TotFrames)  # Choose every n frames
     dpi        = 300                         # Dots per inch
     Color      = 'blue'                      # color of the solution
-    OutFile    = "output.mp4"        # Output filename
+    OutFile    = "output-basic.mp4"        # Output filename
     Index      = 0                           # Initialize index
     InitFrames = 10                          # Number of frames for the initial conditions
     InitIndex  = 0                           # Index for init frames
@@ -91,7 +91,7 @@ def main():
                            file[0,:],
                            linestyle = '-',
                            color     = Color,
-                           label     = "Advection of Tophat" 
+                           label     = "Advection of Tophat"
                            )
 
     # Create legend

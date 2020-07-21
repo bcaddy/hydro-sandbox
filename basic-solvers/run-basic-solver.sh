@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # description
-# Builds, runs, and generates plots for a solver in this repo
+# Builds, runs, and generates plots for a solver in this directory
 #
 # Dependencies:
 #   it2dl
@@ -31,5 +31,5 @@ echo -e "\n\nGenerating Plot..."
 ./basic-solvers-plotting.py
 
 echo -e "\nDownloading Plot..."
-"${HOME}/.iterm2/it2dl" output.mp4
+"${HOME}/.iterm2/it2dl" output-basic.mp4
 echo -e "Download Complete."
