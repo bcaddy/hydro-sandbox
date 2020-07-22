@@ -9,7 +9,15 @@
      Zingale.
 
  Dependencies:
-     TODO
+     std::iostream
+     std::fstream
+     std::chrono
+     std::vector
+     std::cmath
+     helper.h
+     initial-conditions.h
+     interface.h
+     limiters.h
 ================================================================================
 */
 
