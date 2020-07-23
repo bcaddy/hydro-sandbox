@@ -46,7 +46,7 @@ def main():
     SimNumCells   = len(densityData[0,:])
     SimNumSteps   = len(densityData[:,0])
     positions     = np.linspace(0.,SimPhysLength,SimNumCells)
-    gamma         = 5./3.
+    gamma         = 1.4
 
     # Animation Settings
     Duration      = 10.                         # How long the gif is in seconds
@@ -75,8 +75,8 @@ def main():
     # Compute specific internal energy and limits
     # ==========================================================================
     # Compute the specific internal energy
-    ieData = np.zeros((SimNumSteps,SimNumCells))
-    ieData = pressureData * 2#pressureData / ( densityData * (gamma - 1) )
+    # TODO Something is wrong with this calculation. Fix it after refactor
+    ieData = pressureData / ( densityData * (gamma - 1) )
 
     # Find mins and maxes for setting the limits of the plot
     # Density
@@ -129,31 +129,35 @@ def main():
 
     # Specific Internal Energy subplot
     subPlot[3].set_ylim(ieLowLim, ieHighLim)
-    subPlot[3].set_ylabel("Specific \n Internal \n Energy")
+    subPlot[3].set_ylabel("Internal \n Energy")
     subPlot[3].grid(True)
 
     # Set plots
     densityPlot, = subPlot[0].plot(positions,
                            densityData[0,:],
                            linestyle = '-',
+                        #    marker    = '.',
                            color     = densityColor,
                            label     = "Density"
                            )
     velocityPlot, = subPlot[1].plot(positions,
                            velocityData[0,:],
                            linestyle = '-',
+                        #    marker    = '.',
                            color     = velocityColor,
                            label     = "Velocity"
                            )
     pressurePlot, = subPlot[2].plot(positions,
                            pressureData[0,:],
                            linestyle = '-',
+                        #    marker    = '.',
                            color     = pressureColor,
                            label     = "Pressure"
                            )
     iePlot, = subPlot[3].plot(positions,
                            ieData[0,:],
                            linestyle = '-',
+                        #    marker    = '.',
                            color     = ieColor,
                            label     = "specific internal energy"
                            )

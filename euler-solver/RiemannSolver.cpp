@@ -42,7 +42,7 @@ void RiemannSolver::riemannMain(double const &densityR,
     _cL = std::sqrt(_gamma * pressureL / densityL);
 
     // Check for a vacuum
-    if ((2 / (_gamma - 1)) * (_cL + _cR) < (_velocityR - _velocityL))
+    if ((2 / (_gamma - 1)) * (_cL + _cR) <= (_velocityR - _velocityL))
     {
         throw std::runtime_error("Vacuum Detected. Exiting.");
     }
@@ -69,7 +69,7 @@ void RiemannSolver::riemannMain(double const &densityR,
             double shockSpeed = _shockSpeed("left");
 
             // Decide between L and L_* state
-            if (shockSpeed > 0.0)
+            if (shockSpeed > _posOverT)
             {
                 // We're in the L state
                 _pressureState = _pressureL;
@@ -93,14 +93,14 @@ void RiemannSolver::riemannMain(double const &densityR,
             rareSpeedTail = _velocityStar - cRare;
             rareSpeedHead = _velocityL - _cL;
 
-            if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
+            if (rareSpeedHead > _posOverT)
             {
                 // We're in the L state
                 _pressureState = _pressureL;
                 _velocityState = _velocityL;
                 _densityState  = _densityL;
             }
-            else if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
+            else if (rareSpeedTail < _posOverT)
             {
                 // We're in the L_* state
                 _pressureState = _pressureStar;
@@ -116,11 +116,15 @@ void RiemannSolver::riemannMain(double const &densityR,
                                  + _velocityL * ((_gamma - 1) / 2)
                                  + _posOverT);
 
-                double coef = (2 / (_gamma + 1))
-                              + (_gamma - 1) / ((_gamma + 1) * _cL)
-                              * (_velocityL - _posOverT);
+                double coef = ( (2 / (_gamma + 1))
+                              * (
+                              _cL
+                              + ((_gamma - 1) / 2)
+                              * ( _velocityL - _posOverT) ) )
+                              /
+                              _cL;
                 _pressureState = _pressureL * std::pow(coef, 2 * _gamma / (_gamma - 1));
-                _densityState  = _densityL * std::pow(coef, 2 / (_gamma - 1));;
+                _densityState  = _densityL  * std::pow(coef, 2 / (_gamma - 1));
             }
         }
 
@@ -128,13 +132,13 @@ void RiemannSolver::riemannMain(double const &densityR,
     else
     {
         // We're in the R or R_* state
-        if (_pressureStar > _pressureL)
+        if (_pressureStar > _pressureR)
         {
             // The Right non-linear wave is a shockwave
             double shockSpeed = _shockSpeed("right");
 
             // Decide between R and R_* state
-            if (shockSpeed <= 0.0)
+            if (shockSpeed <= _posOverT)
             {
                 // We're in the R state
                 _pressureState = _pressureR;
@@ -158,14 +162,14 @@ void RiemannSolver::riemannMain(double const &densityR,
             rareSpeedTail = _velocityStar + cRare;
             rareSpeedHead = _velocityL + _cR;
 
-            if ((rareSpeedHead < 0.0) && (rareSpeedTail < 0.0))
+            if (rareSpeedHead <= _posOverT)
             {
                 // We're in the R state
                 _pressureState = _pressureR;
                 _velocityState = _velocityR;
                 _densityState  = _densityR;
             }
-            else if ((rareSpeedHead > 0.0) && (rareSpeedTail > 0.0))
+            else if (rareSpeedTail >= _posOverT)
             {
                 // We're in the R_* state
                 _pressureState = _pressureStar;
@@ -178,14 +182,18 @@ void RiemannSolver::riemannMain(double const &densityR,
                 _velocityState = (2 / (_gamma + 1))
                                  * (
                                  -_cR
-                                 + _velocityR * ((_gamma - 1) / 2)
+                                 + ((_gamma - 1) / 2) * _velocityR
                                  + _posOverT);
 
-                double coef = (2 / (_gamma + 1))
-                              - (_gamma - 1) / ((_gamma + 1) * _cR)
-                              * (_velocityR - _posOverT);
-                _pressureState = _pressureL * std::pow(coef, 2 * _gamma / (_gamma - 1));
-                _densityState  = _densityL * std::pow(coef, 2 / (_gamma - 1));;
+                double coef = ((2.0 / (_gamma + 1.0))
+                              * (
+                              _cR
+                              - ((_gamma - 1.0) / 2.0)
+                              * (_velocityR - _posOverT) ))
+                              /
+                              _cR;
+                _pressureState = _pressureR * std::pow(coef, 2.0 * _gamma / (_gamma - 1.0));
+                _densityState  = _densityR  * std::pow(coef, 2.0 / (_gamma - 1.0));;
             }
         }
     }
@@ -274,6 +282,10 @@ double RiemannSolver::_guessPressureStar()
     if (pPrim < pMin)
     {
         // 2-Rarefaction Approximation
+        // TODO - Toro disagrees with himself on this. In Toro the 2-rarefaction
+        // TODO - approximation to the pressure is different in the implementation
+        // TODO - (midway down page 157) and the equation (eqn. 4.46).  The two different
+        // TODO - equations give very different results.
         double p2Rare = // Equation on next lines for readability
         std::pow(
                 // Numerator
@@ -290,10 +302,11 @@ double RiemannSolver::_guessPressureStar()
     else
     {
         // 2-Shock Approximation
-        double gL = std::sqrt( 2 / ( (_gamma + 1) * _densityL *
-                    (pPrim + _pressureL * ( (_gamma-1)/(_gamma+1) )) ) );
-        double gR = std::sqrt( 2 / ( (_gamma + 1) * _densityR *
-                    (pPrim + _pressureR * ( (_gamma-1)/(_gamma+1) )) ) );
+        double gL = std::sqrt( (2 / ( (_gamma + 1) * _densityL)) /
+                    (pPrim + _pressureL * ( (_gamma-1)/(_gamma+1) ) ) );
+        double gR = std::sqrt( (2 / ( (_gamma + 1) * _densityR)) /
+                    (pPrim + _pressureR * ( (_gamma-1)/(_gamma+1) ) ) );
+
 
         double p2Shock = // Equation on next lines for readability
         // Numerator
@@ -332,11 +345,11 @@ void RiemannSolver::_pressureFunctions(double const &pGuess,
     else
     {
         // Rarefaction
-        f = (2 * cSide / (_gamma - 1)) *
+        f = (2. * cSide / (_gamma - 1)) *
             (std::pow(pGuess/pSide, (_gamma - 1)/(2 * _gamma)) - 1);
 
-        df = (1 / (pSide * cSide)) *
-             std::pow( pGuess/pSide, (1 - _gamma) / (2 * _gamma) );
+        df = (1. / (dSide * cSide)) *
+             std::pow( pGuess/pSide, (-1 - _gamma) / (2 * _gamma) );
     }
 
 }
@@ -394,10 +407,9 @@ double RiemannSolver::_densityShock(std::string const &side)
 
     // Compute and return the shock density
     return densitySide * (
-           ( (_pressureStar/pressureSide) + ((_gamma-1)/(_gamma+1)) / (((_gamma-1)
+           ( (_pressureStar/pressureSide) + ((_gamma-1)/(_gamma+1)) )
            /
-           (_gamma+1)) * (_pressureStar/pressureSide)-1) )
-           );
+           (((_gamma-1)/(_gamma+1)) * (_pressureStar/pressureSide) + 1) );
 }
 // =============================================================================
 
