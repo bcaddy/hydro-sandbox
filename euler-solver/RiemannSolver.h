@@ -159,6 +159,27 @@ public:
                      double &massFlux);
 
     /*!
+     * \brief Get the Density State object
+     *
+     * \return double The density of the current state
+     */
+    double getDensityState(){return _densityState;};
+
+    /*!
+     * \brief Get the Velocity State object
+     *
+     * \return double The velocity of the current state
+     */
+    double getVelocityState(){return _velocityState;};
+
+    /*!
+     * \brief Get the Pressure State object
+     *
+     * \return double The pressure of the current state
+     */
+    double getPressureState(){return _pressureState;};
+
+    /*!
      * \brief Construct a new Riemann Solver object
      *
      * \param[in] gamma The ratio of specific heats
