@@ -27,17 +27,17 @@ void Grid1D::updateBoundaries()
             int rightGhost = numTotCells - numGhostCells + j;
             int leftGhost  = j;
 
-            // Update Velocity BC's
-            velocity[leftGhost]  = 0.0;
-            velocity[rightGhost] = 0.0;
-
             // Update Density BC's
             density[leftGhost]  = 1.0;
             density[rightGhost] = 0.125;
 
-            // Update Pressure BC's
-            pressure[leftGhost]  = 1.0;
-            pressure[rightGhost] = 0.1;
+            // Update Momentum BC's
+            momentum[leftGhost]  = 0.0;
+            momentum[rightGhost] = 0.0;
+
+            // Update Energy BC's
+            energy[leftGhost]  = 1.0;
+            energy[rightGhost] = 0.1;
         }
 
     }
@@ -58,18 +58,17 @@ void Grid1D::updateBoundaries()
             << leftReal << " "
             << rightGhost<<std::endl;
 
-
-            // Update Velocity BC's
-            velocity[leftGhost] = velocity[rightReal];
-            velocity[rightGhost] = velocity[leftReal];
-
             // Update Density BC's
             density[leftGhost] = density[rightReal];
             density[rightGhost] = density[leftReal];
 
-            // Update Pressure BC's
-            pressure[leftGhost] = pressure[rightReal];
-            pressure[rightGhost] = pressure[leftReal];
+            // Update Momentum BC's
+            momentum[leftGhost] = momentum[rightReal];
+            momentum[rightGhost] = momentum[leftReal];
+
+            // Update Energy BC's
+            energy[leftGhost] = energy[rightReal];
+            energy[rightGhost] = energy[leftReal];
         }
     }
     else
@@ -83,23 +82,23 @@ void Grid1D::updateBoundaries()
 // =============================================================================
 void Grid1D::saveState()
 {
-    if (_velocitySaveFile.is_open() &&
-        _densitySaveFile.is_open() &&
-        _pressureSaveFile.is_open())
+    if (_densitySaveFile.is_open() &&
+        _momentumSaveFile.is_open() &&
+        _energySaveFile.is_open())
     {
-        _velocitySaveFile << velocity[numGhostCells];
         _densitySaveFile  << density[numGhostCells];
-        _pressureSaveFile << pressure[numGhostCells];
+        _momentumSaveFile << momentum[numGhostCells];
+        _energySaveFile << energy[numGhostCells];
 
         for (size_t i = numGhostCells; i < (numTotCells - numGhostCells); i++)
         {
-            _velocitySaveFile << "," << velocity[i];
             _densitySaveFile  << "," << density[i];
-            _pressureSaveFile << "," << pressure[i];
+            _momentumSaveFile << "," << momentum[i];
+            _energySaveFile << "," << energy[i];
         }
-        _velocitySaveFile << std::endl;
         _densitySaveFile  << std::endl;
-        _pressureSaveFile << std::endl;
+        _momentumSaveFile << std::endl;
+        _energySaveFile << std::endl;
     }
     else
     {
@@ -121,15 +120,15 @@ void Grid1D::init(size_t const &reals,
     numTotCells = 2 * numGhostCells + numRealCells;
     boundaryConditionKind = boundaryConditions;
 
-    velocity.reserve(numTotCells);
     density.reserve(numTotCells);
-    pressure.reserve(numTotCells);
+    momentum.reserve(numTotCells);
+    energy.reserve(numTotCells);
 
     if (saveDir != "no saving")
     {
-        _velocitySaveFile.open(saveDir + "Velocity.csv");
         _densitySaveFile.open(saveDir + "Density.csv");
-        _pressureSaveFile.open(saveDir + "Pressure.csv");
+        _momentumSaveFile.open(saveDir + "Momentum.csv");
+        _energySaveFile.open(saveDir + "Energy.csv");
     }
 
 }
@@ -150,8 +149,8 @@ Grid1D::Grid1D(size_t const &reals,
 
 Grid1D::~Grid1D()
 {
-    _velocitySaveFile.close();
     _densitySaveFile.close();
-    _pressureSaveFile.close();
+    _momentumSaveFile.close();
+    _energySaveFile.close();
 }
 // =============================================================================

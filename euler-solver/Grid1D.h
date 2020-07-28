@@ -9,7 +9,7 @@
  * \copyright Copyright (c) 2020
  *
  * \details The Grid1D struct stores the grid as a set of four arrays, one each
- * for velocity, density, and pressure. There are member functions for finding
+ * for density, momentum, and energy. There are member functions for finding
  * the momentum, saving the grid, and updating the ghost
  * cells.
  ******************************************************************************/
@@ -23,9 +23,9 @@ struct Grid1D
 {
 private:
     // Output files
-    std::ofstream _velocitySaveFile;
     std::ofstream _densitySaveFile;
-    std::ofstream _pressureSaveFile;
+    std::ofstream _momentumSaveFile;
+    std::ofstream _energySaveFile;
 
 public:
     /// The number of ghost cells on either side of the grid
@@ -35,12 +35,12 @@ public:
     /// The total number of cells in the grid. Equal to 2 * numGhostCells + numRealCells
     size_t numTotCells;
 
-    /// The velcity in a specific cell. Measured in meters per second
-    std::vector<double> velocity;
     /// The density in a cell. Measure in kilograms/cubic meter
     std::vector<double> density;
-    /// The pressure in a cell. Measured in Pascals (Newtons per square meter)
-    std::vector<double> pressure;
+    /// The momentum in a specific cell. Measured in kilogram meters per second
+    std::vector<double> momentum;
+    /// The energy in a cell. Measured in Joules
+    std::vector<double> energy;
 
     /// The type of boundary conditions to use
     std::string boundaryConditionKind;
@@ -55,8 +55,8 @@ public:
 
     /*!
      * \brief Saves all the grid variables to their own csv files
-     * \details Calling this functions saves Grid1D::velocity, Grid1D::density,
-     * and Grid1D::pressure each to their own CSV files. The
+     * \details Calling this functions saves Grid1D::density, Grid1D::momentum,
+     * and Grid1D::energy each to their own CSV files. The
      * files are stored in the directory given to the constructor
      * Grid1D::Grid1D(size_t const &reals,size_t const &ghosts,std::string const &saveDir)
      * which opens a file for each vector and saves them in that directory.
@@ -72,10 +72,10 @@ public:
      * at a later time. It does the following:
      * - initializes Grid1D::numGhostCells, Grid1D::numRealCells, and
      *   Grid1D::numTotCells.
-     * - Reserves the memory for Grid1D::velocity, Grid1D::density, and
-     *   Grid1D::pressure
-     * - Opens save files for Grid1D::velocity, Grid1D::density, and
-     *   Grid1D::pressure
+     * - Reserves the memory for  Grid1D::density, Grid1D::momentum, and
+     *   Grid1D::energy
+     * - Opens save files for Grid1D::density, Grid1D::momentum, and
+     *   Grid1D::energy
      *
      * \param[in] reals The number of real cells in the grid. Assigned to Grid1D numRealCells
      * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
@@ -103,7 +103,7 @@ public:
     Grid1D() = default;
 
     /*!
-     * \brief Construct a new Grid1D object that can save the primitive variables
+     * \brief Construct a new Grid1D object that can save the conserved variables
      *
      * \details This constructor utilizes the Grid1D::Init() method to initialize
      *          a Grid1D object with the ability to save the gride to a file.
