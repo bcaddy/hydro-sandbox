@@ -105,12 +105,12 @@ void Simulation1D::_computeEigens(size_t const &idx,
     eigVal[1] = grid.velocity[idx];
     eigVal[2] = grid.velocity[idx] + c;
 
-    // Right Eigenvector
+    // Right Eigenvectors
     rEigVec[0][0] = 1.;            rEigVec[0][1] = 1.; rEigVec[0][2] = 1.;
     rEigVec[1][0] = -cOverDensity; rEigVec[1][1] = 0.; rEigVec[1][2] = cOverDensity;
     rEigVec[2][0] = cSquared;      rEigVec[2][1] = 0.; rEigVec[2][2] = cSquared;
 
-    // Left Eigenvector
+    // Left Eigenvectors
     lEigVec[0][0] = 0.; lEigVec[0][1] = -0.5/cOverDensity; lEigVec[0][2] =  0.5/cSquared;
     lEigVec[1][0] = 1.; lEigVec[1][1] =  0.;               lEigVec[1][2] = -1./cSquared;
     lEigVec[2][0] = 0.; lEigVec[2][1] =  0.5/cOverDensity; lEigVec[2][2] =  0.5/cSquared;
@@ -310,32 +310,7 @@ void Simulation1D::conservativeUpdate(size_t const &idxInput,
                                       double const &momentumFluxR,
                                       double const &energyFluxR)
 {
-    // Density update
-    _tempGrid.density[idxInput] = grid.density[idxInput]
-                           + (_timeStep / _deltaX) * ( massFluxL - massFluxR );
-
-    // Velocity update
-    _tempGrid.velocity[idxInput] = (1 / _tempGrid.density[idxInput]) * (
-                     (grid.density[idxInput] * grid.velocity[idxInput] )
-                     + (_timeStep / _deltaX) * ( momentumFluxL - momentumFluxR )
-                     );
-
-    // Pressure update. This one is more complicated since I have to project into
-    // energy space, compute the update, and project back.
-    double currentEnergy = (grid.pressure[idxInput] / ((_gamma - 1)*grid.density[idxInput]))
-                           + 0.5 * std::pow(grid.velocity[idxInput], 2);
-    double nextEnergy = (1 / _tempGrid.density[idxInput])
-                        * (
-                        (grid.density[idxInput] * currentEnergy )
-                        + (_timeStep / _deltaX) * ( energyFluxL - energyFluxR )
-                        );
-    _tempGrid.pressure[idxInput] = (_gamma - 1)
-                                   * (_tempGrid.density[idxInput]
-                                   * (
-                                   nextEnergy
-                                   - 0.5
-                                   * std::pow( _tempGrid.velocity[idxInput], 2))
-                                   );
+    ;
 }
 // =============================================================================
 
