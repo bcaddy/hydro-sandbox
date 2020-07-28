@@ -18,7 +18,6 @@
 using std::cout;
 using std::cin;
 using std::endl;
-#include <cmath> // TODO Remove
 
 #include "Grid1D.h"
 #include "Simulation1D.h"
@@ -42,7 +41,7 @@ int main()
 
     // ===== Settings ==========================================================
     double const physicalLength        = 100.;
-    double const gamma                 = 5./3.;
+    double const gamma                 = 1.4;
     double const cfl                   = 0.8;
     double const maxTime               = 10.;
     size_t const numRealCells          = 1000;
@@ -105,7 +104,7 @@ int main()
                                 leftSideOfInterface,
                                 rightSideOfInterface);
 
-            // Solve Riemann problem on the left side
+            // Solve Riemann problem on the right side
             double rightEnergyFlux, rightMomentumFlux, rightMassFlux;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
