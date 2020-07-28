@@ -74,7 +74,7 @@ private:
      * \todo Add other kinds of limiters. Templated?
      *
      * \param[in] primitive The primitive variable to compute the slope of.
-     * \param[in] i The cell in which to compute the slope.
+     * \param[in] idx The cell in which to compute the slope.
      * \return double The limited slope.
      */
     double _slope(std::array<double, _arraySize> const &primitive,
@@ -124,8 +124,8 @@ public:
      * the array elements are moved 1 to the left (ie element 3 become element
      * 2) and a new final element is computed.
      *
-     * \param operation What operation to perform. Options are "reset" and "update"
-     * \param idx The index of the current working cell. Only used if operation == "updated"
+     * \param[in] operation What operation to perform. Options are "reset" and "update"
+     * \param[in] idx The index of the current working cell. Only used if operation == "updated"
      */
     void setPrimitives(std::string const &operation,
                        size_t const &idx);
@@ -152,7 +152,6 @@ public:
      * \brief Compute the states on either side of the interface to the left or
      *        right of a given cell.
      *
-     * \param[in] idxInput Which cell to find the possible interface states for
      * \param[in] side Which side of the cell to find the interface states.
      *                 Only options are "left" or "right"
      * \param[out] leftSideOfInterface The state on the left side of the interface.
@@ -176,6 +175,7 @@ public:
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
+     * \param[in] energy The energy in the cell, used for flux calculations
      * \param[in] posOverT The value of the position divided by the current time.
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
@@ -188,6 +188,7 @@ public:
                       double const &densityL,
                       double const &velocityL,
                       double const &pressureL,
+                      double const &energy,
                       double const &posOverT,
                       double &energyFlux,
                       double &momentumFlux,

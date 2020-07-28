@@ -91,6 +91,7 @@ int main()
                              leftSideOfInterface[0],
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
+                             sim.grid.energy[i],
                              0.0, // position over t
                              leftEnergyFlux,
                              leftMomentumFlux,
@@ -110,6 +111,7 @@ int main()
                              leftSideOfInterface[0],
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
+                             sim.grid.energy[i],
                              0.0, // position over t
                              rightEnergyFlux,
                              rightMomentumFlux,
