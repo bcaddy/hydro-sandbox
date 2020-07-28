@@ -145,7 +145,7 @@ public:
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
-     * \param[out] massFlux The mass flux that is being solved for
+     * \param[out] densityFlux The density flux that is being solved for
      */
     void riemannMain(double const &densityR,
                      double const &velocityR,
@@ -156,7 +156,7 @@ public:
                      double const &posOverT,
                      double &energyFlux,
                      double &momentumFlux,
-                     double &massFlux);
+                     double &densityFlux);
 
     /*!
      * \brief Get the Density State object

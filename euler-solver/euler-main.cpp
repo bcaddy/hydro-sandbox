@@ -79,13 +79,12 @@ int main()
             // Compute interface states on the left side.
             //   note that the order within vectors is density, velocity, pressure
             std::vector<double> leftSideOfInterface, rightSideOfInterface;
-            sim.interfaceStates(i,
-                                "left",
+            sim.interfaceStates("left",
                                 leftSideOfInterface,
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the left side
-            double leftEnergyFlux, leftMomentumFlux, leftMassFlux;
+            double leftEnergyFlux, leftMomentumFlux, leftDensityFlux;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
@@ -95,17 +94,16 @@ int main()
                              0.0, // position over t
                              leftEnergyFlux,
                              leftMomentumFlux,
-                             leftMassFlux);
+                             leftDensityFlux);
 
             // Compute interface states on the right side.
             //   note that the order within vectors is density, velocity, pressure
-            sim.interfaceStates(i,
-                                "right",
+            sim.interfaceStates("right",
                                 leftSideOfInterface,
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the right side
-            double rightEnergyFlux, rightMomentumFlux, rightMassFlux;
+            double rightEnergyFlux, rightMomentumFlux, rightDensityFlux;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
@@ -115,14 +113,14 @@ int main()
                              0.0, // position over t
                              rightEnergyFlux,
                              rightMomentumFlux,
-                             rightMassFlux);
+                             rightDensityFlux);
 
             // Compute conservative update
             sim.conservativeUpdate(i,
-                                   leftMassFlux,
+                                   leftDensityFlux,
                                    leftMomentumFlux,
                                    leftEnergyFlux,
-                                   rightMassFlux,
+                                   rightDensityFlux,
                                    rightMomentumFlux,
                                    rightEnergyFlux);
         }; // End of loop to interate through array

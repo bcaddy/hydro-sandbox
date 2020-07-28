@@ -30,9 +30,9 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i < half;
             i++)
         {
-            grid.velocity[i] = 0.;
             grid.density[i]  = 1.;
-            grid.pressure[i] = 1.;
+            grid.momentum[i] = 0.;
+            grid.energy[i] = 1. / (_gamma - 1.) ;
         }
 
         // Iterate over the real cells on the right side
@@ -40,9 +40,9 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i < (grid.numTotCells - grid.numGhostCells);
             i++)
         {
-            grid.velocity[i] = 0;
             grid.density[i]  = 0.125;  // 1/8th
-            grid.pressure[i] = 0.1;
+            grid.momentum[i] = 0.;
+            grid.energy[i] = 0.1 / (_gamma - 1);
         }
     }
     else
@@ -53,8 +53,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
 // =============================================================================
 
 // =============================================================================
-double Simulation1D::_slope(std::vector<double> const &primitive,
-                            size_t const &i)
+double Simulation1D::_slope(std::array<double, _arraySize> const &primitive,
+                            size_t const &idx)
 {
     // MC Limiter
 
@@ -63,8 +63,8 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
     double leftDerive, rightDerive, leftRightProduct;
 
     // Compute the derivatives
-    leftDerive =  (primitive[i] - primitive[i-1]) / _deltaX;
-    rightDerive = (primitive[i + 1] - primitive[i]) / _deltaX;
+    leftDerive =  (primitive[idx] - primitive[idx-1]) / _deltaX;
+    rightDerive = (primitive[idx + 1] - primitive[idx]) / _deltaX;
     leftRightProduct = leftDerive * rightDerive;
 
     // Choose what value to output
@@ -94,16 +94,16 @@ void Simulation1D::_computeEigens(size_t const &idx,
     // Compute the eigenvalues and vectors
 
     // first we have to find the speed of sound c
-    double c = std::sqrt(_gamma * grid.pressure[idx] / grid.density[idx]);
+    double c = std::sqrt(_gamma * _pressure[idx] / _density[idx]);
 
     // Compute a couple of common terms
     double const cOverDensity = c/grid.density[idx];
     double const cSquared = c*c;
 
     // Eigenvalues are lambda^-, lambda^0, lambda^+ in that order
-    eigVal[0] = grid.velocity[idx] - c;
-    eigVal[1] = grid.velocity[idx];
-    eigVal[2] = grid.velocity[idx] + c;
+    eigVal[0] = _velocity[idx] - c;
+    eigVal[1] = _velocity[idx];
+    eigVal[2] = _velocity[idx] + c;
 
     // Right Eigenvectors
     rEigVec[0][0] = 1.;            rEigVec[0][1] = 1.; rEigVec[0][2] = 1.;
@@ -118,6 +118,45 @@ void Simulation1D::_computeEigens(size_t const &idx,
 // =============================================================================
 
 // =============================================================================
+void Simulation1D::setPrimitives(std::string const &operation,
+                                 size_t const &idx)
+{
+    if (operation == "reset")
+    {
+        // Set all the values to the first few cells
+        for (size_t i = 0; i < _arraySize; i++)
+        {
+            _density[i]  = grid.density[i];
+            _velocity[i] = grid.momentum[i] / grid.density[i];
+            _pressure[i] = (_gamma - 1) * (grid.energy[i]
+                           - 0.5 * std::pow(grid.momentum[i], 2));
+        }
+    }
+    else if (operation == "update")
+    {
+        // Shift all but the last value one to the left
+        for (size_t i = 0; i < (_arraySize - 1); i++)
+        {
+            _density[i]  = _density[i+1];
+            _velocity[i] = _velocity[i+1];
+            _pressure[i] = _pressure[i+1];
+        }
+
+        // Set the final array elements
+        _density[_arraySize]  = grid.density[idx + 2];
+        _velocity[_arraySize] = grid.momentum[idx + 2] / grid.density[idx + 2];
+        _pressure[_arraySize] = (_gamma - 1) * (grid.energy[idx + 2]
+                       - 0.5 * std::pow(grid.momentum[idx + 2], 2));
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid value for how to update primitive"
+                                    "variable arrays in Simulation1D::setPrimitives");
+    }
+}
+// =============================================================================
+
+// =============================================================================
 void Simulation1D::computeTimeStep()
 {
     // Find the maximum speed in the simulation
@@ -127,9 +166,13 @@ void Simulation1D::computeTimeStep()
          i < (grid.numTotCells - grid.numGhostCells);
          i++)
     {
+        double velocity = grid.momentum[i]/grid.density[i];
+        double pressure = (_gamma - 1) * (grid.energy[i]
+                          - 0.5 * std::pow(grid.momentum[i], 2));
+
         // Compute the maximum wave speed
-        vMaxTemp = std::abs(grid.velocity[i]) +
-                   std::sqrt(_gamma*grid.pressure[i] / grid.density[i]);
+        vMaxTemp = std::abs(velocity) +
+                   std::sqrt(_gamma * pressure / grid.density[i]);
         if (vMax < vMaxTemp)
         {
             vMax = vMaxTemp;
@@ -142,8 +185,7 @@ void Simulation1D::computeTimeStep()
 
 // =============================================================================
 // This function should work on the ith element and only one primitive at a time
-void Simulation1D::interfaceStates(size_t const &idxInput,
-                                   std::string const &side,
+void Simulation1D::interfaceStates(std::string const &side,
                                    std::vector<double> &leftSideOfInterface,
                                    std::vector<double> &rightSideOfInterface)
 {
@@ -152,11 +194,11 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
     size_t idx;
     if (side == "right")
     {
-        idx = idxInput;
+        idx = _center;
     }
     else if (side == "left")
     {
-        idx = idxInput - 1;
+        idx = _center - 1;
     }
     else
     {
@@ -180,9 +222,9 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
     _computeEigens(idx, eigVal, rEigVec, lEigVec);
 
     // Compute the slopes. The order is density, velocity, pressure
-    std::vector<double> slopes({_slope(grid.density, idx),
-                                _slope(grid.velocity, idx),
-                                _slope(grid.pressure, idx)});
+    std::vector<double> slopes({_slope(_density, idx),
+                                _slope(_velocity, idx),
+                                _slope(_pressure, idx)});
 
     // Compute lEigVec^nu dot slope
     std::vector<double> lEigVecDotSlope(3,0);
@@ -232,9 +274,9 @@ void Simulation1D::interfaceStates(size_t const &idxInput,
     _computeEigens(idx, eigVal, rEigVec, lEigVec);
 
     // Compute the slopes. The order is density, velocity, pressure
-    slopes.assign({_slope(grid.density, idx),
-                   _slope(grid.velocity, idx),
-                   _slope(grid.pressure, idx)});
+    slopes.assign({_slope(_density, idx),
+                   _slope(_velocity, idx),
+                   _slope(_pressure, idx)});
 
     // Compute lEigVec^nu dot slope
     lEigVecDotSlope.assign(3, 0.); // zero out the vector
@@ -285,7 +327,7 @@ void Simulation1D::solveRiemann(double const &densityR,
                                 double const &posOverT,
                                 double &energyFlux,
                                 double &momentumFlux,
-                                double &massFlux)
+                                double &densityFlux)
 {
     _riemannSolver.riemannMain(densityR,
                                velocityR,
@@ -296,21 +338,31 @@ void Simulation1D::solveRiemann(double const &densityR,
                                posOverT,
                                energyFlux,
                                momentumFlux,
-                               massFlux);
+                               densityFlux);
 }
 // =============================================================================
 
 // =============================================================================
 // Performe the conservative update
 void Simulation1D::conservativeUpdate(size_t const &idxInput,
-                                      double const &massFluxL,
+                                      double const &densityFluxL,
                                       double const &momentumFluxL,
                                       double const &energyFluxL,
-                                      double const &massFluxR,
+                                      double const &densityFluxR,
                                       double const &momentumFluxR,
                                       double const &energyFluxR)
 {
-    ;
+    _tempGrid.density[idxInput]  = grid.density[idxInput]
+                                   + (_timeStep / _deltaX)
+                                   * (densityFluxL - densityFluxR);
+
+    _tempGrid.momentum[idxInput] = grid.momentum[idxInput]
+                                   + (_timeStep / _deltaX)
+                                   * (momentumFluxL - momentumFluxR);
+
+    _tempGrid.energy[idxInput]   = grid.energy[idxInput]
+                                   + (_timeStep / _deltaX)
+                                   * (energyFluxL - energyFluxR);
 }
 // =============================================================================
 
@@ -322,9 +374,9 @@ void Simulation1D::updateGrid()
              i < (grid.numTotCells-grid.numGhostCells);
              i++)
     {
-        grid.velocity[i] = _tempGrid.velocity[i];
         grid.density[i]  = _tempGrid.density[i];
-        grid.pressure[i] = _tempGrid.pressure[i];
+        grid.momentum[i] = _tempGrid.momentum[i];
+        grid.energy[i]   = _tempGrid.energy[i];
     }
 }
 // =============================================================================

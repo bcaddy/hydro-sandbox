@@ -10,6 +10,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <array>
 #include "Grid1D.h"
 #include "RiemannSolver.h"
 
@@ -34,6 +36,18 @@ private:
     double const _gamma;
     /// The time step for each interation
     double _timeStep;
+
+    /// The size of the density, velocity, and pressure arrays
+    size_t static const _arraySize = 5;
+    /// The index for the center of the density, velocity, and pressure arrays
+    size_t static const _center = _arraySize/2;
+    /// The local array to store the densities in
+    std::array<double, _arraySize> _density;
+    /// The local array to store the velocities in
+    std::array<double, _arraySize> _velocity;
+    /// The local array to store the pressure in
+    std::array<double, _arraySize> _pressure;
+
 
     /// The temporary grid used for storing the next time step while it's being
     /// computed
@@ -63,8 +77,8 @@ private:
      * \param[in] i The cell in which to compute the slope.
      * \return double The limited slope.
      */
-    double _slope(std::vector<double> const &primitive,
-                 size_t const &i);
+    double _slope(std::array<double, _arraySize> const &primitive,
+                 size_t const &idx);
 
     /*!
      * \brief Compute the eigenvalues and vectors of the Euler equations for a
@@ -101,6 +115,22 @@ public:
     double currentTime;
 
     /*!
+     * \brief Set the primitive arrays (\ref _density, \ref _velocity, and
+     * \ref _pressure) to new values.
+     *
+     * \details Setting the primitive arrays using one of two methods. If
+     * operation == "reset" then the primitives are set to the first
+     * \ref _arraySize elements of the grid. If operation == "update" then all
+     * the array elements are moved 1 to the left (ie element 3 become element
+     * 2) and a new final element is computed.
+     *
+     * \param operation What operation to perform. Options are "reset" and "update"
+     * \param idx The index of the current working cell. Only used if operation == "updated"
+     */
+    void setPrimitives(std::string const &operation,
+                       size_t const &idx);
+
+    /*!
      * \brief Compute the time step using the CFL condition
      */
     void computeTimeStep();
@@ -132,8 +162,7 @@ public:
      *                                  The order within the vector is density,
      *                                  velocity, pressure.
      */
-    void interfaceStates(size_t const &idxInput,
-                         std::string const &side,
+    void interfaceStates(std::string const &side,
                          std::vector<double> &leftSideOfInterface,
                          std::vector<double> &rightSideOfInterface);
 
@@ -151,7 +180,7 @@ public:
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
-     * \param[out] massFlux The mass flux that is being solved for
+     * \param[out] densityFlux The density flux that is being solved for
      */
     void solveRiemann(double const &densityR,
                       double const &velocityR,
@@ -162,25 +191,25 @@ public:
                       double const &posOverT,
                       double &energyFlux,
                       double &momentumFlux,
-                      double &massFlux);
+                      double &densityFlux);
 
 
     /*!
      * \brief Performs the conservative update
      *
      * \param[in] idxInput Which cell we're computing the conservative update for
-     * \param[in] massFluxL The mass flux on the left side
+     * \param[in] densityFluxL The density flux on the left side
      * \param[in] momentumFluxL The momentum flux on the left side
      * \param[in] energyFluxL The energy flux on the left side
-     * \param[in] massFluxR The mass flux on the left side
+     * \param[in] densityFluxR The density flux on the left side
      * \param[in] momentumFluxR The momentum flux on the left side
      * \param[in] energyFluxR The energy flux on the left side
      */
     void conservativeUpdate(size_t const &idxInput,
-                            double const &massFluxL,
+                            double const &densityFluxL,
                             double const &momentumFluxL,
                             double const &energyFluxL,
-                            double const &massFluxR,
+                            double const &densityFluxR,
                             double const &momentumFluxR,
                             double const &energyFluxR);
 

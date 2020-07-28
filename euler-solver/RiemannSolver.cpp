@@ -26,7 +26,7 @@ void RiemannSolver::riemannMain(double const &densityR,
                                 double const &posOverT,
                                 double &energyFlux,
                                 double &momentumFlux,
-                                double &massFlux)
+                                double &densityFlux)
 {
     // Copy arguments to member variables
     _densityR     = densityR;
@@ -199,7 +199,7 @@ void RiemannSolver::riemannMain(double const &densityR,
     }
 
     // Compute and return the fluxes
-    massFlux = _densityState * _velocityState;
+    densityFlux = _densityState * _velocityState;
     momentumFlux = _densityState * std::pow(_velocityState, 2) + _pressureState;
     energyFlux = _velocityState * _pressureState / (_gamma - 1)
                  + 0.5 * _densityState * std::pow(_velocityState, 3)
