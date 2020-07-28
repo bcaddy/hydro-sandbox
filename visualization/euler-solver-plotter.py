@@ -38,8 +38,8 @@ def main():
 
     # Load file
     densityData = np.loadtxt("../data/Density.csv", delimiter=",")
-    velocityData = np.loadtxt("../data/Velocity.csv", delimiter=",")
-    pressureData = np.loadtxt("../data/Pressure.csv", delimiter=",")
+    momentumData = np.loadtxt("../data/Momentum.csv", delimiter=",")
+    energyData = np.loadtxt("../data/Energy.csv", delimiter=",")
 
     # sim info
     SimPhysLength = 1.
@@ -72,11 +72,20 @@ def main():
         Stride    = int(SimNumSteps/TotFrames)
     # ==========================================================================
     # End Settings and Setup
-    # Compute specific internal energy and limits
+    # Compute Primitive Variables
     # ==========================================================================
+    # Compute velocities
+    velocityData = momentumData / densityData
+
+    # Compute pressures
+    pressureData = (gamma - 1) * (energyData - 0.5 * (momentumData**2))
+
     # Compute the specific internal energy
-    # TODO Something is wrong with this calculation. Fix it after refactor
-    ieData = pressureData / ( densityData * (gamma - 1) )
+    ieData = energyData - 0.5 * densityData * (velocityData ** 2)
+    # ==========================================================================
+    # End Computing Primitive Variables
+    # Compute Limits
+    # ==========================================================================
 
     # Find mins and maxes for setting the limits of the plot
     # Density
@@ -101,6 +110,7 @@ def main():
 
 
     # ==========================================================================
+    # End Computing Limits
     # Setup Plots
     # ==========================================================================
     # Create 4 subplots in a column

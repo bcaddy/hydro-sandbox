@@ -19,7 +19,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-int main()
+int main() // TODO NOTE THAT AFTER REFACTORING SIMULATION1D AND GRID1D THIS CODE NO LONGER WORKS. IT NEEDS TO COMPUTE THE MOMENTUM AND ENERGY SOMEWHERE
 {
     // Start timer
     auto start = std::chrono::high_resolution_clock::now();
