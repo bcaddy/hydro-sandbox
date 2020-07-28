@@ -120,25 +120,6 @@ void Simulation1D::_computeEigens(size_t const &idx,
 // =============================================================================
 void Simulation1D::computeTimeStep()
 {
-    // I don't want to compute this in every iteration
-    double const cflTimesDeltaX = _cflNum * _deltaX;
-
-    // Set the timestep to the value determined by the first real cell
-    _timeStep = cflTimesDeltaX / std::abs(grid.velocity[grid.numGhostCells]);
-
-    // Go through the entire grid, compute the time step for each cell, and
-    // choose the smallest one by setting _timeStep equal to it.
-    for (size_t i = grid.numGhostCells + 1;
-         i < (grid.numTotCells - grid.numGhostCells);
-         i++)
-    {
-        double deltatTemp = cflTimesDeltaX / std::abs(grid.velocity[i]);
-        if (_timeStep > deltatTemp)
-        {
-            _timeStep = deltatTemp;
-        }
-    }
-    ////////////////////////////////////////////////////////////////////////////
     // Find the maximum speed in the simulation
     double vMaxTemp, vMax = 0.;
 
@@ -146,7 +127,7 @@ void Simulation1D::computeTimeStep()
          i < (grid.numTotCells - grid.numGhostCells);
          i++)
     {
-        // TODO change this to call Riemann sound speed function
+        // Compute the maximum wave speed
         vMaxTemp = std::abs(grid.velocity[i]) +
                    std::sqrt(_gamma*grid.pressure[i] / grid.density[i]);
         if (vMax < vMaxTemp)
