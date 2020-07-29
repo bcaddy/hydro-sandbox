@@ -17,7 +17,7 @@
 #include "Grid1D.h"
 
 // =============================================================================
-void Grid1D::updateBoundaries()
+void Grid1D::updateBoundaries(double const &gamma)
 {
     if (boundaryConditionKind == "sod")
     {
@@ -36,8 +36,8 @@ void Grid1D::updateBoundaries()
             momentum[rightGhost] = 0.0;
 
             // Update Energy BC's
-            energy[leftGhost]  = 1.0;
-            energy[rightGhost] = 0.1;
+            energy[leftGhost]  = 1. / (gamma - 1.);
+            energy[rightGhost] = 0.1 / (gamma - 1);
         }
 
     }

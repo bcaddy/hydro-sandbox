@@ -122,10 +122,12 @@ void Simulation1D::setPrimitives(std::string const &operation)
 {
     if (operation == "reset")
     {
+        // Reset current index
+        _currentIndex = grid.numGhostCells;
+
         // Set all the values to the first few cells
         for (size_t i = 0; i < _arraySize; i++)
         {
-            _currentIndex = grid.numGhostCells;
             _density[i]  = grid.density[i];
             _velocity[i] = grid.momentum[i] / grid.density[i];
             _pressure[i] = (_gamma - 1) * (grid.energy[i]

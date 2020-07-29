@@ -44,7 +44,7 @@ int main()
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
     double const maxTime               = 10.;
-    size_t const numRealCells          = 1000;
+    size_t const numRealCells          = 10;
     size_t const numGhostCells         = 2;
     std::string  initialConditionsKind = "sod";
     std::string  boundaryConditions    = "sod";
@@ -69,6 +69,9 @@ int main()
         // Compute the time step using the CFL condition
         sim.computeTimeStep();
 
+        // Set boundary conditions (periodic)
+        sim.grid.updateBoundaries(gamma);
+
         // Set the values of the primitive array
         sim.setPrimitives("reset");
 
@@ -77,7 +80,7 @@ int main()
              i++)
         {
             // Set boundary conditions (periodic)
-            sim.grid.updateBoundaries();
+            sim.grid.updateBoundaries(gamma);
 
             // Compute interface states on the left side.
             //   note that the order within vectors is density, velocity, pressure
