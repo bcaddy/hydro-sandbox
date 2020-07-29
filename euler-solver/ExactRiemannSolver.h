@@ -1,7 +1,7 @@
 /*!
- * \file RiemannSolver.h
+ * \file ExactRiemannSolver.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Contains the RiemannSolver class for solving the Riemann Problem.
+ * \brief Contains the ExactRiemannSolver class for solving the Riemann Problem.
  * \version 0.1
  * \date 2020-07-14
  *
@@ -17,7 +17,7 @@
  * \brief Solves the Riemann problem exactly using the same exact Riemann solver
  *        as in Toro "Riemann Solver and Numerical Methods for Fluid Dynamics 3ed"
  */
-class RiemannSolver
+class ExactRiemannSolver
 {
 private:
     // =========================================================================
@@ -72,7 +72,7 @@ private:
     // =========================================================================
     /*!
      * \brief Compute the pressure in the star region using the
-     * RiemannSolver::_guessPressureStar function and Newton-Raphson iterations
+     * ExactRiemannSolver::_guessPressureStar function and Newton-Raphson iterations
      *
      * \return double The pressure in the star region
      */
@@ -141,7 +141,6 @@ public:
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
-     * \param[in] energy The energy in the cell, used for flux calculations
      * \param[in] posOverT The value of the position divided by the current time.
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
@@ -154,7 +153,6 @@ public:
                      double const &densityL,
                      double const &velocityL,
                      double const &pressureL,
-                     double const &energy,
                      double const &posOverT,
                      double &energyFlux,
                      double &momentumFlux,
@@ -186,10 +184,10 @@ public:
      *
      * \param[in] gamma The ratio of specific heats
      */
-    RiemannSolver(double const &gamma);
+    ExactRiemannSolver(double const &gamma);
     /*!
      * \brief Destroy the Riemann Solver object. Uses default destructors
      *
      */
-    ~RiemannSolver() = default;
+    ~ExactRiemannSolver() = default;
 };

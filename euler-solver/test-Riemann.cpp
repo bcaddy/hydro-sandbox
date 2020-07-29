@@ -14,53 +14,38 @@
 #include <string>
 #include <chrono>
 #include <vector>
-#include "RiemannSolver.h"
+#include "ExactRiemannSolver.h"
 using std::cout;
 using std::cin;
 using std::endl;
 
-int main() // TODO NOTE THAT AFTER REFACTORING SIMULATION1D AND GRID1D THIS CODE NO LONGER WORKS. IT NEEDS TO COMPUTE THE MOMENTUM AND ENERGY SOMEWHERE
+int main()
 {
     // Start timer
     auto start = std::chrono::high_resolution_clock::now();
 
 
     // ===== Settings for Sod Shock Tube =======================================
-    double const densityL   = 1.0;
-    double const velocityL  = 0.0;
-    double const pressureL  = 1.0;
-    double const densityR   = 0.125;
+    double const densityR   = 1.0;
     double const velocityR  = 0.0;
-    double const pressureR  = 0.1;
+    double const pressureR  = 1.0;
+    double const densityL   = 0.1;
+    double const velocityL  = 0.0;
+    double const pressureL  = 0.1;
     double const gamma      = 1.4;
-    double const xSize      = 1.;
+    double const xSize      = 1.0;
     double const tMax       = 0.2;
-    size_t const numSamples = 1000;
+    size_t const numSamples = 100;
     double const diaphPos   = 0.5 * xSize;
     double const deltaX     = xSize / static_cast<double>(numSamples);
-    // ===== End Settings for Sod Shock Tube  ===================================
-
-    // // ===== Settings for Sod Shock Tube Swapped ===============================
-    // double const densityR   = 1.0;
-    // double const velocityR  = 0.0;
-    // double const pressureR  = 1.0;
-    // double const densityL   = 0.125;
-    // double const velocityL  = 0.0;
-    // double const pressureL  = 0.1;
-    // double const gamma      = 1.4;
-    // double const xSize      = 1.;
-    // double const tMax       = 0.2;
-    // size_t const numSamples = 1000;
-    // double const diaphPos   = 0.5 * xSize;
-    // double const deltaX     = xSize / static_cast<double>(numSamples);
-    // // ===== End Settings for Sod Shock Tube Swapped ===========================
+    // ===== End Settings for Sod Shock Tube  ==================================
 
     // ===== Arrays & Solver ===================================================
     std::vector<double> density(numSamples);
     std::vector<double> pressure(numSamples);
     std::vector<double> velocity(numSamples);
 
-    RiemannSolver solver(gamma);
+    ExactRiemannSolver solver(gamma);
     // ===== End Arrays & Solver ===============================================
 
     // ===== Compute the Solution ==============================================

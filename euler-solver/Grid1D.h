@@ -50,8 +50,10 @@ public:
      *
      * \todo Currently this only uses periodic boundary conditions and I would
      * like to add outflow, reflective, inflow, and hydrostatic boundary conditions.
+     *
+     * \param[in] gamma The ratio of specific heats
      */
-    void updateBoundaries();
+    void updateBoundaries(double const &gamma);
 
     /*!
      * \brief Saves all the grid variables to their own csv files

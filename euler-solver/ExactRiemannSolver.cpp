@@ -1,7 +1,7 @@
 /*!
- * \file RiemannSolver.cpp
+ * \file ExactRiemannSolver.cpp
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Implementation of the RiemannSolver class
+ * \brief Implementation of the ExactRiemannSolver class
  * \version 0.1
  * \date 2020-07-14
  *
@@ -14,16 +14,15 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "RiemannSolver.h"
+#include "ExactRiemannSolver.h"
 
 // =============================================================================
-void RiemannSolver::riemannMain(double const &densityR,
+void ExactRiemannSolver::riemannMain(double const &densityR,
                                 double const &velocityR,
                                 double const &pressureR,
                                 double const &densityL,
                                 double const &velocityL,
                                 double const &pressureL,
-                                double const &energy,
                                 double const &posOverT,
                                 double &energyFlux,
                                 double &momentumFlux,
@@ -41,6 +40,12 @@ void RiemannSolver::riemannMain(double const &densityR,
     // Compute the sound speeds
     _cR = std::sqrt(_gamma * pressureR / densityR);
     _cL = std::sqrt(_gamma * pressureL / densityL);
+
+    // Check for Nan values in the speeds
+    if (std::isnan(_cR) or std::isnan(_cL))
+    {
+        throw std::runtime_error("Complex valued sound speed detected. Exiting.");
+    }
 
     // Check for a vacuum
     if ((2 / (_gamma - 1)) * (_cL + _cR) <= (_velocityR - _velocityL))
@@ -70,7 +75,7 @@ void RiemannSolver::riemannMain(double const &densityR,
             double shockSpeed = _shockSpeed("left");
 
             // Decide between L and L_* state
-            if (shockSpeed > _posOverT)
+            if (shockSpeed >= _posOverT)
             {
                 // We're in the L state
                 _pressureState = _pressureL;
@@ -94,7 +99,7 @@ void RiemannSolver::riemannMain(double const &densityR,
             rareSpeedTail = _velocityStar - cRare;
             rareSpeedHead = _velocityL - _cL;
 
-            if (rareSpeedHead > _posOverT)
+            if (rareSpeedHead >= _posOverT)
             {
                 // We're in the L state
                 _pressureState = _pressureL;
@@ -161,7 +166,7 @@ void RiemannSolver::riemannMain(double const &densityR,
             double rareSpeedHead, rareSpeedTail, cRare;
             cRare = _cR * std::pow(_pressureStar/_pressureR , (_gamma - 1)/(2 * _gamma));
             rareSpeedTail = _velocityStar + cRare;
-            rareSpeedHead = _velocityL + _cR;
+            rareSpeedHead = _velocityR + _cR;
 
             if (rareSpeedHead <= _posOverT)
             {
@@ -200,14 +205,16 @@ void RiemannSolver::riemannMain(double const &densityR,
     }
 
     // Compute and return the fluxes
+    double energyState = (_pressureState/(_gamma - 1)) + 0.5 * _densityState * std::pow(_velocityState,2);
+
     densityFlux = _densityState * _velocityState;
     momentumFlux = _densityState * std::pow(_velocityState, 2) + _pressureState;
-    energyFlux = _velocityState * energy + _velocityState * _pressureState / _densityState;
+    energyFlux = _velocityState * (energyState + _pressureState);
 }
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_computePressureStar()
+double ExactRiemannSolver::_computePressureStar()
 {
     // Guess a value for the pressure in the star region
     double pStar = _guessPressureStar();
@@ -230,7 +237,7 @@ double RiemannSolver::_computePressureStar()
         {
             pTemp = _tol;
         }
-        else if ( (std::abs(pTemp - pStar) / (0.5 * (pTemp + pStar))) <= _tol)
+        else if ( 2.0 * (std::abs(pTemp - pStar) / (pTemp + pStar)) <= _tol)
         {
             // Change is below tolerance so we're done
             return pTemp;
@@ -255,22 +262,23 @@ double RiemannSolver::_computePressureStar()
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_guessPressureStar()
+double ExactRiemannSolver::_guessPressureStar()
 {
     // Compute min and maximum pressures of the two sides of the interface
     double pMin = std::min(_pressureL, _pressureR);
     double pMax = std::max(_pressureL, _pressureR);
 
     // First compute the primitive variable approximation
-    double pPrim = 0.5   * (_pressureL + _pressureR) -
-                   0.125 * (_velocityR - _velocityL)
+    double pPrim = 0.5   * (_pressureL + _pressureR)
+                   +
+                   0.125 * (_velocityL - _velocityR)
                          * (_densityL + _densityR)
                          * (_cL + _cR);
     // Make sure it's not negative
     pPrim = std::max(_tol, pPrim);
 
     // Check to see if we should use the primitive variable approximation or not
-    if ( ((pMax/pMin) <= 2.0) && (pMin < pPrim) && (pPrim < pMax) )
+    if ( ((pMax/pMin) <= 2.0) and (pMin <= pPrim) and (pPrim <= pMax) )
     {
         // Return pPrim and terminate this function
         return pPrim;
@@ -281,20 +289,23 @@ double RiemannSolver::_guessPressureStar()
     if (pPrim < pMin)
     {
         // 2-Rarefaction Approximation
-        // TODO - Toro disagrees with himself on this. In Toro the 2-rarefaction
-        // TODO - approximation to the pressure is different in the implementation
-        // TODO - (midway down page 157) and the equation (eqn. 4.46).  The two different
-        // TODO - equations give very different results.
-        double p2Rare = // Equation on next lines for readability
-        std::pow(
-                // Numerator
-                ( _cL + _cR - 0.5 * (_gamma - 1) * (_velocityR - _velocityL) )
-                /
-                // Denominator
-                ( std::pow(_cL/_pressureL, (_gamma - 1)/(2*_gamma) )
-                + std::pow(_cR/_pressureR, (_gamma - 1)/(2*_gamma) ) )
-                // Exponent
-                , 2*_gamma/(_gamma-1));
+        // NOTE: Toro disagrees with himself on this. In Toro the 2-rarefaction
+        //       approximation to the pressure is different in the implementation
+        //       (midway down page 157) and the equation (eqn. 4.46).  The two
+        //       different equations give very different results.
+        double pq, vm, ptL, ptR, p2Rare;
+        pq = std::pow(_pressureL / _pressureR, (_gamma - 1.0)/(2.0 * _gamma));
+
+        vm = ( (pq * _velocityL / _cL) + (_velocityR / _cR) + (2.0 / (_gamma - 1)) * (pq - 1.0) )
+             /
+             (pq/_cL + 1.0/_cR);
+
+        ptL = 1.0 + ((_gamma - 1)/2.0) * (_velocityL - vm) / _cL;
+
+        ptR = 1.0 + ((_gamma - 1)/2.0) * (vm - _velocityR) / _cR;
+
+        p2Rare = 0.5 * (_pressureL * std::pow(ptL, 2.0 * _gamma / (_gamma - 1))
+                      + _pressureR * std::pow(ptR, 2.0 * _gamma / (_gamma - 1)));
 
         return std::max(_tol, p2Rare);
     }
@@ -323,7 +334,7 @@ double RiemannSolver::_guessPressureStar()
 // =============================================================================
 
 // =============================================================================
-void RiemannSolver::_pressureFunctions(double const &pGuess,
+void ExactRiemannSolver::_pressureFunctions(double const &pGuess,
                                        double const &pSide,
                                        double const &dSide,
                                        double const &cSide,
@@ -333,29 +344,28 @@ void RiemannSolver::_pressureFunctions(double const &pGuess,
     if (pGuess > pSide)
     {
         // Shock
-        double const aSide = 2/ (dSide * (_gamma + 1));
-        double const bSide = pSide * ((_gamma - 1) / (_gamma + 1));
+        double const aSide = (2.0 / (_gamma + 1.0)) / dSide;
+        double const bSide = pSide * ((_gamma - 1.0) / (_gamma + 1.0));
         f = (pGuess - pSide) * std::sqrt(aSide / (pGuess + bSide));
 
-        df = std::sqrt(aSide / (pGuess + bSide)) * (
-             1 - ((pGuess - pSide) / (2 * (bSide + pGuess)))
-             );
+        df = std::sqrt(aSide / (pGuess + bSide))
+             * ( 1.0 - 0.5 * ( (pGuess - pSide) / (bSide + pGuess) ) );
     }
     else
     {
         // Rarefaction
-        f = (2. * cSide / (_gamma - 1)) *
-            (std::pow(pGuess/pSide, (_gamma - 1)/(2 * _gamma)) - 1);
+        f = (2.0 * cSide / (_gamma - 1)) *
+            (std::pow(pGuess/pSide, (_gamma - 1)/(2 * _gamma)) - 1.0);
 
-        df = (1. / (dSide * cSide)) *
-             std::pow( pGuess/pSide, (-1 - _gamma) / (2 * _gamma) );
+        df = (1.0 / (dSide * cSide)) *
+             std::pow( pGuess/pSide, (-1.0 - _gamma) / (2.0 * _gamma) );
     }
 
 }
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_shockSpeed(std::string const &side)
+double ExactRiemannSolver::_shockSpeed(std::string const &side)
 {
     // Figure out which variables to use
     double velocitySide, cSide, pressureSide;
@@ -373,7 +383,7 @@ double RiemannSolver::_shockSpeed(std::string const &side)
     }
     else
     {
-        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_shockSpeed");
+        throw std::invalid_argument("Incorrect input for side into ExactRiemannSolver::_shockSpeed");
     }
 
     // Compute and return the shock speed
@@ -385,7 +395,7 @@ double RiemannSolver::_shockSpeed(std::string const &side)
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_densityShock(std::string const &side)
+double ExactRiemannSolver::_densityShock(std::string const &side)
 {
     // Figure out which variables to use
     double densitySide, pressureSide;
@@ -401,7 +411,7 @@ double RiemannSolver::_densityShock(std::string const &side)
     }
     else
     {
-        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_densityShock");
+        throw std::invalid_argument("Incorrect input for side into ExactRiemannSolver::_densityShock");
     }
 
     // Compute and return the shock density
@@ -413,7 +423,7 @@ double RiemannSolver::_densityShock(std::string const &side)
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_densityRare(std::string const &side)
+double ExactRiemannSolver::_densityRare(std::string const &side)
 {
     // Figure out which variables to use
     double densitySide, pressureSide;
@@ -429,7 +439,7 @@ double RiemannSolver::_densityRare(std::string const &side)
     }
     else
     {
-        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_densityShock");
+        throw std::invalid_argument("Incorrect input for side into ExactRiemannSolver::_densityShock");
     }
 
     // Compute and return the rarefaction density
@@ -439,7 +449,7 @@ double RiemannSolver::_densityRare(std::string const &side)
 
 // =============================================================================
 // Constructor
-RiemannSolver::RiemannSolver(double const &gamma)
+ExactRiemannSolver::ExactRiemannSolver(double const &gamma)
 
     // Start by initializing all the const member variables
     : _gamma(gamma)

@@ -2,14 +2,22 @@
 .PHONY: clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
-cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic -g
+cppDebug = g++ \
+           -std=c++17 \
+		   -Wall \
+		   -Wextra \
+		   -Wpedantic \
+		   -fasynchronous-unwind-tables \
+		   -fexceptions \
+		   -fstack-clash-protection \
+		   -g
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 
 # list of binaries to clean as well
 binaries = euler-solver.exe test-Riemann.exe
 
-Helper_SRC = Grid1D.cpp Simulation1D.cpp RiemannSolver.cpp
+Helper_SRC = Grid1D.cpp Simulation1D.cpp ExactRiemannSolver.cpp
 Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 
 # To switch between compiling the whole program every time and only compiling
@@ -18,7 +26,7 @@ Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 euler-solver: euler-main.cpp $(Helper_SRC)
 	$(cppCompiler) $? -o $@.exe
 
-test-Helper_SRC = RiemannSolver.cpp
+test-Helper_SRC = ExactRiemannSolver.cpp
 test-Riemann: test-Riemann.cpp $(test-Helper_SRC)
 	$(cppCompiler) $? -o $@.exe
 

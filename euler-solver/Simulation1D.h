@@ -13,19 +13,21 @@
 #include <vector>
 #include <array>
 #include "Grid1D.h"
-#include "RiemannSolver.h"
+#include "ExactRiemannSolver.h"
 
 /*!
  * \brief Solves the Euler equations
  * \details This class handles all the heavy lifting of running a 1D hydro
  * simulation. It uses the Grid1D class for the grid and then computes time steps,
- * interface steps, solves the Riemann problem using the RiemannSolver class,
+ * interface steps, solves the Riemann problem using the ExactRiemannSolver class,
  * does the conservative update, keeps track of the time, etc.
  *
  */
 class Simulation1D
 {
 private:
+    friend class ExactRiemannSolver;
+
     /// The physical length of the simulation in meters
     double const _physLen;
     /// Courant–Friedrichs–Lewy (CFL) Number
@@ -55,9 +57,52 @@ private:
     /// computed
     Grid1D _tempGrid;
 
-    /// The object used to solve the Riemann Problem. See RiemannSolver for the
+    /// The object used to solve the Riemann Problem. See ExactRiemannSolver for the
     /// full documentation.
-    RiemannSolver _riemannSolver;
+    ExactRiemannSolver _riemannSolver;
+
+    /*!
+     * \brief Compute the velocity
+     *
+     * \param momentum The momentum
+     * \param density The density
+     * \return double The velocity
+     */
+    double _computeVelocity(double const &momentum,
+                            double const &density);
+    /*!
+     * \brief Compute the momentum
+     *
+     * \param velocity The velocity
+     * \param density The density
+     * \return double The momentum
+     */
+    double _computeMomentum(double const &velocity,
+                            double const &density);
+
+    /*!
+     * \brief Compute the Pressure
+     *
+     * \param energy The energy
+     * \param density The density
+     * \param velocity The velocity
+     * \return double The pressure
+     */
+    double _computePressure(double const &energy,
+                            double const &density,
+                            double const &velocity);
+
+    /*!
+     * \brief Compute the energy
+     *
+     * \param pressure The pressure
+     * \param density The density
+     * \param velocity The velocity
+     * \return double The energy
+     */
+    double _computeEnergy(double const &pressure,
+                          double const &density,
+                          double const &velocity);
 
     /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock
@@ -80,7 +125,7 @@ private:
      * \return double The limited slope.
      */
     double _slope(std::array<double, _arraySize> const &primitive,
-                 size_t const &idx);
+                  size_t const &idx);
 
     /*!
      * \brief Compute the eigenvalues and vectors of the Euler equations for a
@@ -167,7 +212,7 @@ public:
 
     /*!
      * \brief Solves the Riemann problem exactly by calling the main function of
-     * the RiemannSolver class
+     * the ExactRiemannSolver class
      *
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
@@ -175,7 +220,6 @@ public:
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
-     * \param[in] energy The energy in the cell, used for flux calculations
      * \param[in] posOverT The value of the position divided by the current time.
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
@@ -188,7 +232,6 @@ public:
                       double const &densityL,
                       double const &velocityL,
                       double const &pressureL,
-                      double const &energy,
                       double const &posOverT,
                       double &energyFlux,
                       double &momentumFlux,

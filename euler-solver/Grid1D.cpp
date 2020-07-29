@@ -17,7 +17,7 @@
 #include "Grid1D.h"
 
 // =============================================================================
-void Grid1D::updateBoundaries()
+void Grid1D::updateBoundaries(double const &gamma)
 {
     if (boundaryConditionKind == "sod")
     {
@@ -36,8 +36,8 @@ void Grid1D::updateBoundaries()
             momentum[rightGhost] = 0.0;
 
             // Update Energy BC's
-            energy[leftGhost]  = 1.0;
-            energy[rightGhost] = 0.1;
+            energy[leftGhost]  = 1. / (gamma - 1.);
+            energy[rightGhost] = 0.1 / (gamma - 1);
         }
 
     }
@@ -47,29 +47,27 @@ void Grid1D::updateBoundaries()
         for (size_t j = 0; j < numGhostCells; j++)
         {
             // Compute indices
-            int rightReal  = numTotCells - (2 * numGhostCells) + j;
-            int rightGhost = numTotCells - numGhostCells + j;
-            int leftReal   = j + numGhostCells;
-            int leftGhost  = j;
-
-            std::cout
-            << rightReal << " "
-            << leftGhost << " "
-            << leftReal << " "
-            << rightGhost<<std::endl;
+            size_t rightReal  = numTotCells - (2 * numGhostCells) + j;
+            size_t rightGhost = numTotCells - numGhostCells + j;
+            size_t leftReal   = j + numGhostCells;
+            size_t leftGhost  = j;
 
             // Update Density BC's
-            density[leftGhost] = density[rightReal];
+            density[leftGhost]  = density[rightReal];
             density[rightGhost] = density[leftReal];
 
             // Update Momentum BC's
-            momentum[leftGhost] = momentum[rightReal];
+            momentum[leftGhost]  = momentum[rightReal];
             momentum[rightGhost] = momentum[leftReal];
 
             // Update Energy BC's
-            energy[leftGhost] = energy[rightReal];
+            energy[leftGhost]  = energy[rightReal];
             energy[rightGhost] = energy[leftReal];
         }
+    }
+    else if (boundaryConditionKind == "pass")
+    {
+        ; // Pass
     }
     else
     {
@@ -82,15 +80,17 @@ void Grid1D::updateBoundaries()
 // =============================================================================
 void Grid1D::saveState()
 {
-    if (_densitySaveFile.is_open() &&
-        _momentumSaveFile.is_open() &&
+    if (_densitySaveFile.is_open() and
+        _momentumSaveFile.is_open() and
         _energySaveFile.is_open())
     {
         _densitySaveFile  << density[numGhostCells];
         _momentumSaveFile << momentum[numGhostCells];
         _energySaveFile << energy[numGhostCells];
 
-        for (size_t i = numGhostCells; i < (numTotCells - numGhostCells); i++)
+        for (size_t i = numGhostCells + 1;
+             i < (numTotCells - numGhostCells);
+             i++)
         {
             _densitySaveFile  << "," << density[i];
             _momentumSaveFile << "," << momentum[i];
@@ -120,9 +120,9 @@ void Grid1D::init(size_t const &reals,
     numTotCells = 2 * numGhostCells + numRealCells;
     boundaryConditionKind = boundaryConditions;
 
-    density.reserve(numTotCells);
-    momentum.reserve(numTotCells);
-    energy.reserve(numTotCells);
+    density.resize(numTotCells);
+    momentum.resize(numTotCells);
+    energy.resize(numTotCells);
 
     if (saveDir != "no saving")
     {
@@ -149,8 +149,14 @@ Grid1D::Grid1D(size_t const &reals,
 
 Grid1D::~Grid1D()
 {
-    _densitySaveFile.close();
-    _momentumSaveFile.close();
-    _energySaveFile.close();
+    // Close the file if it's open
+    if (_densitySaveFile.is_open() and
+        _momentumSaveFile.is_open() and
+        _energySaveFile.is_open())
+    {
+        _densitySaveFile.close();
+        _momentumSaveFile.close();
+        _energySaveFile.close();
+    }
 }
 // =============================================================================

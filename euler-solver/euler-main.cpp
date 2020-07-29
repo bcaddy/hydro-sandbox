@@ -40,14 +40,14 @@ int main()
     auto start = std::chrono::high_resolution_clock::now();
 
     // ===== Settings ==========================================================
-    double const physicalLength        = 100.;
+    double const physicalLength        = 1.;
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
-    double const maxTime               = 10.;
-    size_t const numRealCells          = 1000;
+    double const maxTime               = 2.0;
+    size_t const numRealCells          = 100;
     size_t const numGhostCells         = 2;
-    std::string  initialConditionsKind = "sod";
-    std::string  boundaryConditions    = "sod";
+    std::string  initialConditionsKind = "advection";
+    std::string  boundaryConditions    = "periodic";
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
 
@@ -61,13 +61,18 @@ int main()
                      boundaryConditions,
                      saveDir);
 
+    // Save the initial state
+    sim.grid.saveState();
+
     //=== Begin the main evolution loop ========================================
     size_t step = 0;
-
     while (sim.currentTime <= maxTime)
     {
         // Compute the time step using the CFL condition
         sim.computeTimeStep();
+
+        // Set boundary conditions (sod)
+        sim.grid.updateBoundaries(gamma);
 
         // Set the values of the primitive array
         sim.setPrimitives("reset");
@@ -76,64 +81,59 @@ int main()
              i < (sim.grid.numTotCells-sim.grid.numGhostCells);
              i++)
         {
-            // Set boundary conditions (periodic)
-            sim.grid.updateBoundaries();
-
             // Compute interface states on the left side.
-            //   note that the order within vectors is density, velocity, pressure
+            // note that the order within vectors is density, velocity, pressure
             std::vector<double> leftSideOfInterface, rightSideOfInterface;
             sim.interfaceStates("left",
                                 leftSideOfInterface,
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the left side
-            double leftEnergyFlux, leftMomentumFlux, leftDensityFlux;
+            double energyFluxL, momentumFluxL, densityFluxL;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
                              leftSideOfInterface[0],
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
-                             sim.grid.energy[i],
                              0.0, // position over t
-                             leftEnergyFlux,
-                             leftMomentumFlux,
-                             leftDensityFlux);
+                             energyFluxL,
+                             momentumFluxL,
+                             densityFluxL);
 
             // Compute interface states on the right side.
-            //   note that the order within vectors is density, velocity, pressure
+            // note that the order within vectors is density, velocity, pressure
             sim.interfaceStates("right",
                                 leftSideOfInterface,
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the right side
-            double rightEnergyFlux, rightMomentumFlux, rightDensityFlux;
+            double energyFluxR, momentumFluxR, densityFluxR;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
                              leftSideOfInterface[0],
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
-                             sim.grid.energy[i],
                              0.0, // position over t
-                             rightEnergyFlux,
-                             rightMomentumFlux,
-                             rightDensityFlux);
+                             energyFluxR,
+                             momentumFluxR,
+                             densityFluxR);
 
             // Compute conservative update
             sim.conservativeUpdate(i,
-                                   leftDensityFlux,
-                                   leftMomentumFlux,
-                                   leftEnergyFlux,
-                                   rightDensityFlux,
-                                   rightMomentumFlux,
-                                   rightEnergyFlux);
+                                   densityFluxL,
+                                   momentumFluxL,
+                                   energyFluxL,
+                                   densityFluxR,
+                                   momentumFluxR,
+                                   energyFluxR);
 
             // Update the values of the primitive array
             sim.setPrimitives("update");
         }; // End of loop to interate through array
 
-        // Copy values from uVelTemp to a
+        // Copy values from the temp grid to the real grid
         sim.updateGrid();
 
         // Save output
@@ -141,8 +141,8 @@ int main()
 
         // Message
         cout << "Completeted step: " << step
-        << ":   Time step = " << sim.getTimeStep()
-        << ":   Time = " << sim.currentTime << endl;
+        << ",   Time step = " << sim.getTimeStep()
+        << ",   Simulation Time = " << sim.currentTime << endl;
 
         // Update time and step number
         sim.updateCurrentTime();
