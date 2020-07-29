@@ -118,14 +118,14 @@ void Simulation1D::_computeEigens(size_t const &idx,
 // =============================================================================
 
 // =============================================================================
-void Simulation1D::setPrimitives(std::string const &operation,
-                                 size_t const &idx)
+void Simulation1D::setPrimitives(std::string const &operation)
 {
     if (operation == "reset")
     {
         // Set all the values to the first few cells
         for (size_t i = 0; i < _arraySize; i++)
         {
+            _currentIndex = grid.numGhostCells;
             _density[i]  = grid.density[i];
             _velocity[i] = grid.momentum[i] / grid.density[i];
             _pressure[i] = (_gamma - 1) * (grid.energy[i]
@@ -143,10 +143,11 @@ void Simulation1D::setPrimitives(std::string const &operation,
         }
 
         // Set the final array elements
-        _density[_arraySize]  = grid.density[idx + 2];
-        _velocity[_arraySize] = grid.momentum[idx + 2] / grid.density[idx + 2];
-        _pressure[_arraySize] = (_gamma - 1) * (grid.energy[idx + 2]
-                       - 0.5 * std::pow(grid.momentum[idx + 2], 2));
+        _currentIndex++;
+        _density[_arraySize]  = grid.density[_currentIndex + 2];
+        _velocity[_arraySize] = grid.momentum[_currentIndex + 2] / grid.density[_currentIndex + 2];
+        _pressure[_arraySize] = (_gamma - 1) * (grid.energy[_currentIndex + 2]
+                       - 0.5 * std::pow(grid.momentum[_currentIndex + 2], 2));
     }
     else
     {

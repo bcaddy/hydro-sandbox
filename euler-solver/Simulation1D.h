@@ -41,6 +41,8 @@ private:
     size_t static const _arraySize = 5;
     /// The index for the center of the density, velocity, and pressure arrays
     size_t static const _center = _arraySize/2;
+    /// The current location in grid
+    size_t _currentIndex;
     /// The local array to store the densities in
     std::array<double, _arraySize> _density;
     /// The local array to store the velocities in
@@ -125,10 +127,8 @@ public:
      * 2) and a new final element is computed.
      *
      * \param[in] operation What operation to perform. Options are "reset" and "update"
-     * \param[in] idx The index of the current working cell. Only used if operation == "updated"
      */
-    void setPrimitives(std::string const &operation,
-                       size_t const &idx);
+    void setPrimitives(std::string const &operation);
 
     /*!
      * \brief Compute the time step using the CFL condition

@@ -69,6 +69,9 @@ int main()
         // Compute the time step using the CFL condition
         sim.computeTimeStep();
 
+        // Set the values of the primitive array
+        sim.setPrimitives("reset");
+
         for (size_t i = sim.grid.numGhostCells;
              i < (sim.grid.numTotCells-sim.grid.numGhostCells);
              i++)
@@ -125,6 +128,9 @@ int main()
                                    rightDensityFlux,
                                    rightMomentumFlux,
                                    rightEnergyFlux);
+
+            // Update the values of the primitive array
+            sim.setPrimitives("update");
         }; // End of loop to interate through array
 
         // Copy values from uVelTemp to a
