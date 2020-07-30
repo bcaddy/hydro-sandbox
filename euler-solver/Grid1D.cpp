@@ -149,8 +149,14 @@ Grid1D::Grid1D(size_t const &reals,
 
 Grid1D::~Grid1D()
 {
-    _densitySaveFile.close();
-    _momentumSaveFile.close();
-    _energySaveFile.close();
+    // Close the file if it's open
+    if (_densitySaveFile.is_open() &&
+        _momentumSaveFile.is_open() &&
+        _energySaveFile.is_open())
+    {
+        _densitySaveFile.close();
+        _momentumSaveFile.close();
+        _energySaveFile.close();
+    }
 }
 // =============================================================================

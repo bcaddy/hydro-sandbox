@@ -40,11 +40,11 @@ int main()
     auto start = std::chrono::high_resolution_clock::now();
 
     // ===== Settings ==========================================================
-    double const physicalLength        = 100.;
+    double const physicalLength        = 1.;
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
-    double const maxTime               = 10.;
-    size_t const numRealCells          = 10;
+    double const maxTime               = 0.2;
+    size_t const numRealCells          = 100;
     size_t const numGhostCells         = 2;
     std::string  initialConditionsKind = "sod";
     std::string  boundaryConditions    = "sod";
@@ -83,7 +83,7 @@ int main()
             sim.grid.updateBoundaries(gamma);
 
             // Compute interface states on the left side.
-            //   note that the order within vectors is density, velocity, pressure
+            // note that the order within vectors is density, velocity, pressure
             std::vector<double> leftSideOfInterface, rightSideOfInterface;
             sim.interfaceStates("left",
                                 leftSideOfInterface,
@@ -104,7 +104,7 @@ int main()
                              leftDensityFlux);
 
             // Compute interface states on the right side.
-            //   note that the order within vectors is density, velocity, pressure
+            // note that the order within vectors is density, velocity, pressure
             sim.interfaceStates("right",
                                 leftSideOfInterface,
                                 rightSideOfInterface);
@@ -136,7 +136,7 @@ int main()
             sim.setPrimitives("update");
         }; // End of loop to interate through array
 
-        // Copy values from uVelTemp to a
+        // Copy values from the temp grid to the real grid
         sim.updateGrid();
 
         // Save output

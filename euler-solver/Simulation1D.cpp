@@ -97,7 +97,7 @@ void Simulation1D::_computeEigens(size_t const &idx,
     double c = std::sqrt(_gamma * _pressure[idx] / _density[idx]);
 
     // Compute a couple of common terms
-    double const cOverDensity = c/grid.density[idx];
+    double const cOverDensity = c/_density[idx];
     double const cSquared = c*c;
 
     // Eigenvalues are lambda^-, lambda^0, lambda^+ in that order
@@ -211,7 +211,7 @@ void Simulation1D::interfaceStates(std::string const &side,
     // Some common terms that I don't want to compute multiple times
     double const dtOverDx = _timeStep / _deltaX;
 
-    // Declare eigenvalues and eigenvectors vectors
+    // Declare eigenvalues and eigenvectors std::vectors
     std::vector<double> eigVal(3);
     std::vector<std::vector<double>> rEigVec(3, std::vector<double>(3));
     std::vector<std::vector<double>> lEigVec(3, std::vector<double>(3));
@@ -241,9 +241,9 @@ void Simulation1D::interfaceStates(std::string const &side,
 
     // Compute the reference state
     double coef = 0.5 * (1 - dtOverDx * std::max(0., eigVal[2]));
-    std::vector<double> refState({grid.density[idx] + coef*slopes[0],
-                                  grid.density[idx] + coef*slopes[0],
-                                  grid.density[idx] + coef*slopes[0]});
+    std::vector<double> refState({_density[idx] + coef*slopes[0],
+                                  _velocity[idx] + coef*slopes[1],
+                                  _pressure[idx] + coef*slopes[2]});
 
     // To find the left side of the interface state we first compute the sum in
     // the interface equation
@@ -293,9 +293,9 @@ void Simulation1D::interfaceStates(std::string const &side,
 
     // Compute the reference state
     coef = 0.5 * (1 + dtOverDx * std::min(0., eigVal[0]));
-    refState.assign({grid.density[idx] - coef * slopes[0],
-                     grid.density[idx] - coef * slopes[0],
-                     grid.density[idx] - coef * slopes[0]});
+    refState.assign({_density[idx] - coef * slopes[0],
+                     _velocity[idx] - coef * slopes[1],
+                     _pressure[idx] - coef * slopes[2]});
 
     // To find the right side of the interface state we first compute the sum in
     // the interface equation

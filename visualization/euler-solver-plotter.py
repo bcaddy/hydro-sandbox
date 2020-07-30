@@ -146,28 +146,28 @@ def main():
     densityPlot, = subPlot[0].plot(positions,
                            densityData[0,:],
                            linestyle = '-',
-                        #    marker    = '.',
+                           marker    = '.',
                            color     = densityColor,
                            label     = "Density"
                            )
     velocityPlot, = subPlot[1].plot(positions,
                            velocityData[0,:],
                            linestyle = '-',
-                        #    marker    = '.',
+                           marker    = '.',
                            color     = velocityColor,
                            label     = "Velocity"
                            )
     pressurePlot, = subPlot[2].plot(positions,
                            pressureData[0,:],
                            linestyle = '-',
-                        #    marker    = '.',
+                           marker    = '.',
                            color     = pressureColor,
                            label     = "Pressure"
                            )
     iePlot, = subPlot[3].plot(positions,
                            ieData[0,:],
                            linestyle = '-',
-                        #    marker    = '.',
+                           marker    = '.',
                            color     = ieColor,
                            label     = "specific internal energy"
                            )
