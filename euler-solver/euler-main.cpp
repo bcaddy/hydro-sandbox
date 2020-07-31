@@ -144,8 +144,8 @@ int main()
 
         // Message
         cout << "Completeted step: " << step
-        << ":   Time step = " << sim.getTimeStep()
-        << ":   Time = " << sim.currentTime << endl;
+        << ",   Time step = " << sim.getTimeStep()
+        << ",   Simulation Time = " << sim.currentTime << endl;
 
         // Update time and step number
         sim.updateCurrentTime();

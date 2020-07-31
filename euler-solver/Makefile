@@ -5,7 +5,6 @@
 cppDebug = g++ \
            -std=c++17 \
 		   -Wall \
-		   -Werror \
 		   -Wextra \
 		   -Wpedantic \
 		   -fasynchronous-unwind-tables \

@@ -55,33 +55,27 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
 // =============================================================================
 double Simulation1D::_slope(std::array<double, _arraySize> const &primitive,
                             size_t const &idx)
+    /*
+    Implementation of the Monotonized Central Difference (MC) Limiter
+    */
 {
-    // MC Limiter
+    double xi = (primitive[idx+1] - primitive[idx]) * (primitive[idx] - primitive[idx-1]);
 
-    // Declare variables
-    double outValue;
-    double leftDerive, rightDerive, leftRightProduct;
-
-    // Compute the derivatives
-    leftDerive =  (primitive[idx] - primitive[idx-1]) / _deltaX;
-    rightDerive = (primitive[idx + 1] - primitive[idx]) / _deltaX;
-    leftRightProduct = leftDerive * rightDerive;
-
-    // Choose what value to output
-    if ((std::abs(leftDerive) < std::abs(rightDerive)) && (leftRightProduct > 0.))
+    if (xi > 0)
     {
-        outValue = leftDerive;
-    }
-    else if ((std::abs(leftDerive) > std::abs(rightDerive)) && (leftRightProduct > 0.))
-    {
-        outValue = rightDerive;
+        double centerDif, forwardDif, backwardDif, sign;
+        centerDif   =     std::abs(primitive[idx+1] - primitive[idx-1]) / (2 * _deltaX);
+        forwardDif  = 2 * std::abs(primitive[idx+1] - primitive[idx]) / (_deltaX);
+        backwardDif = 2 * std::abs(primitive[idx] - primitive[idx-1]) / (_deltaX);
+
+        sign = ((primitive[idx+1] - primitive[idx-1]) < 0)? -1:1; // equivalent to sign(primitive[idx+1]-primitive[idx-1])
+
+        return sign * std::min({centerDif, forwardDif, backwardDif});
     }
     else
     {
-        outValue = 0.;
+        return 0.;
     }
-
-    return outValue;
 }
 // =============================================================================
 
