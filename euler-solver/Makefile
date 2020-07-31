@@ -2,7 +2,16 @@
 .PHONY: clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
-cppDebug = g++ -std=c++17 -Wall -Wextra -Wpedantic -g
+cppDebug = g++ \
+           -std=c++17 \
+		   -Wall \
+		   -Werror \
+		   -Wextra \
+		   -Wpedantic \
+		   -fasynchronous-unwind-tables \
+		   -fexceptions \
+		   -fstack-clash-protection \
+		   -g
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 
