@@ -120,6 +120,7 @@ void Simulation1D::_computeEigens(size_t const &idx,
 // =============================================================================
 void Simulation1D::setPrimitives(std::string const &operation)
 {
+    ;
     if (operation == "reset")
     {
         // Reset current index
@@ -146,10 +147,11 @@ void Simulation1D::setPrimitives(std::string const &operation)
 
         // Set the final array elements
         _currentIndex++;
-        _density[_arraySize]  = grid.density[_currentIndex + 2];
-        _velocity[_arraySize] = grid.momentum[_currentIndex + 2] / grid.density[_currentIndex + 2];
-        _pressure[_arraySize] = (_gamma - 1) * (grid.energy[_currentIndex + 2]
+        _density[_arraySize-1]  = grid.density[_currentIndex + 2];
+        _velocity[_arraySize-1] = grid.momentum[_currentIndex + 2] / grid.density[_currentIndex + 2];
+        _pressure[_arraySize-1] = (_gamma - 1) * (grid.energy[_currentIndex + 2]
                        - 0.5 * std::pow(grid.momentum[_currentIndex + 2], 2));
+        ;
     }
     else
     {
