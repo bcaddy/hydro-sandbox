@@ -227,11 +227,11 @@ void Simulation1D::interfaceStates(std::string const &side,
 
     // Compute lEigVec^nu dot slope
     std::vector<double> lEigVecDotSlope(3,0);
-    for (size_t i = 0; i < 3; i++)
+    for (size_t nu = 0; nu < 3; nu++)
     {
         for (size_t j = 0; j < 3; j++)
         {
-            lEigVecDotSlope[i] += lEigVec[j][i] * slopes[j];
+            lEigVecDotSlope[nu] += lEigVec[nu][j] * slopes[j];
         }
     }
 
@@ -279,11 +279,11 @@ void Simulation1D::interfaceStates(std::string const &side,
 
     // Compute lEigVec^nu dot slope
     lEigVecDotSlope.assign(3, 0.); // zero out the vector
-    for (size_t i = 0; i < 3; i++)
+    for (size_t nu = 0; nu < 3; nu++)
     {
         for (size_t j = 0; j < 3; j++)
         {
-            lEigVecDotSlope[i] += lEigVec[j][i] * slopes[j];
+            lEigVecDotSlope[nu] += lEigVec[nu][j] * slopes[j];
         }
     }
 
