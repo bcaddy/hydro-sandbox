@@ -126,8 +126,8 @@ void Simulation1D::setPrimitives(std::string const &operation)
         {
             _density[i]  = grid.density[i];
             _velocity[i] = grid.momentum[i] / grid.density[i];
-            _pressure[i] = (_gamma - 1) * (grid.energy[i]
-                           - 0.5 * std::pow(grid.momentum[i], 2));
+            _pressure[i] = (_gamma - 1) * ( grid.energy[i]
+                           - 0.5 * _density[i] * std::pow(_velocity[i], 2));
         }
     }
     else if (operation == "update")
@@ -144,8 +144,8 @@ void Simulation1D::setPrimitives(std::string const &operation)
         _currentIndex++;
         _density[_arraySize-1]  = grid.density[_currentIndex + 2];
         _velocity[_arraySize-1] = grid.momentum[_currentIndex + 2] / grid.density[_currentIndex + 2];
-        _pressure[_arraySize-1] = (_gamma - 1) * (grid.energy[_currentIndex + 2]
-                       - 0.5 * std::pow(grid.momentum[_currentIndex + 2], 2));
+        _pressure[_arraySize-1] = (_gamma - 1) * ( grid.energy[_currentIndex + 2]
+                       - 0.5 * _density[_arraySize - 1] * std::pow(_velocity[_arraySize - 1], 2));
         ;
     }
     else

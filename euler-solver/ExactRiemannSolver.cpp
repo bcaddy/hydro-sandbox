@@ -202,7 +202,7 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     // Compute and return the fluxes
     densityFlux = _densityState * _velocityState;
     momentumFlux = _densityState * std::pow(_velocityState, 2) + _pressureState;
-    energyFlux = _velocityState * energy + _velocityState * _pressureState / _densityState;
+    energyFlux = _velocityState * (energy + _pressureState);
 }
 // =============================================================================
 

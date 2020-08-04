@@ -44,7 +44,7 @@ int main()
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
     double const maxTime               = 0.2;
-    size_t const numRealCells          = 17;
+    size_t const numRealCells          = 100;//17;
     size_t const numGhostCells         = 2;
     std::string  initialConditionsKind = "sod";
     std::string  boundaryConditions    = "sod";
