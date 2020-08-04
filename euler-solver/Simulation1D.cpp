@@ -59,23 +59,24 @@ double Simulation1D::_slope(std::array<double, _arraySize> const &primitive,
     Implementation of the Monotonized Central Difference (MC) Limiter
     */
 {
-    double xi = (primitive[idx+1] - primitive[idx]) * (primitive[idx] - primitive[idx-1]);
+    return 0.0;
+//     double xi = (primitive[idx+1] - primitive[idx]) * (primitive[idx] - primitive[idx-1]);
 
-    if (xi > 0)
-    {
-        double centerDif, forwardDif, backwardDif, sign;
-        centerDif   =     std::abs(primitive[idx+1] - primitive[idx-1]) / (2 * _deltaX);
-        forwardDif  = 2 * std::abs(primitive[idx+1] - primitive[idx]) / (_deltaX);
-        backwardDif = 2 * std::abs(primitive[idx] - primitive[idx-1]) / (_deltaX);
+//     if (xi > 0)
+//     {
+//         double centerDif, forwardDif, backwardDif, sign;
+//         centerDif   =     std::abs(primitive[idx+1] - primitive[idx-1]) / (2 * _deltaX);
+//         forwardDif  = 2 * std::abs(primitive[idx+1] - primitive[idx]) / (_deltaX);
+//         backwardDif = 2 * std::abs(primitive[idx] - primitive[idx-1]) / (_deltaX);
 
-        sign = ((primitive[idx+1] - primitive[idx-1]) < 0)? -1:1; // equivalent to sign(primitive[idx+1]-primitive[idx-1])
+//         sign = ((primitive[idx+1] - primitive[idx-1]) < 0)? -1:1; // equivalent to sign(primitive[idx+1]-primitive[idx-1])
 
-        return sign * std::min({centerDif, forwardDif, backwardDif});
-    }
-    else
-    {
-        return 0.;
-    }
+//         return sign * std::min({centerDif, forwardDif, backwardDif});
+//     }
+//     else
+//     {
+//         return 0.;
+//     }
 }
 // =============================================================================
 

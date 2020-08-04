@@ -1,7 +1,7 @@
 /*!
- * \file RiemannSolver.cpp
+ * \file ExactRiemannSolver.cpp
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Implementation of the RiemannSolver class
+ * \brief Implementation of the ExactRiemannSolver class
  * \version 0.1
  * \date 2020-07-14
  *
@@ -14,10 +14,10 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "RiemannSolver.h"
+#include "ExactRiemannSolver.h"
 
 // =============================================================================
-void RiemannSolver::riemannMain(double const &densityR,
+void ExactRiemannSolver::riemannMain(double const &densityR,
                                 double const &velocityR,
                                 double const &pressureR,
                                 double const &densityL,
@@ -207,7 +207,7 @@ void RiemannSolver::riemannMain(double const &densityR,
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_computePressureStar()
+double ExactRiemannSolver::_computePressureStar()
 {
     // Guess a value for the pressure in the star region
     double pStar = _guessPressureStar();
@@ -255,7 +255,7 @@ double RiemannSolver::_computePressureStar()
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_guessPressureStar()
+double ExactRiemannSolver::_guessPressureStar()
 {
     // Compute min and maximum pressures of the two sides of the interface
     double pMin = std::min(_pressureL, _pressureR);
@@ -323,7 +323,7 @@ double RiemannSolver::_guessPressureStar()
 // =============================================================================
 
 // =============================================================================
-void RiemannSolver::_pressureFunctions(double const &pGuess,
+void ExactRiemannSolver::_pressureFunctions(double const &pGuess,
                                        double const &pSide,
                                        double const &dSide,
                                        double const &cSide,
@@ -355,7 +355,7 @@ void RiemannSolver::_pressureFunctions(double const &pGuess,
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_shockSpeed(std::string const &side)
+double ExactRiemannSolver::_shockSpeed(std::string const &side)
 {
     // Figure out which variables to use
     double velocitySide, cSide, pressureSide;
@@ -373,7 +373,7 @@ double RiemannSolver::_shockSpeed(std::string const &side)
     }
     else
     {
-        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_shockSpeed");
+        throw std::invalid_argument("Incorrect input for side into ExactRiemannSolver::_shockSpeed");
     }
 
     // Compute and return the shock speed
@@ -385,7 +385,7 @@ double RiemannSolver::_shockSpeed(std::string const &side)
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_densityShock(std::string const &side)
+double ExactRiemannSolver::_densityShock(std::string const &side)
 {
     // Figure out which variables to use
     double densitySide, pressureSide;
@@ -401,7 +401,7 @@ double RiemannSolver::_densityShock(std::string const &side)
     }
     else
     {
-        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_densityShock");
+        throw std::invalid_argument("Incorrect input for side into ExactRiemannSolver::_densityShock");
     }
 
     // Compute and return the shock density
@@ -413,7 +413,7 @@ double RiemannSolver::_densityShock(std::string const &side)
 // =============================================================================
 
 // =============================================================================
-double RiemannSolver::_densityRare(std::string const &side)
+double ExactRiemannSolver::_densityRare(std::string const &side)
 {
     // Figure out which variables to use
     double densitySide, pressureSide;
@@ -429,7 +429,7 @@ double RiemannSolver::_densityRare(std::string const &side)
     }
     else
     {
-        throw std::invalid_argument("Incorrect input for side into RiemannSolver::_densityShock");
+        throw std::invalid_argument("Incorrect input for side into ExactRiemannSolver::_densityShock");
     }
 
     // Compute and return the rarefaction density
@@ -439,7 +439,7 @@ double RiemannSolver::_densityRare(std::string const &side)
 
 // =============================================================================
 // Constructor
-RiemannSolver::RiemannSolver(double const &gamma)
+ExactRiemannSolver::ExactRiemannSolver(double const &gamma)
 
     // Start by initializing all the const member variables
     : _gamma(gamma)

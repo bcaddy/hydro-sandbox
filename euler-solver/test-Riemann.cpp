@@ -60,7 +60,7 @@ int main() // TODO NOTE THAT AFTER REFACTORING SIMULATION1D AND GRID1D THIS CODE
     std::vector<double> pressure(numSamples);
     std::vector<double> velocity(numSamples);
 
-    RiemannSolver solver(gamma);
+    ExactRiemannSolver solver(gamma);
     // ===== End Arrays & Solver ===============================================
 
     // ===== Compute the Solution ==============================================

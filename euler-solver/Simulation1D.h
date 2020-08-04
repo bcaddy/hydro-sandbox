@@ -13,13 +13,13 @@
 #include <vector>
 #include <array>
 #include "Grid1D.h"
-#include "RiemannSolver.h"
+#include "ExactRiemannSolver.h"
 
 /*!
  * \brief Solves the Euler equations
  * \details This class handles all the heavy lifting of running a 1D hydro
  * simulation. It uses the Grid1D class for the grid and then computes time steps,
- * interface steps, solves the Riemann problem using the RiemannSolver class,
+ * interface steps, solves the Riemann problem using the ExactRiemannSolver class,
  * does the conservative update, keeps track of the time, etc.
  *
  */
@@ -55,9 +55,9 @@ private:
     /// computed
     Grid1D _tempGrid;
 
-    /// The object used to solve the Riemann Problem. See RiemannSolver for the
+    /// The object used to solve the Riemann Problem. See ExactRiemannSolver for the
     /// full documentation.
-    RiemannSolver _riemannSolver;
+    ExactRiemannSolver _riemannSolver;
 
     /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock
@@ -167,7 +167,7 @@ public:
 
     /*!
      * \brief Solves the Riemann problem exactly by calling the main function of
-     * the RiemannSolver class
+     * the ExactRiemannSolver class
      *
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface

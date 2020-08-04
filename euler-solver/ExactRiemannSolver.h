@@ -1,7 +1,7 @@
 /*!
- * \file RiemannSolver.h
+ * \file ExactRiemannSolver.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Contains the RiemannSolver class for solving the Riemann Problem.
+ * \brief Contains the ExactRiemannSolver class for solving the Riemann Problem.
  * \version 0.1
  * \date 2020-07-14
  *
@@ -17,7 +17,7 @@
  * \brief Solves the Riemann problem exactly using the same exact Riemann solver
  *        as in Toro "Riemann Solver and Numerical Methods for Fluid Dynamics 3ed"
  */
-class RiemannSolver
+class ExactRiemannSolver
 {
 private:
     // =========================================================================
@@ -72,7 +72,7 @@ private:
     // =========================================================================
     /*!
      * \brief Compute the pressure in the star region using the
-     * RiemannSolver::_guessPressureStar function and Newton-Raphson iterations
+     * ExactRiemannSolver::_guessPressureStar function and Newton-Raphson iterations
      *
      * \return double The pressure in the star region
      */
@@ -186,10 +186,10 @@ public:
      *
      * \param[in] gamma The ratio of specific heats
      */
-    RiemannSolver(double const &gamma);
+    ExactRiemannSolver(double const &gamma);
     /*!
      * \brief Destroy the Riemann Solver object. Uses default destructors
      *
      */
-    ~RiemannSolver() = default;
+    ~ExactRiemannSolver() = default;
 };
