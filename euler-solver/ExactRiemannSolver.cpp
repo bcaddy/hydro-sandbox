@@ -41,6 +41,12 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     _cR = std::sqrt(_gamma * pressureR / densityR);
     _cL = std::sqrt(_gamma * pressureL / densityL);
 
+    // Check for Nan values in the speeds
+    if (std::isnan(_cR) || std::isnan(_cL))
+    {
+        throw std::runtime_error("Complex valued sound speed detected. Exiting.");
+    }
+
     // Check for a vacuum
     if ((2 / (_gamma - 1)) * (_cL + _cR) <= (_velocityR - _velocityL))
     {
@@ -199,8 +205,7 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     }
 
     // Compute and return the fluxes
-    double energyState = ( _pressureState / (_gamma - 1) )
-                         + 0.5 * _densityState * std::pow(_velocityState, 2);
+    double energyState = (_pressureState/(_gamma - 1)) + 0.5 * _densityState * std::pow(_velocityState,2);
 
     densityFlux = _densityState * _velocityState;
     momentumFlux = _densityState * std::pow(_velocityState, 2) + _pressureState;

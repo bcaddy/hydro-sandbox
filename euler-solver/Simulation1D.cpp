@@ -16,6 +16,40 @@
 #include "Simulation1D.h"
 
 // =============================================================================
+double Simulation1D::_computeVelocity(double const &momentum,
+                                      double const &density)
+{
+    return momentum / density;
+}
+// =============================================================================
+
+// =============================================================================
+double Simulation1D::_computeMomentum(double const &velocity,
+                                      double const &density)
+{
+    return velocity * density;
+}
+// =============================================================================
+
+// =============================================================================
+double Simulation1D::_computePressure(double const &energy,
+                                      double const &density,
+                                      double const &velocity)
+{
+    return (_gamma - 1) * ( energy - 0.5 * density * std::pow(velocity, 2) );
+}
+// =============================================================================
+
+// =============================================================================
+double Simulation1D::_computeEnergy(double const &pressure,
+                                    double const &density,
+                                    double const &velocity)
+{
+    return (pressure/(_gamma - 1)) + 0.5 * density * std::pow(velocity,2);
+}
+// =============================================================================
+
+// =============================================================================
 void Simulation1D::_setInitialConditions(std::string const &initialConditionsKind)
 {
     // Set up Sod initial conditions
@@ -31,8 +65,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i++)
         {
             grid.density[i]  = 1.;
-            grid.momentum[i] = 0.;
-            grid.energy[i] = 1. / (_gamma - 1.) ;
+            grid.momentum[i] = _computeMomentum(0.0, 1.0);
+            grid.energy[i]   = _computeEnergy(1.0, 1.0, 0.0);
         }
 
         // Iterate over the real cells on the right side
@@ -41,8 +75,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i++)
         {
             grid.density[i]  = 0.125;  // 1/8th
-            grid.momentum[i] = 0.;
-            grid.energy[i] = 0.1 / (_gamma - 1);
+            grid.momentum[i] = _computeMomentum(0.0, 0.125);;
+            grid.energy[i]   = _computeEnergy(0.1, 0.125, 0.0);
         }
     }
     else
@@ -125,9 +159,8 @@ void Simulation1D::setPrimitives(std::string const &operation)
         for (size_t i = 0; i < _arraySize; i++)
         {
             _density[i]  = grid.density[i];
-            _velocity[i] = grid.momentum[i] / grid.density[i];
-            _pressure[i] = (_gamma - 1) * ( grid.energy[i]
-                           - 0.5 * _density[i] * std::pow(_velocity[i], 2));
+            _velocity[i] = _computeVelocity(grid.momentum[i], grid.density[i]);
+            _pressure[i] = _computePressure(grid.energy[i], _density[i], _velocity[i]);
         }
     }
     else if (operation == "update")
@@ -143,10 +176,11 @@ void Simulation1D::setPrimitives(std::string const &operation)
         // Set the final array elements
         _currentIndex++;
         _density[_arraySize-1]  = grid.density[_currentIndex + 2];
-        _velocity[_arraySize-1] = grid.momentum[_currentIndex + 2] / grid.density[_currentIndex + 2];
-        _pressure[_arraySize-1] = (_gamma - 1) * ( grid.energy[_currentIndex + 2]
-                       - 0.5 * _density[_arraySize - 1] * std::pow(_velocity[_arraySize - 1], 2));
-        ;
+        _velocity[_arraySize-1] = _computeVelocity(grid.momentum[_currentIndex + 2],
+                                                   grid.density[_currentIndex + 2]);
+        _pressure[_arraySize-1] = _computePressure(grid.energy[_currentIndex + 2],
+                                                   _density[_arraySize - 1],
+                                                   _velocity[_arraySize - 1]);
     }
     else
     {
@@ -162,13 +196,12 @@ void Simulation1D::computeTimeStep()
     // Find the maximum speed in the simulation
     double vMaxTemp, vMax = 0.;
 
-    for (size_t i = grid.numGhostCells + 1;
+    for (size_t i = grid.numGhostCells;
          i < (grid.numTotCells - grid.numGhostCells);
          i++)
     {
-        double velocity = grid.momentum[i]/grid.density[i];
-        double pressure = (_gamma - 1) * (grid.energy[i]
-                          - 0.5 * std::pow(grid.momentum[i], 2));
+        double velocity = _computeVelocity(grid.momentum[i], grid.density[i]);
+        double pressure = _computePressure(grid.energy[i], grid.density[i], velocity);
 
         // Compute the maximum wave speed
         vMaxTemp = std::abs(velocity) +
