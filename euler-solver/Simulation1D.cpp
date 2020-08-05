@@ -217,103 +217,118 @@ void Simulation1D::interfaceStates(std::string const &side,
     leftSideOfInterface.resize(3);
     rightSideOfInterface.resize(3);
 
-    // ===== Compute the left side of the interface ============================
-    // Compute eigenvalues and eigenvectors
-    _computeEigens(idx, eigVal, rEigVec, lEigVec);
+    // ===== Test piecewise constant ===========================================
+    leftSideOfInterface[0] = _density[idx];
+    leftSideOfInterface[1] = _velocity[idx];
+    leftSideOfInterface[2] = _pressure[idx];
+    idx++;
+    rightSideOfInterface[0] = _density[idx];
+    rightSideOfInterface[1] = _velocity[idx];
+    rightSideOfInterface[2] = _pressure[idx];
 
-    // Compute the slopes. The order is density, velocity, pressure
-    std::vector<double> slopes({_slope(_density, idx),
-                                _slope(_velocity, idx),
-                                _slope(_pressure, idx)});
 
-    // Compute lEigVec^nu dot slope
-    std::vector<double> lEigVecDotSlope(3,0);
-    for (size_t nu = 0; nu < 3; nu++)
-    {
-        for (size_t j = 0; j < 3; j++)
-        {
-            lEigVecDotSlope[nu] += lEigVec[nu][j] * slopes[j];
-        }
-    }
+    // ===== End Test piecewise constant =======================================
 
-    // Compute the reference state
-    double coef = 0.5 * (1 - dtOverDx * std::max(0., eigVal[2]));
-    std::vector<double> refState({_density[idx] + coef*slopes[0],
-                                  _velocity[idx] + coef*slopes[1],
-                                  _pressure[idx] + coef*slopes[2]});
 
-    // To find the left side of the interface state we first compute the sum in
-    // the interface equation
-    std::vector<double> sum(3, 0);
-    for (size_t nu = 0; nu < 3; nu++) // loop over the elements in the sum
-    {
-        if (eigVal[nu] >= 0.)
-        {
-            for (size_t j = 0; j < 3; j++) // loop over primitives
-            {
-                sum[j] += (std::max(eigVal[2], 0.) - eigVal[nu])
-                          * lEigVecDotSlope[nu]
-                          * rEigVec[j][nu];
-            }
-        }
-    }
 
-    // Now we compute the left side of the interface
-    for (size_t i = 0; i < 3; i++)
-    {
-        leftSideOfInterface[i] = refState[i] + 0.5 * dtOverDx * sum[i];
-    }
+
+    // // ===== Compute the left side of the interface ============================
+    // // Compute eigenvalues and eigenvectors
+    // _computeEigens(idx, eigVal, rEigVec, lEigVec);
+
+    // // Compute the slopes. The order is density, velocity, pressure
+    // std::vector<double> slopes({_slope(_density, idx),
+    //                             _slope(_velocity, idx),
+    //                             _slope(_pressure, idx)});
+
+    // // Compute lEigVec^nu dot slope
+    // std::vector<double> lEigVecDotSlope(3,0);
+    // for (size_t nu = 0; nu < 3; nu++)
+    // {
+    //     for (size_t j = 0; j < 3; j++)
+    //     {
+    //         lEigVecDotSlope[nu] += lEigVec[nu][j] * slopes[j];
+    //     }
+    // }
+
+    // // Compute the reference state
+    // double coef = 0.5 * (1 - dtOverDx * std::max(0., eigVal[2]));
+    // std::vector<double> refState({_density[idx] + coef*slopes[0],
+    //                               _velocity[idx] + coef*slopes[1],
+    //                               _pressure[idx] + coef*slopes[2]});
+
+    // // To find the left side of the interface state we first compute the sum in
+    // // the interface equation
+    // std::vector<double> sum(3, 0);
+    // for (size_t nu = 0; nu < 3; nu++) // loop over the elements in the sum
+    // {
+    //     if (eigVal[nu] >= 0.)
+    //     {
+    //         for (size_t j = 0; j < 3; j++) // loop over primitives
+    //         {
+    //             sum[j] += (std::max(eigVal[2], 0.) - eigVal[nu])
+    //                       * lEigVecDotSlope[nu]
+    //                       * rEigVec[j][nu];
+    //         }
+    //     }
+    // }
+
+    // // Now we compute the left side of the interface
+    // for (size_t i = 0; i < 3; i++)
+    // {
+    //     leftSideOfInterface[i] = refState[i] + 0.5 * dtOverDx * sum[i];
+    // }
     // ===== End computing the left side of the interface ======================
 
-    // ===== Compute the right side of the interface ===========================
+    // // ===== Compute the right side of the interface ===========================
 
-    // First increase the index to move to working on the right side of the interface
-    idx++;
+    // // First increase the index to move to working on the right side of the interface
+    // idx++;
 
-    // Compute eigenvalues and eigenvectors
-    _computeEigens(idx, eigVal, rEigVec, lEigVec);
+    // // Compute eigenvalues and eigenvectors
+    // _computeEigens(idx, eigVal, rEigVec, lEigVec);
 
-    // Compute the slopes. The order is density, velocity, pressure
-    slopes.assign({_slope(_density, idx),
-                   _slope(_velocity, idx),
-                   _slope(_pressure, idx)});
+    // // Compute the slopes. The order is density, velocity, pressure
+    // slopes.assign({_slope(_density, idx),
+    //                _slope(_velocity, idx),
+    //                _slope(_pressure, idx)});
 
-    // Compute lEigVec^nu dot slope
-    lEigVecDotSlope.assign(3, 0.); // zero out the vector
-    for (size_t nu = 0; nu < 3; nu++)
-    {
-        for (size_t j = 0; j < 3; j++)
-        {
-            lEigVecDotSlope[nu] += lEigVec[nu][j] * slopes[j];
-        }
-    }
+    // // Compute lEigVec^nu dot slope
+    // lEigVecDotSlope.assign(3, 0.); // zero out the vector
+    // for (size_t nu = 0; nu < 3; nu++)
+    // {
+    //     for (size_t j = 0; j < 3; j++)
+    //     {
+    //         lEigVecDotSlope[nu] += lEigVec[nu][j] * slopes[j];
+    //     }
+    // }
 
-    // Compute the reference state
-    coef = 0.5 * (1 + dtOverDx * std::min(0., eigVal[0]));
-    refState.assign({_density[idx] - coef * slopes[0],
-                     _velocity[idx] - coef * slopes[1],
-                     _pressure[idx] - coef * slopes[2]});
+    // // Compute the reference state
+    // coef = 0.5 * (1 + dtOverDx * std::min(0., eigVal[0]));
+    // refState.assign({_density[idx] - coef * slopes[0],
+    //                  _velocity[idx] - coef * slopes[1],
+    //                  _pressure[idx] - coef * slopes[2]});
 
-    // To find the right side of the interface state we first compute the sum in
-    // the interface equation
-    sum.assign(3, 0);
-    for (size_t nu = 0; nu < 3; nu++) // loop over the elements in the sum
-    {
-        if (eigVal[nu] <= 0.)
-        {
-            for (size_t j = 0; j < 3; j++) // loop over primitives
-            {
-                sum[j] += (std::min(eigVal[0], 0.) - eigVal[nu]) * lEigVecDotSlope[nu] * rEigVec[j][nu];
-            }
-        }
-    }
+    // // To find the right side of the interface state we first compute the sum in
+    // // the interface equation
+    // sum.assign(3, 0);
+    // for (size_t nu = 0; nu < 3; nu++) // loop over the elements in the sum
+    // {
+    //     if (eigVal[nu] <= 0.)
+    //     {
+    //         for (size_t j = 0; j < 3; j++) // loop over primitives
+    //         {
+    //             sum[j] += (std::min(eigVal[0], 0.) - eigVal[nu]) * lEigVecDotSlope[nu] * rEigVec[j][nu];
+    //         }
+    //     }
+    // }
 
-    // Now we compute the left side of the interface
-    for (size_t i = 0; i < 3; i++)
-    {
-        rightSideOfInterface[i] = refState[i] + 0.5 * dtOverDx * sum[i];
-    }
-    // ===== End computing the right side of the interface =====================
+    // // Now we compute the left side of the interface
+    // for (size_t i = 0; i < 3; i++)
+    // {
+    //     rightSideOfInterface[i] = refState[i] + 0.5 * dtOverDx * sum[i];
+    // }
+    // // ===== End computing the right side of the interface =====================
 }
 // =============================================================================
 
@@ -324,7 +339,6 @@ void Simulation1D::solveRiemann(double const &densityR,
                                 double const &densityL,
                                 double const &velocityL,
                                 double const &pressureL,
-                                double const &energy,
                                 double const &posOverT,
                                 double &energyFlux,
                                 double &momentumFlux,
@@ -336,7 +350,6 @@ void Simulation1D::solveRiemann(double const &densityR,
                                densityL,
                                velocityL,
                                pressureL,
-                               energy,
                                posOverT,
                                energyFlux,
                                momentumFlux,

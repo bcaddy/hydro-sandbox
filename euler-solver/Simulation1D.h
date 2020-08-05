@@ -175,7 +175,6 @@ public:
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
-     * \param[in] energy The energy in the cell, used for flux calculations
      * \param[in] posOverT The value of the position divided by the current time.
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
@@ -188,7 +187,6 @@ public:
                       double const &densityL,
                       double const &velocityL,
                       double const &pressureL,
-                      double const &energy,
                       double const &posOverT,
                       double &energyFlux,
                       double &momentumFlux,

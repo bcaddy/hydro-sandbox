@@ -81,9 +81,6 @@ int main()
              i < (sim.grid.numTotCells-sim.grid.numGhostCells);
              i++)
         {
-            // Set boundary conditions (periodic)
-            sim.grid.updateBoundaries(gamma);
-
             // Compute interface states on the left side.
             // note that the order within vectors is density, velocity, pressure
             std::vector<double> leftSideOfInterface, rightSideOfInterface;
@@ -99,7 +96,6 @@ int main()
                              leftSideOfInterface[0],
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
-                             sim.grid.energy[i],
                              0.0, // position over t
                              leftEnergyFlux,
                              leftMomentumFlux,
@@ -119,7 +115,6 @@ int main()
                              leftSideOfInterface[0],
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
-                             sim.grid.energy[i],
                              0.0, // position over t
                              rightEnergyFlux,
                              rightMomentumFlux,

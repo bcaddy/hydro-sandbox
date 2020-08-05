@@ -76,12 +76,15 @@ def main():
     # ==========================================================================
     # Compute velocities
     velocityData = momentumData / densityData
+    # velocityData = np.loadtxt("../data/Velocity.csv", delimiter=",")
 
     # Compute pressures
     pressureData = (gamma - 1) * (energyData - 0.5 * (momentumData**2))
+    # pressureData = np.loadtxt("../data/Pressure.csv", delimiter=",")
 
     # Compute the specific internal energy
     ieData = energyData - 0.5 * densityData * (velocityData ** 2)
+    # ieData = pressureData / ((gamma - 1) * densityData)
     # ==========================================================================
     # End Computing Primitive Variables
     # Compute Limits
