@@ -149,7 +149,6 @@ void Simulation1D::_computeEigens(size_t const &idx,
 // =============================================================================
 void Simulation1D::setPrimitives(std::string const &operation)
 {
-    ;
     if (operation == "reset")
     {
         // Reset current index
@@ -392,7 +391,7 @@ void Simulation1D::solveRiemann(double const &densityR,
 
 // =============================================================================
 // Performe the conservative update
-void Simulation1D::conservativeUpdate(size_t const &idxInput,
+void Simulation1D::conservativeUpdate(size_t const &idx,
                                       double const &densityFluxL,
                                       double const &momentumFluxL,
                                       double const &energyFluxL,
@@ -400,15 +399,15 @@ void Simulation1D::conservativeUpdate(size_t const &idxInput,
                                       double const &momentumFluxR,
                                       double const &energyFluxR)
 {
-    _tempGrid.density[idxInput]  = grid.density[idxInput]
+    _tempGrid.density[idx]  = grid.density[idx]
                                    + (_timeStep / _deltaX)
                                    * (densityFluxL - densityFluxR);
 
-    _tempGrid.momentum[idxInput] = grid.momentum[idxInput]
+    _tempGrid.momentum[idx] = grid.momentum[idx]
                                    + (_timeStep / _deltaX)
                                    * (momentumFluxL - momentumFluxR);
 
-    _tempGrid.energy[idxInput]   = grid.energy[idxInput]
+    _tempGrid.energy[idx]   = grid.energy[idx]
                                    + (_timeStep / _deltaX)
                                    * (energyFluxL - energyFluxR);
 }

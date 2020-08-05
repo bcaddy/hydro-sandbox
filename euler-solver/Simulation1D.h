@@ -27,7 +27,7 @@ class Simulation1D
 {
 private:
     friend class ExactRiemannSolver;
-    
+
     /// The physical length of the simulation in meters
     double const _physLen;
     /// Courant–Friedrichs–Lewy (CFL) Number
@@ -101,8 +101,8 @@ private:
      * \return double The energy
      */
     double _computeEnergy(double const &pressure,
-                            double const &density,
-                            double const &velocity);
+                          double const &density,
+                          double const &velocity);
 
     /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock
@@ -125,7 +125,7 @@ private:
      * \return double The limited slope.
      */
     double _slope(std::array<double, _arraySize> const &primitive,
-                 size_t const &idx);
+                  size_t const &idx);
 
     /*!
      * \brief Compute the eigenvalues and vectors of the Euler equations for a

@@ -71,7 +71,7 @@ int main()
         // Compute the time step using the CFL condition
         sim.computeTimeStep();
 
-        // Set boundary conditions (periodic)
+        // Set boundary conditions (sod)
         sim.grid.updateBoundaries(gamma);
 
         // Set the values of the primitive array
