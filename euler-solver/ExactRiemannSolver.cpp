@@ -271,14 +271,14 @@ double ExactRiemannSolver::_guessPressureStar()
     // First compute the primitive variable approximation
     double pPrim = 0.5   * (_pressureL + _pressureR)
                    +
-                   0.125 * (_velocityR - _velocityL)
+                   0.125 * (_velocityL - _velocityR)
                          * (_densityL + _densityR)
                          * (_cL + _cR);
     // Make sure it's not negative
     pPrim = std::max(_tol, pPrim);
 
     // Check to see if we should use the primitive variable approximation or not
-    if ( ((pMax/pMin) <= 2.0) && (pMin < pPrim) && (pPrim < pMax) )
+    if ( ((pMax/pMin) <= 2.0) && (pMin <= pPrim) && (pPrim <= pMax) )
     {
         // Return pPrim and terminate this function
         return pPrim;

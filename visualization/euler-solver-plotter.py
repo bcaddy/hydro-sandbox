@@ -38,8 +38,8 @@ def main():
 
     # Load file
     densityData = np.loadtxt("../data/Density.csv", delimiter=",")
-    # momentumData = np.loadtxt("../data/Momentum.csv", delimiter=",")
-    # energyData = np.loadtxt("../data/Energy.csv", delimiter=",")
+    momentumData = np.loadtxt("../data/Momentum.csv", delimiter=",")
+    energyData = np.loadtxt("../data/Energy.csv", delimiter=",")
 
     # sim info
     SimPhysLength = 1.
@@ -75,16 +75,16 @@ def main():
     # Compute Primitive Variables
     # ==========================================================================
     # Compute velocities
-    # velocityData = momentumData / densityData
-    velocityData = np.loadtxt("../data/Velocity.csv", delimiter=",")
+    velocityData = momentumData / densityData
+    # velocityData = np.loadtxt("../data/Velocity.csv", delimiter=",")
 
     # Compute pressures
-    # pressureData = (gamma - 1) * (energyData - 0.5 * (momentumData**2))
-    pressureData = np.loadtxt("../data/Pressure.csv", delimiter=",")
+    pressureData = (gamma - 1) * (energyData - 0.5 * (momentumData**2))
+    # pressureData = np.loadtxt("../data/Pressure.csv", delimiter=",")
 
     # Compute the specific internal energy
-    # ieData = energyData - 0.5 * densityData * (velocityData ** 2)
-    ieData = pressureData / ((gamma - 1) * densityData)
+    ieData = energyData - 0.5 * densityData * (velocityData ** 2)
+    # ieData = pressureData / ((gamma - 1) * densityData)
     # ==========================================================================
     # End Computing Primitive Variables
     # Compute Limits
@@ -92,34 +92,34 @@ def main():
 
     # Find mins and maxes for setting the limits of the plot
     # Density
-    # pad = np.max(np.abs([densityData.min(), densityData.max()])) * 0.05
-    # densityLowLim = densityData.min() - pad
-    # densityHighLim = densityData.max() + pad
+    pad = np.max(np.abs([densityData.min(), densityData.max()])) * 0.05
+    densityLowLim = densityData.min() - pad
+    densityHighLim = densityData.max() + pad
 
-    densityLowLim = 0.
-    densityHighLim = 1.1
-    velocityLowLim = -0.1
-    velocityHighLim = 1.1
-    pressureLowLim = 0.
-    pressureHighLim = 1.1
-    ieLowLim = 1.5
-    ieHighLim = 3.6
+    # Velocity`
+    pad = np.max(np.abs([velocityData.min(), velocityData.max()])) * 0.05
+    velocityLowLim = velocityData.min() - pad
+    velocityHighLim = velocityData.max() + pad
 
-    # # Velocity`
-    # pad = np.max(np.abs([velocityData.min(), velocityData.max()])) * 0.05
-    # velocityLowLim = velocityData.min() - pad
-    # velocityHighLim = velocityData.max() + pad
+    # Pressure
+    pad = np.max(np.abs([pressureData.min(), pressureData.max()])) * 0.05
+    pressureLowLim = pressureData.min() - pad
+    pressureHighLim = pressureData.max() + pad
 
-    # # Pressure
-    # pad = np.max(np.abs([pressureData.min(), pressureData.max()])) * 0.05
-    # pressureLowLim = pressureData.min() - pad
-    # pressureHighLim = pressureData.max() + pad
+    # Specific Internal Energy
+    pad = np.max(np.abs([ieData.min(), ieData.max()])) * 0.05
+    ieLowLim = ieData.min() - pad
+    ieHighLim = ieData.max() + pad
 
-    # # Specific Internal Energy
-    # pad = np.max(np.abs([ieData.min(), ieData.max()])) * 0.05
-    # ieLowLim = ieData.min() - pad
-    # ieHighLim = ieData.max() + pad
-
+    # If I'm just graphing the Sod Shock Tube have this uncommented
+    # densityLowLim   = 0.
+    # densityHighLim  = 1.1
+    # velocityLowLim  = -0.1
+    # velocityHighLim = 1.1
+    # pressureLowLim  = 0.
+    # pressureHighLim = 1.1
+    # ieLowLim        = 1.5
+    # ieHighLim       = 3.6
 
     # ==========================================================================
     # End Computing Limits
@@ -160,33 +160,33 @@ def main():
     # Set plots
     densityPlot, = subPlot[0,0].plot(positions,
                            densityData[0,:],
-                           linestyle = '',
+                           linestyle = '-',
                            marker    = '.',
-                           markersize = 1,
+                           markersize = 3,
                            color     = densityColor,
                            label     = "Density"
                            )
     velocityPlot, = subPlot[0,1].plot(positions,
                            velocityData[0,:],
-                           linestyle = '',
+                           linestyle = '-',
                            marker    = '.',
-                           markersize = 1,
+                           markersize = 3,
                            color     = velocityColor,
                            label     = "Velocity"
                            )
     pressurePlot, = subPlot[1,0].plot(positions,
                            pressureData[0,:],
-                           linestyle = '',
+                           linestyle = '-',
                            marker    = '.',
-                           markersize = 1,
+                           markersize = 3,
                            color     = pressureColor,
                            label     = "Pressure"
                            )
     iePlot, = subPlot[1,1].plot(positions,
                            ieData[0,:],
-                           linestyle = '',
+                           linestyle = '-',
                            marker    = '.',
-                           markersize = 1,
+                           markersize = 3,
                            color     = ieColor,
                            label     = "specific internal energy"
                            )

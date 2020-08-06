@@ -29,31 +29,16 @@ int main()
     double const densityL   = 1.0;
     double const velocityL  = 0.0;
     double const pressureL  = 1.0;
-    double const densityR   = 0.125;
+    double const densityR   = 0.1;
     double const velocityR  = 0.0;
     double const pressureR  = 0.1;
     double const gamma      = 1.4;
-    double const xSize      = 1.;
+    double const xSize      = 1.0;
     double const tMax       = 0.2;
     size_t const numSamples = 1000;
     double const diaphPos   = 0.5 * xSize;
     double const deltaX     = xSize / static_cast<double>(numSamples);
-    // ===== End Settings for Sod Shock Tube  ===================================
-
-    // // ===== Settings for Sod Shock Tube Swapped ===============================
-    // double const densityR   = 1.0;
-    // double const velocityR  = 0.0;
-    // double const pressureR  = 1.0;
-    // double const densityL   = 0.125;
-    // double const velocityL  = 0.0;
-    // double const pressureL  = 0.1;
-    // double const gamma      = 1.4;
-    // double const xSize      = 1.;
-    // double const tMax       = 0.2;
-    // size_t const numSamples = 1000;
-    // double const diaphPos   = 0.5 * xSize;
-    // double const deltaX     = xSize / static_cast<double>(numSamples);
-    // // ===== End Settings for Sod Shock Tube Swapped ===========================
+    // ===== End Settings for Sod Shock Tube  ==================================
 
     // ===== Arrays & Solver ===================================================
     std::vector<double> density(numSamples);
