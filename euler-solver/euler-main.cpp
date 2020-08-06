@@ -89,7 +89,7 @@ int main()
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the left side
-            double leftEnergyFlux, leftMomentumFlux, leftDensityFlux;
+            double EnergyFluxL, momentumFluxL, densityFluxL;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
@@ -97,9 +97,9 @@ int main()
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
                              0.0, // position over t
-                             leftEnergyFlux,
-                             leftMomentumFlux,
-                             leftDensityFlux);
+                             EnergyFluxL,
+                             momentumFluxL,
+                             densityFluxL);
 
             // Compute interface states on the right side.
             // note that the order within vectors is density, velocity, pressure
@@ -108,7 +108,7 @@ int main()
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the right side
-            double rightEnergyFlux, rightMomentumFlux, rightDensityFlux;
+            double energyFluxR, momentumFluxR, densityFluxR;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
@@ -116,18 +116,18 @@ int main()
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
                              0.0, // position over t
-                             rightEnergyFlux,
-                             rightMomentumFlux,
-                             rightDensityFlux);
+                             energyFluxR,
+                             momentumFluxR,
+                             densityFluxR);
 
             // Compute conservative update
             sim.conservativeUpdate(i,
-                                   leftDensityFlux,
-                                   leftMomentumFlux,
-                                   leftEnergyFlux,
-                                   rightDensityFlux,
-                                   rightMomentumFlux,
-                                   rightEnergyFlux);
+                                   densityFluxL,
+                                   momentumFluxL,
+                                   EnergyFluxL,
+                                   densityFluxR,
+                                   momentumFluxR,
+                                   energyFluxR);
 
             // Update the values of the primitive array
             sim.setPrimitives("update");
