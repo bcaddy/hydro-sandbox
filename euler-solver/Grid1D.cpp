@@ -82,8 +82,8 @@ void Grid1D::updateBoundaries(double const &gamma)
 // =============================================================================
 void Grid1D::saveState()
 {
-    if (_densitySaveFile.is_open() &&
-        _momentumSaveFile.is_open() &&
+    if (_densitySaveFile.is_open() and
+        _momentumSaveFile.is_open() and
         _energySaveFile.is_open())
     {
         _densitySaveFile  << density[numGhostCells];
@@ -150,8 +150,8 @@ Grid1D::Grid1D(size_t const &reals,
 Grid1D::~Grid1D()
 {
     // Close the file if it's open
-    if (_densitySaveFile.is_open() &&
-        _momentumSaveFile.is_open() &&
+    if (_densitySaveFile.is_open() and
+        _momentumSaveFile.is_open() and
         _energySaveFile.is_open())
     {
         _densitySaveFile.close();

@@ -36,7 +36,9 @@ double Simulation1D::_computePressure(double const &energy,
                                       double const &density,
                                       double const &velocity)
 {
-    return (_gamma - 1) * ( energy - 0.5 * density * std::pow(velocity, 2) );
+    double pressure =  (_gamma - 1) * ( energy - 0.5 * density * std::pow(velocity, 2) );
+
+    return pressure;
 }
 // =============================================================================
 
@@ -45,7 +47,9 @@ double Simulation1D::_computeEnergy(double const &pressure,
                                     double const &density,
                                     double const &velocity)
 {
-    return (pressure/(_gamma - 1)) + 0.5 * density * std::pow(velocity,2);
+    double energy = (pressure/(_gamma - 1)) + 0.5 * density * std::pow(velocity,2);
+
+    return energy;
 }
 // =============================================================================
 
@@ -186,6 +190,7 @@ void Simulation1D::setPrimitives(std::string const &operation)
         throw std::invalid_argument("Invalid value for how to update primitive"
                                     "variable arrays in Simulation1D::setPrimitives");
     }
+    ;
 }
 // =============================================================================
 
@@ -238,7 +243,7 @@ void Simulation1D::interfaceStates(std::string const &side,
     }
 
     // Some common terms that I don't want to compute multiple times
-    double const dtOverDx = _timeStep / _deltaX;
+    // double const dtOverDx = _timeStep / _deltaX;
 
     // Declare eigenvalues and eigenvectors std::vectors
     std::vector<double> eigVal(3);
@@ -257,6 +262,7 @@ void Simulation1D::interfaceStates(std::string const &side,
     rightSideOfInterface[0] = _density[idx];
     rightSideOfInterface[1] = _velocity[idx];
     rightSideOfInterface[2] = _pressure[idx];
+    ;
 
 
 
@@ -400,6 +406,18 @@ void Simulation1D::conservativeUpdate(size_t const &idx,
                                       double const &momentumFluxR,
                                       double const &energyFluxR)
 {
+
+    double a = grid.density[idx]
+                                   + (_timeStep / _deltaX)
+                                   * (densityFluxL - densityFluxR);
+    double b = grid.energy[idx]
+                                   + (_timeStep / _deltaX)
+                                   * (energyFluxL - energyFluxR);
+    double c = grid.momentum[idx]
+                                   + (_timeStep / _deltaX)
+                                   * (momentumFluxL - momentumFluxR);
+
+
     _tempGrid.density[idx]  = grid.density[idx]
                                    + (_timeStep / _deltaX)
                                    * (densityFluxL - densityFluxR);
@@ -422,6 +440,10 @@ void Simulation1D::updateGrid()
              i < (grid.numTotCells-grid.numGhostCells);
              i++)
     {
+        double a = _tempGrid.density[i];
+        double b = _tempGrid.energy[i];
+        double c = _tempGrid.momentum[i];
+
         grid.density[i]  = _tempGrid.density[i];
         grid.momentum[i] = _tempGrid.momentum[i];
         grid.energy[i]   = _tempGrid.energy[i];

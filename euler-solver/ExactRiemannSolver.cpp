@@ -42,8 +42,9 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     _cL = std::sqrt(_gamma * pressureL / densityL);
 
     // Check for Nan values in the speeds
-    if (std::isnan(_cR) || std::isnan(_cL))
+    if (std::isnan(_cR) or std::isnan(_cL))
     {
+        ;
         throw std::runtime_error("Complex valued sound speed detected. Exiting.");
     }
 
@@ -99,14 +100,14 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
             rareSpeedTail = _velocityStar - cRare;
             rareSpeedHead = _velocityL - _cL;
 
-            if (rareSpeedHead > _posOverT)
+            if (rareSpeedHead >= _posOverT)
             {
                 // We're in the L state
                 _pressureState = _pressureL;
                 _velocityState = _velocityL;
                 _densityState  = _densityL;
             }
-            else if (rareSpeedTail < _posOverT)
+            else if (rareSpeedTail <= _posOverT)
             {
                 // We're in the L_* state
                 _pressureState = _pressureStar;
@@ -166,7 +167,7 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
             double rareSpeedHead, rareSpeedTail, cRare;
             cRare = _cR * std::pow(_pressureStar/_pressureR , (_gamma - 1)/(2 * _gamma));
             rareSpeedTail = _velocityStar + cRare;
-            rareSpeedHead = _velocityL + _cR;
+            rareSpeedHead = _velocityR + _cR;
 
             if (rareSpeedHead <= _posOverT)
             {
@@ -237,7 +238,7 @@ double ExactRiemannSolver::_computePressureStar()
         {
             pTemp = _tol;
         }
-        else if ( (std::abs(pTemp - pStar) / (0.5 * (pTemp + pStar))) <= _tol)
+        else if ( 2.0 * (std::abs(pTemp - pStar) / (pTemp + pStar)) <= _tol)
         {
             // Change is below tolerance so we're done
             return pTemp;
@@ -278,7 +279,7 @@ double ExactRiemannSolver::_guessPressureStar()
     pPrim = std::max(_tol, pPrim);
 
     // Check to see if we should use the primitive variable approximation or not
-    if ( ((pMax/pMin) <= 2.0) && (pMin <= pPrim) && (pPrim <= pMax) )
+    if ( ((pMax/pMin) <= 2.0) and (pMin <= pPrim) and (pPrim <= pMax) )
     {
         // Return pPrim and terminate this function
         return pPrim;
@@ -344,22 +345,21 @@ void ExactRiemannSolver::_pressureFunctions(double const &pGuess,
     if (pGuess > pSide)
     {
         // Shock
-        double const aSide = 2/ (dSide * (_gamma + 1));
-        double const bSide = pSide * ((_gamma - 1) / (_gamma + 1));
+        double const aSide = (2.0 / (_gamma + 1.0)) / dSide;
+        double const bSide = pSide * ((_gamma - 1.0) / (_gamma + 1.0));
         f = (pGuess - pSide) * std::sqrt(aSide / (pGuess + bSide));
 
-        df = std::sqrt(aSide / (pGuess + bSide)) * (
-             1 - ((pGuess - pSide) / (2 * (bSide + pGuess)))
-             );
+        df = std::sqrt(aSide / (pGuess + bSide))
+             * ( 1.0 - 0.5 * ( (pGuess - pSide) / (bSide + pGuess) ) );
     }
     else
     {
         // Rarefaction
-        f = (2. * cSide / (_gamma - 1)) *
-            (std::pow(pGuess/pSide, (_gamma - 1)/(2 * _gamma)) - 1);
+        f = (2.0 * cSide / (_gamma - 1)) *
+            (std::pow(pGuess/pSide, (_gamma - 1)/(2 * _gamma)) - 1.0);
 
-        df = (1. / (dSide * cSide)) *
-             std::pow( pGuess/pSide, (-1 - _gamma) / (2 * _gamma) );
+        df = (1.0 / (dSide * cSide)) *
+             std::pow( pGuess/pSide, (-1.0 - _gamma) / (2.0 * _gamma) );
     }
 
 }
