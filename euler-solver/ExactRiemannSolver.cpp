@@ -288,20 +288,19 @@ double ExactRiemannSolver::_guessPressureStar()
     if (pPrim < pMin)
     {
         // 2-Rarefaction Approximation
-        // TODO - Toro disagrees with himself on this. In Toro the 2-rarefaction
-        // TODO - approximation to the pressure is different in the implementation
-        // TODO - (midway down page 157) and the equation (eqn. 4.46).  The two different
-        // TODO - equations give very different results.
-        double p2Rare = // Equation on next lines for readability
-        std::pow(
-                // Numerator
-                ( _cL + _cR - 0.5 * (_gamma - 1) * (_velocityR - _velocityL) )
-                /
-                // Denominator
-                ( std::pow(_cL/_pressureL, (_gamma - 1)/(2*_gamma) )
-                + std::pow(_cR/_pressureR, (_gamma - 1)/(2*_gamma) ) )
-                // Exponent
-                , 2*_gamma/(_gamma-1));
+        // NOTE: Toro disagrees with himself on this. In Toro the 2-rarefaction
+        //       approximation to the pressure is different in the implementation
+        //       (midway down page 157) and the equation (eqn. 4.46).  The two
+        //       different equations give very different results.
+        double pq, vm, ptL, ptR, p2Rare;
+        pq = std::pow(_pressureL / _pressureR, (_gamma - 1.0)/(2.0 * _gamma));
+
+        vm = ( (pq * _velocityL / _cL) + (_velocityR / _cR) + (2.0 / (_gamma - 1)) * (pq - 1.0) )
+             /
+             (pq/_cL + 1.0/_cR);
+
+        p2Rare = 0.5 * ( _pressureL * std::pow(ptL, (2.0 * _gamma / (_gamma - 1)))
+                              + _pressureR * std::pow(ptR, (2.0 * _gamma / (_gamma - 1))));
 
         return std::max(_tol, p2Rare);
     }
