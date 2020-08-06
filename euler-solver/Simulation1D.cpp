@@ -250,13 +250,14 @@ void Simulation1D::interfaceStates(std::string const &side,
     rightSideOfInterface.resize(3);
 
     // ===== Test piecewise constant ===========================================
-    leftSideOfInterface[0] = _density[idx];
-    leftSideOfInterface[1] = _velocity[idx];
-    leftSideOfInterface[2] = _pressure[idx];
+    leftSideOfInterface[0] = 0.01; //_density[idx];
+    leftSideOfInterface[1] = 9.99; //_velocity[idx];
+    leftSideOfInterface[2] = 0.01; //_pressure[idx];
     idx++;
-    rightSideOfInterface[0] = _density[idx];
-    rightSideOfInterface[1] = _velocity[idx];
-    rightSideOfInterface[2] = _pressure[idx];
+    rightSideOfInterface[0] = 0.01; //_density[idx];
+    rightSideOfInterface[1] = 0.01; //_velocity[idx];
+    rightSideOfInterface[2] = 0.01; //_pressure[idx];
+
 
 
     // ===== End Test piecewise constant =======================================

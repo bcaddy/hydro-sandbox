@@ -269,7 +269,8 @@ double ExactRiemannSolver::_guessPressureStar()
     double pMax = std::max(_pressureL, _pressureR);
 
     // First compute the primitive variable approximation
-    double pPrim = 0.5   * (_pressureL + _pressureR) -
+    double pPrim = 0.5   * (_pressureL + _pressureR)
+                   +
                    0.125 * (_velocityR - _velocityL)
                          * (_densityL + _densityR)
                          * (_cL + _cR);
@@ -299,8 +300,12 @@ double ExactRiemannSolver::_guessPressureStar()
              /
              (pq/_cL + 1.0/_cR);
 
-        p2Rare = 0.5 * ( _pressureL * std::pow(ptL, (2.0 * _gamma / (_gamma - 1)))
-                              + _pressureR * std::pow(ptR, (2.0 * _gamma / (_gamma - 1))));
+        ptL = 1.0 + ((_gamma - 1)/2.0) * (_velocityL - vm) / _cL;
+
+        ptR = 1.0 + ((_gamma - 1)/2.0) * (vm - _velocityR) / _cR;
+
+        p2Rare = 0.5 * (_pressureL * std::pow(ptL, 2.0 * _gamma / (_gamma - 1))
+                      + _pressureR * std::pow(ptR, 2.0 * _gamma / (_gamma - 1)));
 
         return std::max(_tol, p2Rare);
     }
