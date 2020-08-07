@@ -44,7 +44,6 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     // Check for Nan values in the speeds
     if (std::isnan(_cR) or std::isnan(_cL))
     {
-        ;
         throw std::runtime_error("Complex valued sound speed detected. Exiting.");
     }
 

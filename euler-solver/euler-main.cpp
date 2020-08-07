@@ -66,8 +66,22 @@ int main()
     //=== Begin the main evolution loop ========================================
     size_t step = 0;
 
+    // track conserved variables
+    std::vector<double> densityTotal, momentumTotal, energyTotal;
+
     while (sim.currentTime <= maxTime)
     {
+        densityTotal.push_back(sim.grid.density[sim.grid.numGhostCells]);
+        momentumTotal.push_back(sim.grid.momentum[sim.grid.numGhostCells]);
+        energyTotal.push_back(sim.grid.energy[sim.grid.numGhostCells]);
+        for (size_t i = sim.grid.numGhostCells + 1;
+             i < (sim.grid.numTotCells-sim.grid.numGhostCells);
+             i++)
+        {
+            densityTotal.back() += sim.grid.density[i];
+            momentumTotal.back() += sim.grid.momentum[i];
+            energyTotal.back() += sim.grid.energy[i];
+        }
         // Compute the time step using the CFL condition
         sim.computeTimeStep();
 

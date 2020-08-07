@@ -35,7 +35,7 @@ int main()
     double const gamma      = 1.4;
     double const xSize      = 1.0;
     double const tMax       = 0.2;
-    size_t const numSamples = 1000;
+    size_t const numSamples = 100;
     double const diaphPos   = 0.5 * xSize;
     double const deltaX     = xSize / static_cast<double>(numSamples);
     // ===== End Settings for Sod Shock Tube  ==================================

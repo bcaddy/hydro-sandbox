@@ -63,6 +63,8 @@ def main():
     velocityColor = 'purple'                    # color of the velocity plot
     pressureColor = 'green'                     # color of the pressure plot
     ieColor       = 'red'                       # color of the specific internal energy plot
+    # linestyle     = ''                          # The line style
+    linestyle     = '-'                         # The line style
 
     # Reset some animation settings for short simulations
     if SimNumSteps < TotFrames:
@@ -160,7 +162,7 @@ def main():
     # Set plots
     densityPlot, = subPlot[0,0].plot(positions,
                            densityData[0,:],
-                           linestyle = '-',
+                           linestyle = linestyle,
                            marker    = '.',
                            markersize = 3,
                            color     = densityColor,
@@ -168,7 +170,7 @@ def main():
                            )
     velocityPlot, = subPlot[0,1].plot(positions,
                            velocityData[0,:],
-                           linestyle = '-',
+                           linestyle = linestyle,
                            marker    = '.',
                            markersize = 3,
                            color     = velocityColor,
@@ -176,7 +178,7 @@ def main():
                            )
     pressurePlot, = subPlot[1,0].plot(positions,
                            pressureData[0,:],
-                           linestyle = '-',
+                           linestyle = linestyle,
                            marker    = '.',
                            markersize = 3,
                            color     = pressureColor,
@@ -184,7 +186,7 @@ def main():
                            )
     iePlot, = subPlot[1,1].plot(positions,
                            ieData[0,:],
-                           linestyle = '-',
+                           linestyle = linestyle,
                            marker    = '.',
                            markersize = 3,
                            color     = ieColor,

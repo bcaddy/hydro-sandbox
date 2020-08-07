@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/euler-solver/euler-solver.exe",
             // "program": "${workspaceRoot}/euler-solver/test-Riemann.exe",
             "args": [],
-            "stopAtEntry": false,
+            "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,

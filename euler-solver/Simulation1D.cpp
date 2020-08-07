@@ -246,9 +246,9 @@ void Simulation1D::interfaceStates(std::string const &side,
     // double const dtOverDx = _timeStep / _deltaX;
 
     // Declare eigenvalues and eigenvectors std::vectors
-    std::vector<double> eigVal(3);
-    std::vector<std::vector<double>> rEigVec(3, std::vector<double>(3));
-    std::vector<std::vector<double>> lEigVec(3, std::vector<double>(3));
+    // std::vector<double> eigVal(3);
+    // std::vector<std::vector<double>> rEigVec(3, std::vector<double>(3));
+    // std::vector<std::vector<double>> lEigVec(3, std::vector<double>(3));
 
     // Resize output vectors to make sure they're the right size
     leftSideOfInterface.resize(3);
