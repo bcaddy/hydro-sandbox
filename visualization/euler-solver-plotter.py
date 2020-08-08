@@ -65,6 +65,9 @@ def main():
     ieColor       = 'red'                       # color of the specific internal energy plot
     # linestyle     = ''                          # The line style
     linestyle     = '-'                         # The line style
+    linewidth     = 0.5
+    marker        = "."
+    markersize    = 3
 
     # Reset some animation settings for short simulations
     if SimNumSteps < TotFrames:
@@ -81,7 +84,7 @@ def main():
     # velocityData = np.loadtxt("../data/Velocity.csv", delimiter=",")
 
     # Compute pressures
-    pressureData = (gamma - 1) * (energyData - 0.5 * (momentumData**2))
+    pressureData = (gamma - 1) * (energyData - 0.5 * densityData * (velocityData**2))
     # pressureData = np.loadtxt("../data/Pressure.csv", delimiter=",")
 
     # Compute the specific internal energy
@@ -162,35 +165,39 @@ def main():
     # Set plots
     densityPlot, = subPlot[0,0].plot(positions,
                            densityData[0,:],
-                           linestyle = linestyle,
-                           marker    = '.',
-                           markersize = 3,
-                           color     = densityColor,
-                           label     = "Density"
+                           linestyle  = linestyle,
+                           linewidth  = linewidth,
+                           marker     = marker,
+                           markersize = markersize,
+                           color      = densityColor,
+                           label      = "Density"
                            )
     velocityPlot, = subPlot[0,1].plot(positions,
                            velocityData[0,:],
-                           linestyle = linestyle,
-                           marker    = '.',
-                           markersize = 3,
-                           color     = velocityColor,
-                           label     = "Velocity"
+                           linestyle  = linestyle,
+                           linewidth  = linewidth,
+                           marker     = marker,
+                           markersize = markersize,
+                           color      = velocityColor,
+                           label      = "Velocity"
                            )
     pressurePlot, = subPlot[1,0].plot(positions,
                            pressureData[0,:],
-                           linestyle = linestyle,
-                           marker    = '.',
-                           markersize = 3,
-                           color     = pressureColor,
-                           label     = "Pressure"
+                           linestyle  = linestyle,
+                           linewidth  = linewidth,
+                           marker     = marker,
+                           markersize = markersize,
+                           color      = pressureColor,
+                           label      = "Pressure"
                            )
     iePlot, = subPlot[1,1].plot(positions,
                            ieData[0,:],
-                           linestyle = linestyle,
-                           marker    = '.',
-                           markersize = 3,
-                           color     = ieColor,
-                           label     = "specific internal energy"
+                           linestyle  = linestyle,
+                           linewidth  = linewidth,
+                           marker     = marker,
+                           markersize = markersize,
+                           color      = ieColor,
+                           label      = "specific internal energy"
                            )
     # ==========================================================================
     # End Setup Plots
