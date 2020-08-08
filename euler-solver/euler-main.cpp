@@ -43,11 +43,11 @@ int main()
     double const physicalLength        = 1.;
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
-    double const maxTime               = 0.2;
-    size_t const numRealCells          = 100;//17;
+    double const maxTime               = 2.0;
+    size_t const numRealCells          = 10;//17;
     size_t const numGhostCells         = 2;
-    std::string  initialConditionsKind = "sod";
-    std::string  boundaryConditions    = "sod";
+    std::string  initialConditionsKind = "indexCheck";
+    std::string  boundaryConditions    = "periodic";
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
 
@@ -63,25 +63,11 @@ int main()
 
     // Save the initial state
     sim.grid.saveState();
+
     //=== Begin the main evolution loop ========================================
     size_t step = 0;
-
-    // track conserved variables
-    std::vector<double> densityTotal, momentumTotal, energyTotal;
-
     while (sim.currentTime <= maxTime)
     {
-        densityTotal.push_back(sim.grid.density[sim.grid.numGhostCells]);
-        momentumTotal.push_back(sim.grid.momentum[sim.grid.numGhostCells]);
-        energyTotal.push_back(sim.grid.energy[sim.grid.numGhostCells]);
-        for (size_t i = sim.grid.numGhostCells + 1;
-             i < (sim.grid.numTotCells-sim.grid.numGhostCells);
-             i++)
-        {
-            densityTotal.back() += sim.grid.density[i];
-            momentumTotal.back() += sim.grid.momentum[i];
-            energyTotal.back() += sim.grid.energy[i];
-        }
         // Compute the time step using the CFL condition
         sim.computeTimeStep();
 

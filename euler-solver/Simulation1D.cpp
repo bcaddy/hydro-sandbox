@@ -56,9 +56,6 @@ double Simulation1D::_computeEnergy(double const &pressure,
 // =============================================================================
 void Simulation1D::_setInitialConditions(std::string const &initialConditionsKind)
 {
-    // Set up Sod initial conditions
-    // TODO Add other kinds of initial conditions
-
     if (initialConditionsKind == "sod")
     {
         size_t const half  = grid.numTotCells / 2;
@@ -81,6 +78,45 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             grid.density[i]  = 0.125;  // 1/8th
             grid.momentum[i] = _computeMomentum(0.0, 0.125);;
             grid.energy[i]   = _computeEnergy(0.1, 0.125, 0.0);
+        }
+    }
+    else if (initialConditionsKind == "indexCheck")
+    {
+        for (size_t i = grid.numGhostCells;
+             i < (grid.numTotCells-grid.numGhostCells);
+             i++)
+        {
+            double dIdx = static_cast<double>(i) + 0.001;
+            grid.density[i]  = dIdx;
+            grid.momentum[i] = dIdx;//_computeMomentum(dIdx, dIdx);
+            grid.energy[i]   = dIdx;//_computeEnergy(dIdx, dIdx, dIdx);
+        }
+
+    }
+    else if (initialConditionsKind == "advection")
+    {
+        double pressure = 1.0, velocity = 1.0;
+        double denLow = 1.0, denHigh = 2.0;
+
+        for (size_t i = grid.numGhostCells;
+             i < (grid.numTotCells-grid.numGhostCells);
+             i++)
+        {
+            // if ( (grid.numTotCells/4 < i) and (i < grid.numTotCells/2) )
+            if ((i > 3*grid.numTotCells/4) )
+            {
+                // We're in the high pressure region
+                grid.density[i] = denHigh;
+            }
+            else
+            {
+                // We're in the low pressure region
+                grid.density[i] = denLow;
+            }
+
+            // Set the other conserved variables
+            grid.momentum[i] = _computeMomentum(velocity, grid.density[i]);
+            grid.energy[i]   = _computeEnergy(pressure, grid.density[i], velocity);
         }
     }
     else
@@ -406,18 +442,6 @@ void Simulation1D::conservativeUpdate(size_t const &idx,
                                       double const &momentumFluxR,
                                       double const &energyFluxR)
 {
-
-    double a = grid.density[idx]
-                                   + (_timeStep / _deltaX)
-                                   * (densityFluxL - densityFluxR);
-    double b = grid.energy[idx]
-                                   + (_timeStep / _deltaX)
-                                   * (energyFluxL - energyFluxR);
-    double c = grid.momentum[idx]
-                                   + (_timeStep / _deltaX)
-                                   * (momentumFluxL - momentumFluxR);
-
-
     _tempGrid.density[idx]  = grid.density[idx]
                                    + (_timeStep / _deltaX)
                                    * (densityFluxL - densityFluxR);
@@ -426,9 +450,12 @@ void Simulation1D::conservativeUpdate(size_t const &idx,
                                    + (_timeStep / _deltaX)
                                    * (momentumFluxL - momentumFluxR);
 
-    _tempGrid.energy[idx]   = grid.energy[idx]
-                                   + (_timeStep / _deltaX)
-                                   * (energyFluxL - energyFluxR);
+    // _tempGrid.energy[idx]   = grid.energy[idx]
+    //                                + (_timeStep / _deltaX)
+    //                                * (energyFluxL - energyFluxR);
+
+    // _tempGrid.momentum[idx] = _computeMomentum(1.0,_tempGrid.density[idx] );
+    _tempGrid.energy[idx] = _computeEnergy(1.0, _tempGrid.density[idx] , 1.0);
 }
 // =============================================================================
 
@@ -440,10 +467,6 @@ void Simulation1D::updateGrid()
              i < (grid.numTotCells-grid.numGhostCells);
              i++)
     {
-        double a = _tempGrid.density[i];
-        double b = _tempGrid.energy[i];
-        double c = _tempGrid.momentum[i];
-
         grid.density[i]  = _tempGrid.density[i];
         grid.momentum[i] = _tempGrid.momentum[i];
         grid.energy[i]   = _tempGrid.energy[i];
