@@ -26,12 +26,12 @@ int main()
 
 
     // ===== Settings for Sod Shock Tube =======================================
-    double const densityL   = 1.0;
-    double const velocityL  = 0.0;
-    double const pressureL  = 1.0;
-    double const densityR   = 0.1;
+    double const densityR   = 1.0;
     double const velocityR  = 0.0;
-    double const pressureR  = 0.1;
+    double const pressureR  = 1.0;
+    double const densityL   = 0.1;
+    double const velocityL  = 0.0;
+    double const pressureL  = 0.1;
     double const gamma      = 1.4;
     double const xSize      = 1.0;
     double const tMax       = 0.2;

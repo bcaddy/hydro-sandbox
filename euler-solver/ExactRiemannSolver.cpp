@@ -75,7 +75,7 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
             double shockSpeed = _shockSpeed("left");
 
             // Decide between L and L_* state
-            if (shockSpeed > _posOverT)
+            if (shockSpeed >= _posOverT)
             {
                 // We're in the L state
                 _pressureState = _pressureL;
@@ -106,7 +106,7 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
                 _velocityState = _velocityL;
                 _densityState  = _densityL;
             }
-            else if (rareSpeedTail <= _posOverT)
+            else if (rareSpeedTail < _posOverT)
             {
                 // We're in the L_* state
                 _pressureState = _pressureStar;

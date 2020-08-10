@@ -298,7 +298,6 @@ void Simulation1D::interfaceStates(std::string const &side,
     rightSideOfInterface[0] = _density[idx];
     rightSideOfInterface[1] = _velocity[idx];
     rightSideOfInterface[2] = _pressure[idx];
-    ;
 
 
 
@@ -450,12 +449,10 @@ void Simulation1D::conservativeUpdate(size_t const &idx,
                                    + (_timeStep / _deltaX)
                                    * (momentumFluxL - momentumFluxR);
 
-    // _tempGrid.energy[idx]   = grid.energy[idx]
-    //                                + (_timeStep / _deltaX)
-    //                                * (energyFluxL - energyFluxR);
-
-    // _tempGrid.momentum[idx] = _computeMomentum(1.0,_tempGrid.density[idx] );
-    _tempGrid.energy[idx] = _computeEnergy(1.0, _tempGrid.density[idx] , 1.0);
+    _tempGrid.energy[idx]   = grid.energy[idx]
+                                   + (_timeStep / _deltaX)
+                                   * (energyFluxL - energyFluxR);
+    // _tempGrid.energy[idx] = _computeEnergy(1.0, _tempGrid.density[idx] , 1.0);
 }
 // =============================================================================
 

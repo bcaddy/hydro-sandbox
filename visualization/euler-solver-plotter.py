@@ -34,7 +34,7 @@ def main():
     # Set global variable for the animation functions
     global densityData, velocityData, pressureData, ieData, positions
     global Stride, Index, InitFrames, InitIndex
-    global densityPlot, velocityPlot, pressurePlot, iePlot
+    global densityPlot, velocityPlot, pressurePlot, iePlot, timeStep
 
     # Load file
     densityData = np.loadtxt("../data/Density.csv", delimiter=",")
@@ -199,6 +199,7 @@ def main():
                            color      = ieColor,
                            label      = "specific internal energy"
                            )
+    timeStep = plt.text(0.5, 0.5, "Step = -1")
     # ==========================================================================
     # End Setup Plots
     # ==========================================================================
@@ -229,6 +230,9 @@ def NewFrame(self):
     velocityPlot.set_data(positions, velocityData[Index,:])
     pressurePlot.set_data(positions, pressureData[Index,:])
     iePlot.set_data(positions, ieData[Index,:])
+
+    timeStep.set_text(f"Step = {Index-1}")
+
 
 
     if InitIndex > InitFrames:

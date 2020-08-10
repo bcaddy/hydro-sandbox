@@ -44,9 +44,9 @@ int main()
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
     double const maxTime               = 2.0;
-    size_t const numRealCells          = 10;//17;
+    size_t const numRealCells          = 100;
     size_t const numGhostCells         = 2;
-    std::string  initialConditionsKind = "indexCheck";
+    std::string  initialConditionsKind = "advection";
     std::string  boundaryConditions    = "periodic";
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
