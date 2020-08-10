@@ -89,7 +89,7 @@ int main()
                                 rightSideOfInterface);
 
             // Solve Riemann problem on the left side
-            double EnergyFluxL, momentumFluxL, densityFluxL;
+            double energyFluxL, momentumFluxL, densityFluxL;
             sim.solveRiemann(rightSideOfInterface[0],
                              rightSideOfInterface[1],
                              rightSideOfInterface[2],
@@ -97,7 +97,7 @@ int main()
                              leftSideOfInterface[1],
                              leftSideOfInterface[2],
                              0.0, // position over t
-                             EnergyFluxL,
+                             energyFluxL,
                              momentumFluxL,
                              densityFluxL);
 
@@ -124,7 +124,7 @@ int main()
             sim.conservativeUpdate(i,
                                    densityFluxL,
                                    momentumFluxL,
-                                   EnergyFluxL,
+                                   energyFluxL,
                                    densityFluxR,
                                    momentumFluxR,
                                    energyFluxR);
