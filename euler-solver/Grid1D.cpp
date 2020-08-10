@@ -63,14 +63,6 @@ void Grid1D::updateBoundaries(double const &gamma)
             // Update Energy BC's
             energy[leftGhost]  = energy[rightReal];
             energy[rightGhost] = energy[leftReal];
-
-            double a,b;
-            a = density[leftGhost];
-            b = density[rightGhost];
-            a = momentum[leftGhost];
-            b = momentum[rightGhost];
-            a = energy[leftGhost];
-            b = energy[rightGhost];
         }
     }
     else if (boundaryConditionKind == "pass")

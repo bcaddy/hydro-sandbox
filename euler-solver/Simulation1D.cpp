@@ -226,7 +226,6 @@ void Simulation1D::setPrimitives(std::string const &operation)
         throw std::invalid_argument("Invalid value for how to update primitive"
                                     "variable arrays in Simulation1D::setPrimitives");
     }
-    ;
 }
 // =============================================================================
 
