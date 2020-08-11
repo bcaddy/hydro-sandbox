@@ -14,7 +14,10 @@
 #include <stdexcept>
 #include <iostream>
 
+#include "HydroHelper.h"
 #include "ExactRiemannSolver.h"
+
+using namespace HydroHelper;
 
 // =============================================================================
 void ExactRiemannSolver::riemannMain(double const &densityR,
@@ -38,14 +41,8 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     _posOverT     = posOverT;
 
     // Compute the sound speeds
-    _cR = std::sqrt(_gamma * pressureR / densityR);
-    _cL = std::sqrt(_gamma * pressureL / densityL);
-
-    // Check for Nan values in the speeds
-    if (std::isnan(_cR) or std::isnan(_cL))
-    {
-        throw std::runtime_error("Complex valued sound speed detected. Exiting.");
-    }
+    _cR = soundSpeed(pressureR, densityR, _gamma);
+    _cL = soundSpeed(pressureL, densityL, _gamma);
 
     // Check for a vacuum
     if ((2 / (_gamma - 1)) * (_cL + _cR) <= (_velocityR - _velocityL))

@@ -9,7 +9,6 @@ cppDebug = g++ \
 		   -Wpedantic \
 		   -fasynchronous-unwind-tables \
 		   -fexceptions \
-		   -fstack-clash-protection \
 		   -g
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used

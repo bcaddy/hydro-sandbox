@@ -1,17 +1,12 @@
 /*!*****************************************************************************
  * \file Grid1D.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief The Grid1D struct stores the grid and provides member functions to
- * manipulate the grid
+ * \brief Contains the declaration of the Grid1D struct
  *
  * \date 2020-06-23
  *
  * \copyright Copyright (c) 2020
  *
- * \details The Grid1D struct stores the grid as a set of four arrays, one each
- * for density, momentum, and energy. There are member functions for finding
- * the momentum, saving the grid, and updating the ghost
- * cells.
  ******************************************************************************/
 #pragma once
 
@@ -19,12 +14,24 @@
 #include <string>
 #include <fstream>
 
+/*!
+ * \brief The Grid1D struct stores the grid and provides member functions to
+ * manipulate the grid
+ * 
+ * \details The Grid1D struct stores the grid as a set of three arrays, one each
+ * for density, momentum, and energy. There are member functions for saving the 
+ * grid and updating the ghost cells/boundary conditions.
+ */
 struct Grid1D
 {
 private:
     // Output files
+
+    /// Save file object for the density
     std::ofstream _densitySaveFile;
+    /// Save file object for the momentum
     std::ofstream _momentumSaveFile;
+    /// Save file object for the energy
     std::ofstream _energySaveFile;
 
 public:

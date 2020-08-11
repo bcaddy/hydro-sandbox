@@ -14,44 +14,9 @@
 #include <algorithm>
 
 #include "Simulation1D.h"
+#include "HydroHelper.h"
 
-// =============================================================================
-double Simulation1D::_computeVelocity(double const &momentum,
-                                      double const &density)
-{
-    return momentum / density;
-}
-// =============================================================================
-
-// =============================================================================
-double Simulation1D::_computeMomentum(double const &velocity,
-                                      double const &density)
-{
-    return velocity * density;
-}
-// =============================================================================
-
-// =============================================================================
-double Simulation1D::_computePressure(double const &energy,
-                                      double const &density,
-                                      double const &velocity)
-{
-    double pressure =  (_gamma - 1) * ( energy - 0.5 * density * std::pow(velocity, 2) );
-
-    return pressure;
-}
-// =============================================================================
-
-// =============================================================================
-double Simulation1D::_computeEnergy(double const &pressure,
-                                    double const &density,
-                                    double const &velocity)
-{
-    double energy = (pressure/(_gamma - 1)) + 0.5 * density * std::pow(velocity,2);
-
-    return energy;
-}
-// =============================================================================
+using namespace HydroHelper;
 
 // =============================================================================
 void Simulation1D::_setInitialConditions(std::string const &initialConditionsKind)
@@ -66,8 +31,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i++)
         {
             grid.density[i]  = 1.;
-            grid.momentum[i] = _computeMomentum(0.0, 1.0);
-            grid.energy[i]   = _computeEnergy(1.0, 1.0, 0.0);
+            grid.momentum[i] = computeMomentum(0.0, 1.0);
+            grid.energy[i]   = computeEnergy(1.0, 1.0, 0.0, _gamma);
         }
 
         // Iterate over the real cells on the right side
@@ -76,8 +41,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i++)
         {
             grid.density[i]  = 0.125;  // 1/8th
-            grid.momentum[i] = _computeMomentum(0.0, 0.125);;
-            grid.energy[i]   = _computeEnergy(0.1, 0.125, 0.0);
+            grid.momentum[i] = computeMomentum(0.0, 0.125);;
+            grid.energy[i]   = computeEnergy(0.1, 0.125, 0.0, _gamma);
         }
     }
     else if (initialConditionsKind == "indexCheck")
@@ -115,8 +80,8 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             }
 
             // Set the other conserved variables
-            grid.momentum[i] = _computeMomentum(velocity, grid.density[i]);
-            grid.energy[i]   = _computeEnergy(pressure, grid.density[i], velocity);
+            grid.momentum[i] = computeMomentum(velocity, grid.density[i]);
+            grid.energy[i]   = computeEnergy(pressure, grid.density[i], velocity, _gamma);
         }
     }
     else
@@ -163,7 +128,7 @@ void Simulation1D::_computeEigens(size_t const &idx,
     // Compute the eigenvalues and vectors
 
     // first we have to find the speed of sound c
-    double c = std::sqrt(_gamma * _pressure[idx] / _density[idx]);
+    double c = soundSpeed(_pressure[idx], _density[idx], _gamma);
 
     // Compute a couple of common terms
     double const cOverDensity = c/_density[idx];
@@ -198,8 +163,8 @@ void Simulation1D::setPrimitives(std::string const &operation)
         for (size_t i = 0; i < _arraySize; i++)
         {
             _density[i]  = grid.density[i];
-            _velocity[i] = _computeVelocity(grid.momentum[i], grid.density[i]);
-            _pressure[i] = _computePressure(grid.energy[i], _density[i], _velocity[i]);
+            _velocity[i] = computeVelocity(grid.momentum[i], grid.density[i]);
+            _pressure[i] = computePressure(grid.energy[i], _density[i], _velocity[i], _gamma);
         }
     }
     else if (operation == "update")
@@ -215,11 +180,12 @@ void Simulation1D::setPrimitives(std::string const &operation)
         // Set the final array elements
         _currentIndex++;
         _density[_arraySize-1]  = grid.density[_currentIndex + 2];
-        _velocity[_arraySize-1] = _computeVelocity(grid.momentum[_currentIndex + 2],
-                                                   grid.density[_currentIndex + 2]);
-        _pressure[_arraySize-1] = _computePressure(grid.energy[_currentIndex + 2],
-                                                   _density[_arraySize - 1],
-                                                   _velocity[_arraySize - 1]);
+        _velocity[_arraySize-1] = computeVelocity(grid.momentum[_currentIndex + 2],
+                                                  grid.density[_currentIndex + 2]);
+        _pressure[_arraySize-1] = computePressure(grid.energy[_currentIndex + 2],
+                                                  _density[_arraySize - 1],
+                                                  _velocity[_arraySize - 1],
+                                                  _gamma);
     }
     else
     {
@@ -239,12 +205,12 @@ void Simulation1D::computeTimeStep()
          i < (grid.numTotCells - grid.numGhostCells);
          i++)
     {
-        double velocity = _computeVelocity(grid.momentum[i], grid.density[i]);
-        double pressure = _computePressure(grid.energy[i], grid.density[i], velocity);
+        double velocity = computeVelocity(grid.momentum[i], grid.density[i]);
+        double pressure = computePressure(grid.energy[i], grid.density[i], velocity, _gamma);
 
         // Compute the maximum wave speed
         vMaxTemp = std::abs(velocity) +
-                   std::sqrt(_gamma * pressure / grid.density[i]);
+                   soundSpeed(pressure, grid.density[i], _gamma);
         if (vMax < vMaxTemp)
         {
             vMax = vMaxTemp;

@@ -62,49 +62,6 @@ private:
     ExactRiemannSolver _riemannSolver;
 
     /*!
-     * \brief Compute the velocity
-     *
-     * \param momentum The momentum
-     * \param density The density
-     * \return double The velocity
-     */
-    double _computeVelocity(double const &momentum,
-                            double const &density);
-    /*!
-     * \brief Compute the momentum
-     *
-     * \param velocity The velocity
-     * \param density The density
-     * \return double The momentum
-     */
-    double _computeMomentum(double const &velocity,
-                            double const &density);
-
-    /*!
-     * \brief Compute the Pressure
-     *
-     * \param energy The energy
-     * \param density The density
-     * \param velocity The velocity
-     * \return double The pressure
-     */
-    double _computePressure(double const &energy,
-                            double const &density,
-                            double const &velocity);
-
-    /*!
-     * \brief Compute the energy
-     *
-     * \param pressure The pressure
-     * \param density The density
-     * \param velocity The velocity
-     * \return double The energy
-     */
-    double _computeEnergy(double const &pressure,
-                          double const &density,
-                          double const &velocity);
-
-    /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock
      * tube.
      *
@@ -276,7 +233,7 @@ public:
      * \param[in] reals The number of real grid cells
      * \param[in] ghosts The number of ghost cells
      * \param[in] initialConditionsKind Which initial conditions to use
-     * \param[in] limiterKindConstructor Which limiter to use
+     * \param[in] boundaryConditions Which kind of boundary conditions to use
      * \param[in] saveDir The directory to save the grid to
      */
     Simulation1D(double const &physicalLength,
