@@ -29,7 +29,7 @@ void Grid1D::updateBoundaries(double const &gamma)
 
             // Update Density BC's
             density[leftGhost]  = 1.0;
-            density[rightGhost] = 0.125;
+            density[rightGhost] = 0.1;
 
             // Update Momentum BC's
             momentum[leftGhost]  = 0.0;
@@ -110,10 +110,10 @@ void Grid1D::saveState()
 // =============================================================================
 // Constructors and destructors along with Init function
 // =============================================================================
-void Grid1D::init(size_t const &reals,
-                  size_t const &ghosts,
-                  std::string const &saveDir,
-                  std::string const &boundaryConditions)
+Grid1D::Grid1D(size_t const &reals,
+               size_t const &ghosts,
+               std::string const &saveDir,
+               std::string const &boundaryConditions)
 {
     numGhostCells = ghosts;
     numRealCells = reals;
@@ -124,27 +124,9 @@ void Grid1D::init(size_t const &reals,
     momentum.resize(numTotCells);
     energy.resize(numTotCells);
 
-    if (saveDir != "no saving")
-    {
-        _densitySaveFile.open(saveDir + "Density.csv");
-        _momentumSaveFile.open(saveDir + "Momentum.csv");
-        _energySaveFile.open(saveDir + "Energy.csv");
-    }
-
-}
-
-Grid1D::Grid1D(size_t const &reals,
-               size_t const &ghosts,
-               std::string const &saveDir,
-               std::string const &boundaryConditions)
-{
-    init(reals, ghosts, saveDir, boundaryConditions);
-}
-
-Grid1D::Grid1D(size_t const &reals,
-               size_t const &ghosts)
-{
-    init(reals, ghosts, "no bc", "no saving");
+    _densitySaveFile.open(saveDir + "Density.csv");
+    _momentumSaveFile.open(saveDir + "Momentum.csv");
+    _energySaveFile.open(saveDir + "Energy.csv");
 }
 
 Grid1D::~Grid1D()

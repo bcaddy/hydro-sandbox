@@ -21,6 +21,7 @@ import matplotlib
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 matplotlib.use("Agg")
 
@@ -31,10 +32,16 @@ def main():
     # ==========================================================================
     # Settings and Setup
     # ==========================================================================
+    # Check for CLI arguments
+    if len(sys.argv) == 2:
+        cliFPS = int(sys.argv[1])
+    elif len(sys.argv) > 2:
+        raise TypeError(f"Too many ({len(sys.argv)}) command line arguments given")
+
     # Set global variable for the animation functions
     global densityData, velocityData, pressureData, ieData, positions
-    global Stride, Index, InitFrames, InitIndex
-    global densityPlot, velocityPlot, pressurePlot, iePlot, timeStep
+    global intSamples, index, initFrames, initIndex
+    global densityPlot, velocityPlot, pressurePlot, iePlot, fig, supTitleText
 
     # Load file
     densityData = np.loadtxt("../data/Density.csv", delimiter=",")
@@ -42,59 +49,59 @@ def main():
     energyData = np.loadtxt("../data/Energy.csv", delimiter=",")
 
     # sim info
-    SimPhysLength = 1.
-    SimNumCells   = len(densityData[0,:])
-    SimNumSteps   = len(densityData[:,0])
-    positions     = np.linspace(0.,SimPhysLength,SimNumCells)
+    simPhysLength = 1.
+    simNumCells   = len(densityData[0,:])
+    simNumSteps   = len(densityData[:,0])
+    positions     = np.linspace(0.,simPhysLength,simNumCells)
     gamma         = 1.4
 
-    # Animation Settings
-    Duration      = 10.                         # How long the gif is in seconds
-    Fps           = 60                          # Frames per second
-    FrameTime     = (1./Fps) * 1000             # Frametime in milliseconds
-    TotFrames     = int(Fps * Duration)         # Total number of frames (floor)
-    Stride        = int(SimNumSteps/TotFrames)  # Choose every n frames
-    dpi           = 300                         # Dots per inch
-    OutFile       = "output-euler.mp4"          # Output filename
-    Index         = 0                           # Initialize index
-    InitFrames    = 10                          # Number of frames for the initial conditions
-    InitIndex     = 0                           # Index for init frames
+    # Plot Settings
+    supTitleText  = "Time Evolution of Initial Conditions Using Euler Equations"
     densityColor  = 'blue'                      # color of the density plot
     velocityColor = 'purple'                    # color of the velocity plot
     pressureColor = 'green'                     # color of the pressure plot
     ieColor       = 'red'                       # color of the specific internal energy plot
-    # linestyle     = ''                          # The line style
     linestyle     = '-'                         # The line style
-    linewidth     = 0.5
-    marker        = "."
-    markersize    = 3
+    linewidth     = 0.5                         # How wide to make the lines
+    marker        = "."                         # Marker kind for points
+    markersize    = 3                           # Size of the marker
 
-    # Reset some animation settings for short simulations
-    if SimNumSteps < TotFrames:
-        TotFrames = SimNumSteps
-        Fps       = TotFrames/Duration
-        FrameTime = (1./Fps) * 1000
-        Stride    = int(SimNumSteps/TotFrames)
+    # Video Settings
+    OutFile       = "output-euler.mp4"          # Output filename
+    Duration      = 10.                         # How long the video is in seconds
+    dpi           = 150                         # Dots per inch
+    index         = 0                           # Initialize index
+    initIndex     = 0                           # Index for init frames
+    fps           = cliFPS if ("cliFPS" in locals()) else 24  # Framerate
+    FrameTime     = (1./fps) * 1000             # Frametime in milliseconds
+    totFrames     = int(fps * Duration)         # Total number of frames (floor)
+    initFrames    = fps                         # Number of frames for the initial conditions
+
+      # Compute which time steps to plot
+    if simNumSteps >= totFrames:
+        floatSamples = np.arange(0, simNumSteps, simNumSteps/totFrames)
+        intSamples   = np.asarray(np.floor(floatSamples), dtype="int")
+    else:  # if the number of simulation steps is less than the total number of frames
+        totFrames  = simNumSteps
+        Fps        = int(totFrames/Duration)
+        FrameTime  = (1./Fps) * 1000
+        intSamples = np.arange(0, simNumSteps, 1, dtype="int")
     # ==========================================================================
     # End Settings and Setup
     # Compute Primitive Variables
     # ==========================================================================
     # Compute velocities
     velocityData = momentumData / densityData
-    # velocityData = np.loadtxt("../data/Velocity.csv", delimiter=",")
 
     # Compute pressures
     pressureData = (gamma - 1) * (energyData - 0.5 * densityData * (velocityData**2))
-    # pressureData = np.loadtxt("../data/Pressure.csv", delimiter=",")
 
     # Compute the specific internal energy
-    ieData = energyData - 0.5 * densityData * (velocityData ** 2)
-    # ieData = pressureData / ((gamma - 1) * densityData)
+    ieData = pressureData / ((gamma - 1) * densityData)
     # ==========================================================================
     # End Computing Primitive Variables
     # Compute Limits
     # ==========================================================================
-
     # Find mins and maxes for setting the limits of the plot
     # Density
     pad = np.max(np.abs([densityData.min(), densityData.max()])) * 0.05
@@ -115,17 +122,6 @@ def main():
     pad = np.max(np.abs([ieData.min(), ieData.max()])) * 0.05
     ieLowLim = ieData.min() - pad
     ieHighLim = ieData.max() + pad
-
-    # If I'm just graphing the Sod Shock Tube have this uncommented
-    # densityLowLim   = 0.
-    # densityHighLim  = 1.1
-    # velocityLowLim  = -0.1
-    # velocityHighLim = 1.1
-    # pressureLowLim  = 0.
-    # pressureHighLim = 1.1
-    # ieLowLim        = 1.5
-    # ieHighLim       = 3.6
-
     # ==========================================================================
     # End Computing Limits
     # Setup Plots
@@ -134,7 +130,7 @@ def main():
     fig, subPlot = plt.subplots(2, 2)
 
     # Super Title
-    fig.suptitle(f"Time Evolution of Initial Conditions Using Euler Equations")
+    fig.suptitle(supTitleText)
 
     # Shared x-label
     subPlot[1,0].set_xlabel("Position")
@@ -159,8 +155,6 @@ def main():
     subPlot[1,1].set_ylim(ieLowLim, ieHighLim)
     subPlot[1,1].set_ylabel("Internal Energy")
     subPlot[1,1].grid(True)
-
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
     # Set plots
     densityPlot, = subPlot[0,0].plot(positions,
@@ -199,7 +193,9 @@ def main():
                            color      = ieColor,
                            label      = "specific internal energy"
                            )
-    timeStep = plt.text(0.5, 0.5, "Step = -1")
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    fig.subplots_adjust(top=0.88)
     # ==========================================================================
     # End Setup Plots
     # ==========================================================================
@@ -210,12 +206,12 @@ def main():
     simulation = animation.FuncAnimation(fig,
                                          NewFrame,
                                          blit = False,
-                                         frames = TotFrames+InitFrames,
+                                         frames = totFrames+initFrames,
                                          interval = FrameTime,
                                          repeat = False)
 
-    simulation.save(filename=OutFile, fps=Fps, dpi=dpi)
-
+    simulation.save(filename=OutFile, fps=fps, dpi=dpi)
+    print(f"\nAnimation complete. Framerate: {fps} fps")
     # ==========================================================================
     # End Make the animation
     # ==========================================================================
@@ -224,20 +220,23 @@ def NewFrame(self):
     """
     This function generates the plotting for each individual frame
     """
-    global Index, InitFrames, InitIndex
+    global index, initFrames, initIndex
 
-    densityPlot.set_data(positions, densityData[Index,:])
-    velocityPlot.set_data(positions, velocityData[Index,:])
-    pressurePlot.set_data(positions, pressureData[Index,:])
-    iePlot.set_data(positions, ieData[Index,:])
+    idx = intSamples[index]
 
-    timeStep.set_text(f"Step = {Index-1}")
+    densityPlot.set_data(positions, densityData[idx,:])
+    velocityPlot.set_data(positions, velocityData[idx,:])
+    pressurePlot.set_data(positions, pressureData[idx,:])
+    iePlot.set_data(positions, ieData[idx,:])
 
+    fig.suptitle(f"{supTitleText} \n Time Step: {idx}")
 
-
-    if InitIndex > InitFrames:
-        Index += Stride
+    if initIndex > initFrames:
+        index += 1
     else:
-        InitIndex += 1
+        initIndex += 1
+
+
 main()
-print(f'\nTime to execute: {round(default_timer()-start,2)} seconds')
+
+print(f'Time to execute: {round(default_timer()-start,2)} seconds')

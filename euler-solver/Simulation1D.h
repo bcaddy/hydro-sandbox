@@ -11,7 +11,6 @@
 
 #include <string>
 #include <vector>
-#include <array>
 #include "Grid1D.h"
 #include "ExactRiemannSolver.h"
 
@@ -26,8 +25,6 @@
 class Simulation1D
 {
 private:
-    friend class ExactRiemannSolver;
-
     /// The physical length of the simulation in meters
     double const _physLen;
     /// Courant–Friedrichs–Lewy (CFL) Number
@@ -39,23 +36,42 @@ private:
     /// The time step for each interation
     double _timeStep;
 
-    /// The size of the density, velocity, and pressure arrays
-    size_t static const _arraySize = 5;
-    /// The index for the center of the density, velocity, and pressure arrays
-    size_t static const _center = _arraySize/2;
-    /// The current location in grid
-    size_t _currentIndex;
-    /// The local array to store the densities in
-    std::array<double, _arraySize> _density;
-    /// The local array to store the velocities in
-    std::array<double, _arraySize> _velocity;
-    /// The local array to store the pressure in
-    std::array<double, _arraySize> _pressure;
+    /// The vector to store the density at the left side of the interface.
+    /// _densityInterfaceL is the density state on the left side of the i-1/2
+    /// interface
+    std::vector<double> _densityInterfaceL;
+    /// The vector to store the velocity at the left side of the interface.
+    /// _velocityInterfaceL is the velocity state on the left side of the i-1/2
+    /// interface
+    std::vector<double> _velocityInterfaceL;
+    /// The vector to store the pressure at the left side of the interface.
+    /// _pressureInterfaceL is the pressure state on the left side of the i-1/2
+    /// interface
+    std::vector<double> _pressureInterfaceL;
+
+    /// The vector to store the density at the right side of the interface.
+    /// _densityInterfaceR is the density state on the right side of the i-1/2
+    /// interface
+    std::vector<double> _densityInterfaceR;
+    /// The vector to store the velocity at the right side of the interface.
+    /// _velocityInterfaceR is the velocity state on the right side of the i-1/2
+    /// interface
+    std::vector<double> _velocityInterfaceR;
+    /// The vector to store the pressure at the right side of the interface.
+    /// _pressureInterfaceR is the pressure state on the right side of the i-1/2
+    /// interface
+    std::vector<double> _pressureInterfaceR;
 
 
-    /// The temporary grid used for storing the next time step while it's being
-    /// computed
-    Grid1D _tempGrid;
+    /// The vector to store the density fluxes. _densityFlux[i] is the density
+    /// flux through the i-1/2 interface
+    std::vector<double> _densityFlux;
+    /// The vector to store the momentum fluxes. _momentumFlux[i] is the momentum
+    /// flux through the i-1/2 interface
+    std::vector<double> _momentumFlux;
+    /// The vector to store the energy fluxes. _energyFlux[i] is the energy
+    /// flux through the i-1/2 interface
+    std::vector<double> _energyFlux;
 
     /// The object used to solve the Riemann Problem. See ExactRiemannSolver for the
     /// full documentation.
@@ -66,50 +82,48 @@ private:
      * tube.
      *
      * \param[in] initialConditionsKind The type of initial conditions to use.
-     * currently unused.
-     *
-     * \todo Add more initial conditions. Make it a template?
+     *            Options are "sod", "indexCheck", "advectionStep",  and
+     *            "advectionGauss".
+     *            | Keyword        | Initial Conditions                                                       |
+     *            |----------------|--------------------------------------------------------------------------|
+     *            | sod            | A sod shock tube                                                         |
+     *            | indexCheck     | Set each primitive variable to the value of the grid index at that point |
+     *            | advectionStep  | Step function advection                                                  |
+     *            | advectionGauss | Gaussion function advection                                              |
      */
     void _setInitialConditions(std::string const &initialConditionsKind);
 
     /*!
-     * \brief Compute the MC limited slope of a given primitive variable
+     * \brief Slope of a given primitive variable
      *
-     * \todo Add other kinds of limiters. Templated?
+     * \details Computes the slope. Uses Simulation1D::limiterKind to choose
+     *          which limiter to use.
+     *          | limiterKind | Which Limiter/Slope is used?                |
+     *          |-------------|---------------------------------------------|
+     *          | zeroSlope   | Always return a slope of zero               |
+     *          | centerDiff  | A centered difference, no limiting          |
+     *          | minMod      | Minmod limiter                              |
+     *          | MC          | Monotonized Central Difference (MC) Limiter |
      *
      * \param[in] primitive The primitive variable to compute the slope of.
      * \param[in] idx The cell in which to compute the slope.
      * \return double The limited slope.
      */
-    double _slope(std::array<double, _arraySize> const &primitive,
+    double _slope(std::vector<double> const &primitive,
                   size_t const &idx);
 
     /*!
-     * \brief Compute the eigenvalues and vectors of the Euler equations for a
-     * given cell.
-     *
-     * \details The eigenvalues and vectors compute are given in *Introduction
-     * to Computational Astrophysical Hydrodynamics* by Zingale pages 96-97,
-     * exercise 7.2 and 7.3. The eigenvector matrices are defined by equations
-     * 7.28 and 7.29.
-     *
-     * \param[in] idx The cell in which to compute the eigenvalues and
-     *                eigenvectors
-     * \param[out] eigVal A std::vector containing the eigenvalues in the order
-     *                    \f$ \lambda^-, \lambda^0, \lambda^+ \f$.
-     * \param[out] rEigVec A 2D std::vector which contains the right eigenvectors.
-     *                     They are all column vectors and are arranged side by
-     *                     side in the same -, 0, + ordering as the eigenvalues.
-     *                     Indices are [row][column].
-     * \param[out] lEigVec A 2D std::vector which contains the left eigenvectors.
-     *                     They are all row vectors and are arranged stacked in
-     *                     the same -, 0, + ordering as the eigenvalues.Indices
-     *                     are [row][column].
+     * \brief Computes the interface states using the Piecewise Linear Method
+     *        (PLM) from "Introduction to Computational Astrophysical
+     *        Hydrodynamics" by Zingale, git version: 4de1fef51af5 Section 8.2.2
      */
-    void _computeEigens(size_t const &idx,
-                        std::vector<double> &eigVal,
-                        std::vector<std::vector<double>> &rEigVec,
-                        std::vector<std::vector<double>> &lEigVec);
+    void _piecewiseLinearReconstruction();
+
+    /*!
+     * \brief Computes the interface states using the Piecewise Constant Method (PCM)
+     *
+     */
+    void _piecewiseConstantReconstruction();
 
 public:
     /// The primary grid
@@ -118,19 +132,11 @@ public:
     /// The current time in the simulation
     double currentTime;
 
-    /*!
-     * \brief Set the primitive arrays (\ref _density, \ref _velocity, and
-     * \ref _pressure) to new values.
-     *
-     * \details Setting the primitive arrays using one of two methods. If
-     * operation == "reset" then the primitives are set to the first
-     * \ref _arraySize elements of the grid. If operation == "update" then all
-     * the array elements are moved 1 to the left (ie element 3 become element
-     * 2) and a new final element is computed.
-     *
-     * \param[in] operation What operation to perform. Options are "reset" and "update"
-     */
-    void setPrimitives(std::string const &operation);
+    /// The reconstruction scheme to use
+    std::string const reconstructionKind;
+
+    /// The kind of slope limiter to use
+    std::string const limiterKind;
 
     /*!
      * \brief Compute the time step using the CFL condition
@@ -151,48 +157,19 @@ public:
     void updateCurrentTime() { currentTime += _timeStep; };
 
     /*!
-     * \brief Compute the states on either side of the interface to the left or
-     *        right of a given cell.
+     * \brief Compute all the interface states.
      *
-     * \param[in] side Which side of the cell to find the interface states.
-     *                 Only options are "left" or "right"
-     * \param[out] leftSideOfInterface The state on the left side of the interface.
-     *                                 The order within the vector is density,
-     *                                 velocity, pressure.
-     * \param[out] rightSideOfInterface The state on the right side of the interface.
-     *                                  The order within the vector is density,
-     *                                  velocity, pressure.
+     * \details Calls either Simulation1D::_piecewiseConstant or
+     *          Simulation1D::_piecewiseLinear depending on if
+     *          Simulation1D::reconstructionKind is "PCM" or "PCL" respectively
      */
-    void interfaceStates(std::string const &side,
-                         std::vector<double> &leftSideOfInterface,
-                         std::vector<double> &rightSideOfInterface);
+    void interfaceStates();
 
     /*!
      * \brief Solves the Riemann problem exactly by calling the main function of
      * the ExactRiemannSolver class
-     *
-     * \param[in] densityR  The density on the right side of the interface
-     * \param[in] velocityR The velocity on the right side of the interface
-     * \param[in] pressureR The pressure on the right side of the interface
-     * \param[in] densityL The density on the left side of the interface
-     * \param[in] velocityL The velocity on the left side of the interface
-     * \param[in] pressureL The pressure on the left side of the interface
-     * \param[in] posOverT The value of the position divided by the current time.
-     * Alway equal to zero for numerical solutions
-     * \param[out] energyFlux The energy flux that is being solved for
-     * \param[out] momentumFlux The momentum flux that is being solved for
-     * \param[out] densityFlux The density flux that is being solved for
      */
-    void solveRiemann(double const &densityR,
-                      double const &velocityR,
-                      double const &pressureR,
-                      double const &densityL,
-                      double const &velocityL,
-                      double const &pressureL,
-                      double const &posOverT,
-                      double &energyFlux,
-                      double &momentumFlux,
-                      double &densityFlux);
+    void solveRiemann();
 
 
     /*!
@@ -206,19 +183,7 @@ public:
      * \param[in] momentumFluxR The momentum flux on the left side
      * \param[in] energyFluxR The energy flux on the left side
      */
-    void conservativeUpdate(size_t const &idxInput,
-                            double const &densityFluxL,
-                            double const &momentumFluxL,
-                            double const &energyFluxL,
-                            double const &densityFluxR,
-                            double const &momentumFluxR,
-                            double const &energyFluxR);
-
-    /*!
-     * \brief Update Simulation1D::grid to the new values that have been
-     * computed. Basically this just copies the values of _tempGrid into grid.
-     */
-    void updateGrid();
+    void conservativeUpdate();
 
     /*!
      * \brief Construct a new Simulation1D object.
@@ -233,6 +198,11 @@ public:
      * \param[in] reals The number of real grid cells
      * \param[in] ghosts The number of ghost cells
      * \param[in] initialConditionsKind Which initial conditions to use
+     * \param[in] reconstructionKind Which kind of interface reconstruction to
+     *            use. Option are "PCM" for Piecewise Constant Method and "PLM"
+     *            for Piecewise Linear Method
+     * \param[in] limiterKind What kind of limiter to use. Options are
+     *            "centerDiff", "minMod", and "MC"
      * \param[in] boundaryConditions Which kind of boundary conditions to use
      * \param[in] saveDir The directory to save the grid to
      */
@@ -242,6 +212,8 @@ public:
                  size_t const &reals,
                  size_t const &ghosts,
                  std::string const &initialConditionsKind,
+                 std::string const &reconstructionKind,
+                 std::string const &limiterKind,
                  std::string const &boundaryConditions,
                  std::string const &saveDir);
     /*!

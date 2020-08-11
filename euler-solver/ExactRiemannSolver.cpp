@@ -14,35 +14,35 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "HydroHelper.h"
+#include "HydroUtilities.h"
 #include "ExactRiemannSolver.h"
 
-using namespace HydroHelper;
+using namespace HydroUtilities;
 
 // =============================================================================
-void ExactRiemannSolver::riemannMain(double const &densityR,
-                                double const &velocityR,
-                                double const &pressureR,
-                                double const &densityL,
-                                double const &velocityL,
-                                double const &pressureL,
-                                double const &posOverT,
-                                double &energyFlux,
-                                double &momentumFlux,
-                                double &densityFlux)
+void ExactRiemannSolver::riemannMain(double const &densityL,
+                                     double const &velocityL,
+                                     double const &pressureL,
+                                     double const &densityR,
+                                     double const &velocityR,
+                                     double const &pressureR,
+                                     double const &posOverT,
+                                     double &energyFlux,
+                                     double &momentumFlux,
+                                     double &densityFlux)
 {
     // Copy arguments to member variables
-    _densityR     = densityR;
-    _velocityR    = velocityR;
-    _pressureR    = pressureR;
     _densityL     = densityL;
     _velocityL    = velocityL;
-    _pressureL    = pressureL;
+    _pressureL    = std::max(pressureL, 1.0E-20);
+    _densityR     = densityR;
+    _velocityR    = velocityR;
+    _pressureR    = std::max(pressureR, 1.0E-20);
     _posOverT     = posOverT;
 
     // Compute the sound speeds
-    _cR = soundSpeed(pressureR, densityR, _gamma);
     _cL = soundSpeed(pressureL, densityL, _gamma);
+    _cR = soundSpeed(pressureR, densityR, _gamma);
 
     // Check for a vacuum
     if ((2 / (_gamma - 1)) * (_cL + _cR) <= (_velocityR - _velocityL))
@@ -202,7 +202,7 @@ void ExactRiemannSolver::riemannMain(double const &densityR,
     }
 
     // Compute and return the fluxes
-    double energyState = (_pressureState/(_gamma - 1)) + 0.5 * _densityState * std::pow(_velocityState,2);
+    double energyState = computeEnergy(_pressureState, _densityState, _velocityState, _gamma);
 
     densityFlux = _densityState * _velocityState;
     momentumFlux = _densityState * std::pow(_velocityState, 2) + _pressureState;
@@ -227,7 +227,7 @@ double ExactRiemannSolver::_computePressureStar()
         _pressureFunctions(pStar, _pressureR, _densityR, _cR, fR, dfR);
 
         // Compute new value of pStar
-        pTemp = pStar - ( (fR + fL - (_velocityR - _velocityL)) / (dfL + dfR) );
+        pTemp = pStar - ( (fR + fL + _velocityR - _velocityL) / (dfL + dfR) );
 
         // Check for positivity and for convergence
         if (pTemp < 0.0)

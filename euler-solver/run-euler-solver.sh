@@ -5,13 +5,11 @@
 #
 # Dependencies:
 #   it2dl
+#
+# Inputs:
+#   1: (optional) The framerate of the animation in fps
 
 # set -x #echo all commands
-
-# if [ -z "${1}" ]; then
-#     echo "No solver chosen"
-#     exit 1
-# fi
 
 cd "${0%/*}"  # cd to hydro-sandbox directory
 
@@ -28,7 +26,7 @@ echo -e "\nRunning..."
 cd "${REPO_ROOT}/visualization"
 
 echo -e "\n\nGenerating Plot..."
-./euler-solver-plotter.py
+./euler-solver-plotter.py ${1}
 
 echo -e "\nDownloading Plot..."
 "${HOME}/.iterm2/it2dl" output-euler.mp4

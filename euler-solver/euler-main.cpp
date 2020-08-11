@@ -7,8 +7,9 @@
  *
  * \copyright Copyright (c) 2020
  *
- * \details This program serves as a place for me to learn computational hydrodynamics
- * and as a testbed for my future additions to [Cholla](https://github.com/cholla-hydro/cholla).
+ * \details This program serves as a place for me to learn computational
+ * hydrodynamics and as a testbed for my future additions to
+ * [Cholla](https://github.com/cholla-hydro/cholla).
  *
  ******************************************************************************/
 
@@ -43,11 +44,13 @@ int main()
     double const physicalLength        = 1.;
     double const gamma                 = 1.4;
     double const cfl                   = 0.8;
-    double const maxTime               = 2.0;
+    double const maxTime               = 0.2;
     size_t const numRealCells          = 100;
     size_t const numGhostCells         = 2;
-    std::string  initialConditionsKind = "advection";
-    std::string  boundaryConditions    = "periodic";
+    std::string  initialConditionsKind = "sod";
+    std::string  boundaryConditions    = "sod";
+    std::string  reconstructionKind    = "PLM";
+    std::string  limiterKind           = "MC"; // Options: zeroSlope, centerDiff, minMod, or MC
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
 
@@ -58,14 +61,17 @@ int main()
                      numRealCells,
                      numGhostCells,
                      initialConditionsKind,
+                     reconstructionKind,
+                     limiterKind,
                      boundaryConditions,
                      saveDir);
+    // ===== End initializing Simulation Class =================================
 
     // Save the initial state
     sim.grid.saveState();
 
     //=== Begin the main evolution loop ========================================
-    size_t step = 0;
+    size_t step = 1;
     while (sim.currentTime <= maxTime)
     {
         // Compute the time step using the CFL condition
@@ -74,80 +80,29 @@ int main()
         // Set boundary conditions (sod)
         sim.grid.updateBoundaries(gamma);
 
-        // Set the values of the primitive array
-        sim.setPrimitives("reset");
+        // Compute interface states.
+        // note that the order within vectors is density, velocity, pressure
+        sim.interfaceStates();
 
-        for (size_t i = sim.grid.numGhostCells;
-             i < (sim.grid.numTotCells-sim.grid.numGhostCells);
-             i++)
-        {
-            // Compute interface states on the left side.
-            // note that the order within vectors is density, velocity, pressure
-            std::vector<double> leftSideOfInterface, rightSideOfInterface;
-            sim.interfaceStates("left",
-                                leftSideOfInterface,
-                                rightSideOfInterface);
+        // Solve Riemann problem on all the interfaces
+        sim.solveRiemann();
 
-            // Solve Riemann problem on the left side
-            double energyFluxL, momentumFluxL, densityFluxL;
-            sim.solveRiemann(rightSideOfInterface[0],
-                             rightSideOfInterface[1],
-                             rightSideOfInterface[2],
-                             leftSideOfInterface[0],
-                             leftSideOfInterface[1],
-                             leftSideOfInterface[2],
-                             0.0, // position over t
-                             energyFluxL,
-                             momentumFluxL,
-                             densityFluxL);
-
-            // Compute interface states on the right side.
-            // note that the order within vectors is density, velocity, pressure
-            sim.interfaceStates("right",
-                                leftSideOfInterface,
-                                rightSideOfInterface);
-
-            // Solve Riemann problem on the right side
-            double energyFluxR, momentumFluxR, densityFluxR;
-            sim.solveRiemann(rightSideOfInterface[0],
-                             rightSideOfInterface[1],
-                             rightSideOfInterface[2],
-                             leftSideOfInterface[0],
-                             leftSideOfInterface[1],
-                             leftSideOfInterface[2],
-                             0.0, // position over t
-                             energyFluxR,
-                             momentumFluxR,
-                             densityFluxR);
-
-            // Compute conservative update
-            sim.conservativeUpdate(i,
-                                   densityFluxL,
-                                   momentumFluxL,
-                                   energyFluxL,
-                                   densityFluxR,
-                                   momentumFluxR,
-                                   energyFluxR);
-
-            // Update the values of the primitive array
-            sim.setPrimitives("update");
-        }; // End of loop to interate through array
-
-        // Copy values from the temp grid to the real grid
-        sim.updateGrid();
+        // Compute conservative update
+        sim.conservativeUpdate();
 
         // Save output
         sim.grid.saveState();
+
+        // Update current time
+        sim.updateCurrentTime();
 
         // Message
         cout << "Completeted step: " << step
         << ",   Time step = " << sim.getTimeStep()
         << ",   Simulation Time = " << sim.currentTime << endl;
 
-        // Update time and step number
-        sim.updateCurrentTime();
+        // Increment the step number
         step++;
-
     };
     // ===== End of evolution loop =============================================
 

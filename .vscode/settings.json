@@ -3,6 +3,8 @@
         "Advec",
         "Advect",
         "Eigens",
+        "Vhat",
+        "arange",
         "diaph",
         "dynload",
         "loadtxt",
@@ -60,6 +62,7 @@
         "compare": "cpp",
         "complex": "cpp",
         "concepts": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "*.txt": "cpp"
     }
 }

@@ -31,19 +31,19 @@ private:
     /// _pressureStar
     double const _tol = 1.0E-6;
 
-    /// The density on the right side of the interface
-    double _densityR;
-    /// The velocity on the right side of the interface
-    double _velocityR;
-    /// The pressure on the right side of the interface
-    double _pressureR;
-
     /// The density on the left side of the interface
     double _densityL;
     /// The velocity on the left side of the interface
     double _velocityL;
     /// The pressure on the left side of the interface
     double _pressureL;
+
+    /// The density on the right side of the interface
+    double _densityR;
+    /// The velocity on the right side of the interface
+    double _velocityR;
+    /// The pressure on the right side of the interface
+    double _pressureR;
 
     /// The velocity in the star region
     double _velocityStar;
@@ -57,11 +57,10 @@ private:
     /// The pressure of the found state
     double _pressureState;
 
-    /// The sound speeds on the right side of the interface
-    double _cR;
-
     /// The sound speeds on the left side of the interface
     double _cL;
+    /// The sound speeds on the right side of the interface
+    double _cR;
 
     /// The position divided by the time.
     double _posOverT;
@@ -135,24 +134,24 @@ public:
      * functions. Uses the same exact Riemann solver as in Toro "Riemann Solvers
      * and Numerical Methods for Fluid Dynamics 3ed"
      *
-     * \param[in] densityR  The density on the right side of the interface
-     * \param[in] velocityR The velocity on the right side of the interface
-     * \param[in] pressureR The pressure on the right side of the interface
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
+     * \param[in] densityR  The density on the right side of the interface
+     * \param[in] velocityR The velocity on the right side of the interface
+     * \param[in] pressureR The pressure on the right side of the interface
      * \param[in] posOverT The value of the position divided by the current time.
      * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] densityFlux The density flux that is being solved for
      */
-    void riemannMain(double const &densityR,
-                     double const &velocityR,
-                     double const &pressureR,
-                     double const &densityL,
+    void riemannMain(double const &densityL,
                      double const &velocityL,
                      double const &pressureL,
+                     double const &densityR,
+                     double const &velocityR,
+                     double const &pressureR,
                      double const &posOverT,
                      double &energyFlux,
                      double &momentumFlux,

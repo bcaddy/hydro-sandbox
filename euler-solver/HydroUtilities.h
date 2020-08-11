@@ -1,25 +1,29 @@
 /*!
- * \file HydroHelper.h
+ * \file HydroUtilities.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
  * \brief Contains some basic utility functions commonly used in hydrodynamics.
  * All functions are inlined.
  * \version 0.1
  * \date 2020-08-11
- * 
+ *
  * \copyright Copyright (c) 2020
- * 
+ *
  */
 #pragma once
 
 #include <stdexcept>
 #include <cmath>
 
-namespace HydroHelper
+/*!
+ * \brief A namespace for common functions used in hydrodynamics
+ *
+ */
+namespace HydroUtilities
 {
 // =============================================================================
     /*!
      * \brief Compute the local sound speed
-     * 
+     *
      * \param pressure The pressure
      * \param density The density
      * \param gamma The ratio of specific heats
@@ -34,9 +38,9 @@ namespace HydroHelper
 
         // Check for Nan values in the speeds
         if (std::isnan(c))
-            {throw std::runtime_error("Complex valued sound speed detected. Exiting.");}
-        else
-            {return c;}
+            throw std::runtime_error("Complex valued sound speed detected. Exiting.");
+
+        return c;
     }
 // =============================================================================
 

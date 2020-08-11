@@ -17,9 +17,9 @@
 /*!
  * \brief The Grid1D struct stores the grid and provides member functions to
  * manipulate the grid
- * 
+ *
  * \details The Grid1D struct stores the grid as a set of three arrays, one each
- * for density, momentum, and energy. There are member functions for saving the 
+ * for density, momentum, and energy. There are member functions for saving the
  * grid and updating the ghost cells/boundary conditions.
  */
 struct Grid1D
@@ -55,8 +55,9 @@ public:
     /*!
      * \brief Applies the boundary conditions by updating the ghost cells
      *
-     * \todo Currently this only uses periodic boundary conditions and I would
-     * like to add outflow, reflective, inflow, and hydrostatic boundary conditions.
+     * \todo Currently this only uses periodic and Sod boundary conditions and I
+     *       would like to add outflow, reflective, inflow, and hydrostatic
+     *       boundary conditions.
      *
      * \param[in] gamma The ratio of specific heats
      */
@@ -73,12 +74,11 @@ public:
      */
     void saveState();
 
+    // Constructors and Destructor =============================================
     /*!
      * \brief Construct a new Grid1D object
      *
-     * \details This method provides the actual construction of the object so
-     * that the object can either be constructed immediately upon declaration or
-     * at a later time. It does the following:
+     * \details Constructs the Grid1D object. It does the following:
      * - initializes Grid1D::numGhostCells, Grid1D::numRealCells, and
      *   Grid1D::numTotCells.
      * - Reserves the memory for  Grid1D::density, Grid1D::momentum, and
@@ -86,70 +86,15 @@ public:
      * - Opens save files for Grid1D::density, Grid1D::momentum, and
      *   Grid1D::energy
      *
-     * \param[in] reals The number of real cells in the grid. Assigned to Grid1D numRealCells
-     * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
-     * \param[in] saveDir The directory to save files to. If set to "no saving" then the
-     * initialized grid will not be able to save itself to a file.
-     * \param[in] boundaryConditions What kind of boundary conditions to use
-     *
-     * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
-     *      Constructor that instantiates variables but does not provide the
-     *      ability to save the grid
-     * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts, std::string const &saveDir)
-     *      Constructor that instantiates variables and does provide the ability
-     *      to save the grid
-     */
-    void init(size_t const &reals,
-              size_t const &ghosts,
-              std::string const &saveDir,
-              std::string const &boundaryConditions);
-
-    // Constructors and Destructor =============================================
-    /*!
-     * \brief Construct a new uninitialized Grid1D object for initialization
-     * later using the Grid1D::Init() method
-     */
-    Grid1D() = default;
-
-    /*!
-     * \brief Construct a new Grid1D object that can save the conserved variables
-     *
-     * \details This constructor utilizes the Grid1D::Init() method to initialize
-     *          a Grid1D object with the ability to save the gride to a file.
-     *
      * \param[in] reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
      * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
      * \param[in] saveDir The directory to save files to
      * \param[in] boundaryConditions What kind of boundary conditions to use
-     *
-     * \see Grid1D::Init() The initializing function used by this constructor
-     * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts)
-     *      Constructor that instantiates variables but does not provide the
-     *      ability to save the grid
-     *
      */
     Grid1D(size_t const &reals,
            size_t const &ghosts,
            std::string const &saveDir,
            std::string const &boundaryConditions);
-
-    /*!
-     * \brief Construct a new Grid1D object that cannot save itself to a file
-     *
-     * \details This constructor utilizes the Grid1D::Init() method to initialize
-     *          a Grid1D object with the ability to save the gride to a file.
-     *
-     * \param[in] reals The number of real cells in the grid. Assigned to Grid1D::numRealCells
-     * \param[in] ghosts The number of ghost cells. Assigned to Grid1D::numGhostCells
-     *
-     * \see Grid1D::Init() The initializing function used by this constructor
-     * \see Grid1D::Grid1D(size_t const &reals, size_t const &ghosts, std::string const &saveDir)
-     *      Constructor that instantiates variables and does provide the ability
-     *      to save the grid
-     *
-     */
-    Grid1D(size_t const &reals,  // This constructor is for instances that will
-           size_t const &ghosts);  // never be saved
 
     /*!
      * \brief Destroy the Grid1D object
