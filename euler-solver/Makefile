@@ -38,6 +38,7 @@ clean:
 	@rm -f $(binaries)
 	@rm -f *.mod
 	@rm -f *.o
+	@rm -rf *.gch
 	@rm -f *.exe
 	@rm -rf *.dSYM
 	@rm -f a.out
