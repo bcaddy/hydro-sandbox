@@ -63,6 +63,7 @@
         "complex": "cpp",
         "concepts": "cpp",
         "ranges": "cpp",
-        "*.txt": "cpp"
+        "*.txt": "cpp",
+        "iomanip": "cpp"
     }
 }

@@ -15,13 +15,13 @@
 
 #include <iostream>
 #include <string>
-#include <chrono>
 using std::cout;
 using std::cin;
 using std::endl;
 
 #include "Grid1D.h"
 #include "Simulation1D.h"
+#include "PerfTimer.h"
 
 /*!
  * \brief Main function that invokes class methods and provides user output.
@@ -37,8 +37,12 @@ using std::endl;
  */
 int main()
 {
-    // Start clock
-    auto start = std::chrono::high_resolution_clock::now();
+    // Initialize timers and start overall timer
+    PerfTimer overallTimer("Overall Timer");
+    PerfTimer timeStepTimer("Time Step Timer");
+    PerfTimer interfaceTimer("Interface Reconstruction Timer");
+    PerfTimer riemannTimer("Riemann Solver Timer");
+    overallTimer.startTimer();
 
     // ===== Settings ==========================================================
     double const physicalLength        = 1.;
@@ -75,17 +79,23 @@ int main()
     while (sim.currentTime <= maxTime)
     {
         // Compute the time step using the CFL condition
+        timeStepTimer.startTimer();
         sim.computeTimeStep();
+        timeStepTimer.stopTimer();
 
         // Set boundary conditions (sod)
         sim.grid.updateBoundaries(gamma);
 
         // Compute interface states.
         // note that the order within vectors is density, velocity, pressure
+        interfaceTimer.startTimer();
         sim.interfaceStates();
+        interfaceTimer.stopTimer();
 
         // Solve Riemann problem on all the interfaces
+        riemannTimer.startTimer();
         sim.solveRiemann();
+        riemannTimer.stopTimer();
 
         // Compute conservative update
         sim.conservativeUpdate();
@@ -107,13 +117,10 @@ int main()
     // ===== End of evolution loop =============================================
 
 
-    // Stop timer and print execution time. Time options are nanoseconds,
-    // microseconds, milliseconds, seconds, minutes, hours. To pick one just
-    // change `using FpTime` and the cout statement suitably.
-    auto stop = std::chrono::high_resolution_clock::now();
-    using FpTime = std::chrono::duration<float, std::chrono::seconds::period>;
-    static_assert(std::chrono::treat_as_floating_point<FpTime::rep>::value,"Rep required to be floating point");
-    auto duration = FpTime(stop - start);
-    cout << "Time to execute: " << duration.count() << " seconds";
-    return 0;
+    // Print timing results
+    overallTimer.stopTimer();
+    overallTimer.reportStats();
+    timeStepTimer.reportStats();
+    interfaceTimer.reportStats();
+    riemannTimer.reportStats();
 }
