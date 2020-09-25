@@ -42,4 +42,5 @@ clean:
 	@rm -f *.exe
 	@rm -rf *.dSYM
 	@rm -f a.out
+	@rm -rf doxygen-html
 	@echo "Done"

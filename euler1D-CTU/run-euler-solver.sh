@@ -15,7 +15,7 @@ cd "${0%/*}"  # cd to hydro-sandbox directory
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
-cd "${REPO_ROOT}/euler-solver"
+cd "${REPO_ROOT}/euler1D-CTU"
 
 echo -e "\nCompiling..."
 make

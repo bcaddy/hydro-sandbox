@@ -64,6 +64,7 @@
         "concepts": "cpp",
         "ranges": "cpp",
         "*.txt": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "cstring": "cpp"
     }
 }
