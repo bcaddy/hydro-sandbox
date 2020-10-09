@@ -13,37 +13,21 @@
 
 #include <string>
 
+#include "RiemannSolver.h"
+
 /*!
  * \brief Solves the Riemann problem exactly using the same exact Riemann solver
  *        as in Toro "Riemann Solver and Numerical Methods for Fluid Dynamics 3ed"
  */
-class ExactRiemannSolver
+class ExactRiemannSolver : public RiemannSolver
 {
 private:
     // =========================================================================
     // Declare all the private variables
     // =========================================================================
-
-    /// The ratio of specific heats gamma
-    double const _gamma;
-
     /// The tolerance for the Newton-Raphson iterations used to compute
     /// _pressureStar
     double const _tol = 1.0E-6;
-
-    /// The density on the left side of the interface
-    double _densityL;
-    /// The velocity on the left side of the interface
-    double _velocityL;
-    /// The pressure on the left side of the interface
-    double _pressureL;
-
-    /// The density on the right side of the interface
-    double _densityR;
-    /// The velocity on the right side of the interface
-    double _velocityR;
-    /// The pressure on the right side of the interface
-    double _pressureR;
 
     /// The velocity in the star region
     double _velocityStar;
@@ -140,11 +124,11 @@ public:
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
      * \param[in] pressureR The pressure on the right side of the interface
-     * \param[in] posOverT The value of the position divided by the current time.
-     * Alway equal to zero for numerical solutions
      * \param[out] energyFlux The energy flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] densityFlux The density flux that is being solved for
+     * \param[in] posOverT OPTIONAL: The value of the position divided by the current time.
+     * Alway equal to zero for numerical solutions and as such defaults to it
      */
     void riemannMain(double const &densityL,
                      double const &velocityL,
@@ -152,10 +136,10 @@ public:
                      double const &densityR,
                      double const &velocityR,
                      double const &pressureR,
-                     double const &posOverT,
                      double &energyFlux,
                      double &momentumFlux,
-                     double &densityFlux);
+                     double &densityFlux,
+                     double const &posOverT = 0.0);
 
     /*!
      * \brief Get the Density State object
@@ -183,7 +167,7 @@ public:
      *
      * \param[in] gamma The ratio of specific heats
      */
-    ExactRiemannSolver(double const &gamma);
+    ExactRiemannSolver(double const &gamma) : RiemannSolver(gamma) {};
     /*!
      * \brief Destroy the Riemann Solver object. Uses default destructors
      *

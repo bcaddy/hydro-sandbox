@@ -11,9 +11,11 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+
 #include "Grid1D.h"
 #include "PrimitiveGrid1D.h"
-#include "ExactRiemannSolver.h"
+#include "RiemannSolver.h"
 
 /*!
  * \brief Solves the Euler equations
@@ -57,9 +59,10 @@ private:
     /// The grid to store the half time step conserved variables
     Grid1D _gridHalfTime;
 
-    /// The object used to solve the Riemann Problem. See ExactRiemannSolver for the
-    /// full documentation.
-    ExactRiemannSolver _riemannSolver;
+    /// The object used to solve the Riemann Problem. Uses the RiemannSolver
+    /// virtual base class and chooses between different Riemann Solver
+    /// algorithms
+    std::unique_ptr<RiemannSolver> _riemannSolver;
 
     /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock
@@ -127,6 +130,9 @@ public:
 
     /// The kind of slope limiter to use
     std::string const limiterKind;
+
+    /// The Riemann solver to use
+    std::string const riemannSolverKind;
 
     /*!
      * \brief Compute the time step using the CFL condition
@@ -202,13 +208,14 @@ public:
      * \param[in] gamma The ratio of specific heats
      * \param[in] CFL The CFL Number
      * \param[in] reals The number of real grid cells
-     * \param[in] ghosts The number of ghost cells
      * \param[in] initialConditionsKind Which initial conditions to use
      * \param[in] reconstructionKind Which kind of interface reconstruction to
      *            use. Option are "PCM" for Piecewise Constant Method and "PLM"
      *            for Piecewise Linear Method
      * \param[in] limiterKind What kind of limiter to use. Options are
      *            "centerDiff", "minMod", and "MC"
+     * \param[in] riemannSolverKind What kind of Riemann solver to use. Options
+     *            are: "HLLC" and "exact"
      * \param[in] boundaryConditions Which kind of boundary conditions to use
      * \param[in] saveDir The directory to save the grid to
      */
@@ -219,6 +226,7 @@ public:
                  std::string const &initialConditionsKind,
                  std::string const &reconstructionKind,
                  std::string const &limiterKind,
+                 std::string const &riemannSolverKind,
                  std::string const &boundaryConditions,
                  std::string const &saveDir);
     /*!

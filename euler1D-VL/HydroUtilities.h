@@ -30,8 +30,8 @@ namespace HydroUtilities
      * \return double The local speed of sound, c
      */
     inline double soundSpeed(double const & pressure,
-                      double const & density,
-                      double const & gamma)
+                             double const & density,
+                             double const & gamma)
     {
         // Compute the sound speeds
         double c = std::sqrt(gamma * pressure / density);

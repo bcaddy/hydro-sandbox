@@ -119,7 +119,7 @@ Grid1D::Grid1D(size_t const &reals,
     :
     numGhostCells(ghosts),
     numRealCells(reals),
-    numTotCells(numGhostCells + numRealCells),
+    numTotCells(2*numGhostCells + numRealCells),
     boundaryConditionKind(boundaryConditions)
 {
     density.resize(numTotCells);

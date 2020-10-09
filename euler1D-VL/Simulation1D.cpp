@@ -13,9 +13,12 @@
 #include <stdexcept>
 #include <algorithm>
 #include <numeric>
+#include <memory>
 
 #include "Simulation1D.h"
 #include "HydroUtilities.h"
+#include "HllcRiemannSolver.h"
+#include "ExactRiemannSolver.h"
 
 using namespace HydroUtilities;
 
@@ -317,16 +320,15 @@ void Simulation1D::solveRiemann()
     i < grid.numTotCells;
     i++)
     {
-        _riemannSolver.riemannMain(_interfaceL.density[i],
-                                   _interfaceL.velocity[i],
-                                   _interfaceL.pressure[i],
-                                   _interfaceR.density[i],
-                                   _interfaceR.velocity[i],
-                                   _interfaceR.pressure[i],
-                                   0.0,
-                                   _flux.energy[i],
-                                   _flux.momentum[i],
-                                   _flux.density[i]);
+        _riemannSolver->riemannMain(_interfaceL.density[i],
+                                    _interfaceL.velocity[i],
+                                    _interfaceL.pressure[i],
+                                    _interfaceR.density[i],
+                                    _interfaceR.velocity[i],
+                                    _interfaceR.pressure[i],
+                                    _flux.energy[i],
+                                    _flux.momentum[i],
+                                    _flux.density[i]);
     }
 }
 // =============================================================================
@@ -336,19 +338,19 @@ void Simulation1D::solveRiemann()
 void Simulation1D::conservativeUpdate(std::string const &timeChoice)
 {
     // Choose which grid to update
-    Grid1D* sourceGrid;
-    Grid1D* destinationGrid;
+    std::unique_ptr<Grid1D> sourceGrid;
+    std::unique_ptr<Grid1D> destinationGrid;
     double localTimeStep;
     if (timeChoice == "half time update")
     {
-        sourceGrid      = &grid;
-        destinationGrid = &_gridHalfTime;
+        sourceGrid      = std::unique_ptr<Grid1D>(&grid);
+        destinationGrid = std::unique_ptr<Grid1D>(&_gridHalfTime);
         localTimeStep = 0.5 * _timeStep;
     }
     else if (timeChoice == "full time update")
     {
-        sourceGrid      = &grid;
-        destinationGrid = &grid;
+        sourceGrid      = std::unique_ptr<Grid1D>(&grid);
+        destinationGrid = std::unique_ptr<Grid1D>(&grid);
         localTimeStep = _timeStep;
     }
     else
@@ -372,6 +374,10 @@ void Simulation1D::conservativeUpdate(std::string const &timeChoice)
                                       + (localTimeStep / _deltaX)
                                       * (_flux.energy[i] - _flux.energy[i+1]);
     }
+
+    // Release pointers
+    sourceGrid.release();
+    destinationGrid.release();
 }
 // =============================================================================
 
@@ -384,6 +390,7 @@ Simulation1D::Simulation1D(double const &physicalLength,
                            std::string const &initialConditionsKind,
                            std::string const &reconstructionKind,
                            std::string const &limiterKind,
+                           std::string const &riemannSolverKind,
                            std::string const &boundaryConditions,
                            std::string const &saveDir)
 
@@ -396,13 +403,27 @@ Simulation1D::Simulation1D(double const &physicalLength,
       _interfaceR(reals, _numGhosts),
       _flux(reals, _numGhosts),
       _gridHalfTime(reals, _numGhosts, boundaryConditions),
-      _riemannSolver(gamma),
       grid(reals, _numGhosts, boundaryConditions, saveDir),
       currentTime(0.0),
       reconstructionKind(reconstructionKind),
-      limiterKind(limiterKind)
+      limiterKind(limiterKind),
+      riemannSolverKind(riemannSolverKind)
 {
     // Set the initial conditions
     _setInitialConditions(initialConditionsKind);
+
+    // Choose the Riemann Solver
+    if (riemannSolverKind == "HLLC")
+    {
+        _riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(1.4));
+    }
+    else if (riemannSolverKind == "exact")
+    {
+        _riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(1.4));
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid kind of Riemann Solver");
+    }
 }
 // =============================================================================

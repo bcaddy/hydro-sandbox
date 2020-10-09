@@ -26,10 +26,10 @@ void ExactRiemannSolver::riemannMain(double const &densityL,
                                      double const &densityR,
                                      double const &velocityR,
                                      double const &pressureR,
-                                     double const &posOverT,
                                      double &energyFlux,
                                      double &momentumFlux,
-                                     double &densityFlux)
+                                     double &densityFlux,
+                                     double const &posOverT)
 {
     // Copy arguments to member variables
     _densityL     = densityL;
@@ -441,15 +441,5 @@ double ExactRiemannSolver::_densityRare(std::string const &side)
 
     // Compute and return the rarefaction density
     return densitySide * std::pow(_pressureStar/pressureSide, 1/_gamma);
-}
-// =============================================================================
-
-// =============================================================================
-// Constructor
-ExactRiemannSolver::ExactRiemannSolver(double const &gamma)
-
-    // Start by initializing all the const member variables
-    : _gamma(gamma)
-{
 }
 // =============================================================================

@@ -17,7 +17,7 @@ cppCompiler = ${cppDebug} #the version used
 # list of binaries to clean as well
 binaries = euler-solver.exe test-Riemann.exe
 
-Helper_SRC = Grid1D.cpp Simulation1D.cpp ExactRiemannSolver.cpp
+Helper_SRC = Grid1D.cpp Simulation1D.cpp ExactRiemannSolver.cpp HllcRiemannSolver.cpp
 Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 
 # To switch between compiling the whole program every time and only compiling

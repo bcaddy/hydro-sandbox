@@ -37,7 +37,7 @@ public:
     PrimitiveGrid1D(size_t const &reals,
                     size_t const &ghosts)
     {
-        size_t numTotCells = reals + ghosts;
+        size_t numTotCells = reals + 2 * ghosts;
         density.resize(numTotCells);
         velocity.resize(numTotCells);
         pressure.resize(numTotCells);

@@ -65,6 +65,10 @@
         "ranges": "cpp",
         "*.txt": "cpp",
         "iomanip": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp"
     }
 }
