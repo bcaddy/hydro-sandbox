@@ -326,9 +326,9 @@ void Simulation1D::solveRiemann()
                                     _interfaceR.density[i],
                                     _interfaceR.velocity[i],
                                     _interfaceR.pressure[i],
-                                    _flux.energy[i],
+                                    _flux.density[i],
                                     _flux.momentum[i],
-                                    _flux.density[i]);
+                                    _flux.energy[i]);
     }
 }
 // =============================================================================

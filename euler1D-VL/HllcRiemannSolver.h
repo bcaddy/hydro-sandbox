@@ -95,9 +95,9 @@ public:
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
      * \param[in] pressureR The pressure on the right side of the interface
-     * \param[out] energyFlux The energy flux that is being solved for
-     * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] densityFlux The density flux that is being solved for
+     * \param[out] momentumFlux The momentum flux that is being solved for
+     * \param[out] energyFlux The energy flux that is being solved for
      */
     void riemannMain(double const &densityL,
                      double const &velocityL,
@@ -105,9 +105,9 @@ public:
                      double const &densityR,
                      double const &velocityR,
                      double const &pressureR,
-                     double &energyFlux,
-                     double &momentumFlux,
                      double &densityFlux,
+                     double &momentumFlux,
+                     double &energyFlux,
                      double const &);
 
     /*!

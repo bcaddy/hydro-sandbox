@@ -25,9 +25,9 @@ void HllcRiemannSolver::riemannMain(double const &densityL,
                                     double const &densityR,
                                     double const &velocityR,
                                     double const &pressureR,
-                                    double &energyFlux,
-                                    double &momentumFlux,
                                     double &densityFlux,
+                                    double &momentumFlux,
+                                    double &energyFlux,
                                     double const &)
 {
     // Copy arguments to member variables
