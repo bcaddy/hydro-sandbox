@@ -98,6 +98,9 @@ public:
      * \param[out] densityFlux The density flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] energyFlux The energy flux that is being solved for
+     * \param[in] posOverT OPTIONAL: The value of the position divided by the
+     * current time. Alway equal to zero for numerical solutions and as such
+     * defaults to it
      */
     void riemannMain(double const &densityL,
                      double const &velocityL,
@@ -108,7 +111,7 @@ public:
                      double &densityFlux,
                      double &momentumFlux,
                      double &energyFlux,
-                     double const &);
+                     double const &posOverT = 0);
 
     /*!
      * \brief Construct a new Riemann Solver object

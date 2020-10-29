@@ -45,14 +45,13 @@ int main()
     size_t const numSamples = 100;
     double const diaphPos   = 0.5 * xSize;
     double const deltaX     = xSize / static_cast<double>(numSamples);
-    std::string  solverKind = "exact";
     // ===== End Settings for Sod Shock Tube  ==================================
 
     // ===== Grid & Solver ===================================================
     Grid1D grid(numSamples, 0, "pass", "../data/");
 
-    std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(gamma));
-    // std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(gamma));
+    // std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(gamma));
+    std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(gamma));
     // ===== End Arrays & Solver ===============================================
 
     // ===== Compute the Solution ==============================================

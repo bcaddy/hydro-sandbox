@@ -28,7 +28,7 @@ void HllcRiemannSolver::riemannMain(double const &densityL,
                                     double &densityFlux,
                                     double &momentumFlux,
                                     double &energyFlux,
-                                    double const &)
+                                    double const &posOverT)
 {
     // Copy arguments to member variables
     _densityL  = densityL;
@@ -45,22 +45,22 @@ void HllcRiemannSolver::riemannMain(double const &densityL,
     _computeWaveSpeeds();
 
     // Now we need to figure out which state we're in
-    if (0.0 < _sL)
+    if (posOverT < _sL)
     {
         _computeStandardFluxes(_densityL, _velocityL, _pressureL, _energyL,
                                densityFlux, momentumFlux, energyFlux);
     }
-    else if ( (_sL <= 0.0) and (0.0 <= _sM) )
+    else if ( (_sL <= posOverT) and (posOverT <= _sM) )
     {
         _computeStarFluxes(_densityL, _velocityL, _pressureL, _energyL, _sL,
                                densityFlux, momentumFlux, energyFlux);
     }
-    else if ( (_sM <= 0.0) and (0.0 <= _sR) )
+    else if ( (_sM <= posOverT) and (posOverT <= _sR) )
     {
         _computeStarFluxes(_densityR, _velocityR, _pressureR, _energyR, _sR,
                                densityFlux, momentumFlux, energyFlux);
     }
-    else if (_sR < 0.0)
+    else if (_sR < posOverT)
     {
         _computeStandardFluxes(_densityR, _velocityR, _pressureR, _energyR,
                                densityFlux, momentumFlux, energyFlux);

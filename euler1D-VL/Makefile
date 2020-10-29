@@ -26,8 +26,9 @@ Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 euler-solver: euler-main.cpp $(Helper_SRC)
 	$(cppCompiler) $? -o $@.exe
 
-test-Helper_SRC = ExactRiemannSolver.cpp
-test-Riemann: test-Riemann.cpp $(test-Helper_SRC)
+
+test-Helper_SRC = ExactRiemannSolver.cpp HllcRiemannSolver.cpp Grid1D.cpp
+riemannTester: riemannTester.cpp $(test-Helper_SRC)
 	$(cppCompiler) $? -o $@.exe
 
 %.o: %.cpp
