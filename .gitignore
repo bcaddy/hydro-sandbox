@@ -26,6 +26,7 @@ doxygen-*
 *.a
 a.out
 *.dSYM
+*.gch
 
 # Packages #
 ############

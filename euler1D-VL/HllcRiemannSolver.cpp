@@ -86,6 +86,11 @@ void HllcRiemannSolver::_computeStandardFluxes(double const &density,
     densityFlux  = density  * velocity;
     momentumFlux = density  * std::pow(velocity, 2) + pressure;
     energyFlux   = velocity * (energy + pressure);
+
+    // Set member variables to the current state for retrieval if needed
+    _densityState  = density;
+    _velocityState = velocity;
+    _pressureState = pressure;
 }
 // =============================================================================
 
@@ -127,6 +132,11 @@ void HllcRiemannSolver::_computeStarFluxes(double const &density,
     densityFlux  = sideDensityFlux  + sSide * (densityStar  - density);
     momentumFlux = sideMomentumFlux + sSide * (momentumStar - computeMomentum(velocity, density));
     energyFlux   = sideEnergyFlux   + sSide * (energyStar   - energy);
+
+    // Set member variables to the current state for retrieval if needed
+    _densityState  = densityStar;
+    _velocityState = momentumStar/densityStar;
+    _pressureState = pressureStar;
 }
 // =============================================================================
 

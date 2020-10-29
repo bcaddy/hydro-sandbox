@@ -37,6 +37,13 @@ protected:
     /// The pressure on the right side of the interface
     double _pressureR;
 
+    /// The density of the found state
+    double _densityState;
+    /// The velocity of the found state
+    double _velocityState;
+    /// The pressure of the found state
+    double _pressureState;
+
 public:
     /*!
      * \brief Solves the Riemann problem exactly by calling and organizing member
@@ -66,6 +73,29 @@ public:
                              double &momentumFlux,
                              double &energyFlux,
                              double const &posOverT = 0.0) = 0;
+
+    /*!
+     * \brief Get the Density State object
+     *
+     * \return double The density of the current state
+     */
+    double getDensityState(){return _densityState;};
+
+    /*!
+     * \brief Get the Velocity State object
+     *
+     * \return double The velocity of the current state
+     */
+    double getVelocityState(){return _velocityState;};
+
+    /*!
+     * \brief Get the Pressure State object
+     *
+     * \return double The pressure of the current state
+     */
+    double getPressureState(){return _pressureState;};
+
+
 
     RiemannSolver(double const &gamma) : _gamma(gamma){};
     virtual ~RiemannSolver() = default;
