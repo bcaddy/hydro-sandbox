@@ -415,11 +415,11 @@ Simulation1D::Simulation1D(double const &physicalLength,
     // Choose the Riemann Solver
     if (riemannSolverKind == "HLLC")
     {
-        _riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(1.4));
+        _riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(_gamma));
     }
     else if (riemannSolverKind == "exact")
     {
-        _riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(1.4));
+        _riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(_gamma));
     }
     else
     {
