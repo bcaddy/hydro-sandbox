@@ -55,10 +55,6 @@ public:
     /*!
      * \brief Applies the boundary conditions by updating the ghost cells
      *
-     * \todo Currently this only uses periodic and Sod boundary conditions and I
-     *       would like to add outflow, reflective, inflow, and hydrostatic
-     *       boundary conditions.
-     *
      * \param[in] gamma The ratio of specific heats
      */
     void updateBoundaries(double const &gamma);
