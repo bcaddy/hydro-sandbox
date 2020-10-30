@@ -1,7 +1,7 @@
 /*!
 * \file test-Riemann.cpp
 * \author Robert 'Bob' Caddy (rvc@pitt.edu)
-* \brief Test the exact Riemann solver from Toro using a Sod Shock tube
+* \brief Test a Riemann solver
 * \version 0.1
 * \date 2020-07-23
 *
@@ -17,7 +17,6 @@
 #include <memory>
 #include "RiemannSolver.h"
 #include "HllcRiemannSolver.h"
-#include "ExactRiemannSolver.h"
 #include "Grid1D.h"
 #include "HydroUtilities.h"
 
@@ -50,7 +49,6 @@ int main()
     // ===== Grid & Solver ===================================================
     Grid1D grid(numSamples, 0, "pass", "../data/");
 
-    // std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(gamma));
     std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(gamma));
     // ===== End Arrays & Solver ===============================================
 

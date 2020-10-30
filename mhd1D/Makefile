@@ -17,17 +17,17 @@ cppCompiler = ${cppDebug} #the version used
 # list of binaries to clean as well
 binaries = euler-solver.exe test-Riemann.exe
 
-Helper_SRC = Grid1D.cpp Simulation1D.cpp ExactRiemannSolver.cpp HllcRiemannSolver.cpp
+Helper_SRC = Grid1D.cpp Simulation1D.cpp HllcRiemannSolver.cpp
 Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
 
 # To switch between compiling the whole program every time and only compiling
 # what has changed simply replace NAME.cpp with NAME.o and $(Helper_SRC) with
 # $(Helper_OBJ). This will generate a lot of object files though
-euler-solver: euler-main.cpp $(Helper_SRC)
+mhd-solver: mhd-main.cpp $(Helper_SRC)
 	$(cppCompiler) $? -o $@.exe
 
 
-test-Helper_SRC = ExactRiemannSolver.cpp HllcRiemannSolver.cpp Grid1D.cpp
+test-Helper_SRC = HllcRiemannSolver.cpp Grid1D.cpp
 riemannTester: riemannTester.cpp $(test-Helper_SRC)
 	$(cppCompiler) $? -o $@.exe
 

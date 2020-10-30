@@ -21,7 +21,7 @@
  * \brief Solves the Euler equations
  * \details This class handles all the heavy lifting of running a 1D hydro
  * simulation. It uses the Grid1D class for the grid and then computes time steps,
- * interface steps, solves the Riemann problem using the ExactRiemannSolver class,
+ * interface steps, solves the Riemann problem using the RiemannSolver class,
  * does the conservative update, keeps track of the time, etc.
  *
  */
@@ -179,8 +179,8 @@ public:
     void interfaceStates(std::string const &algoStep);
 
     /*!
-     * \brief Solves the Riemann problem exactly by calling the main function of
-     * the ExactRiemannSolver class
+     * \brief Solves the Riemann problem by calling the main function of
+     * the RiemannSolver class
      */
     void solveRiemann();
 
@@ -214,8 +214,8 @@ public:
      *            for Piecewise Linear Method
      * \param[in] limiterKind What kind of limiter to use. Options are
      *            "centerDiff", "minMod", and "MC"
-     * \param[in] riemannSolverKind What kind of Riemann solver to use. Options
-     *            are: "HLLC" and "exact"
+     * \param[in] riemannSolverKind What kind of MHD Riemann solver to use.
+     *            The only option currently is "HLLD"
      * \param[in] boundaryConditions Which kind of boundary conditions to use
      * \param[in] saveDir The directory to save the grid to
      */

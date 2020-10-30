@@ -18,7 +18,6 @@
 #include "Simulation1D.h"
 #include "HydroUtilities.h"
 #include "HllcRiemannSolver.h"
-#include "ExactRiemannSolver.h"
 
 using namespace HydroUtilities;
 
@@ -416,10 +415,6 @@ Simulation1D::Simulation1D(double const &physicalLength,
     if (riemannSolverKind == "HLLC")
     {
         _riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(_gamma));
-    }
-    else if (riemannSolverKind == "exact")
-    {
-        _riemannSolver = std::unique_ptr<RiemannSolver>(new ExactRiemannSolver(_gamma));
     }
     else
     {

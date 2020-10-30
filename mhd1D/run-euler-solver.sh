@@ -15,13 +15,13 @@ cd "${0%/*}"  # cd to hydro-sandbox directory
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
-cd "${REPO_ROOT}/euler1D-VL"
+cd "${REPO_ROOT}/mhd1D"
 
 echo -e "\nCompiling..."
 make
 
 echo -e "\nRunning..."
-"./euler-solver.exe"
+"./mhd-solver.exe"
 
 cd "${REPO_ROOT}/visualization"
 

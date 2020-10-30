@@ -12,9 +12,9 @@
 #pragma once
 
 /*!
- * \brief A (mostly) virtual base class for all Riemann solvers. Contains all
- * the member variables that are common to all Riemann solver along with a pure
- * virtual declaration of the riemannMain method
+ * \brief A (mostly) pure virtual base class for all Riemann solvers. Contains
+ * all the member variables that are common to all Riemann solver along with a
+ * pure virtual declaration of the riemannMain method
  *
  */
 class RiemannSolver
@@ -46,9 +46,8 @@ protected:
 
 public:
     /*!
-     * \brief Solves the Riemann problem exactly by calling and organizing member
-     * functions. Uses the same exact Riemann solver as in Toro "Riemann Solvers
-     * and Numerical Methods for Fluid Dynamics 3ed"
+     * \brief Solves the Riemann problem by calling and organizing member
+     * functions.
      *
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
@@ -59,9 +58,9 @@ public:
      * \param[out] densityFlux The density flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] energyFlux The energy flux that is being solved for
-     * \param[in] posOverT OPTIONAL: and only present on the Exact Riemann
-     * Solver The value of the position divided by the current time. Alway equal
-     * to zero for numerical solutions and as such defaults to it
+     * \param[in] posOverT OPTIONAL: The value of the position divided by the
+     * current time. Alway equal to zero for numerical solutions and as such
+     * defaults to it
      */
     virtual void riemannMain(double const &densityL,
                              double const &velocityL,

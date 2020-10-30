@@ -1,7 +1,8 @@
 /*******************************************************************************
- * \file euler-main.cpp
+ * \file mhd-main.cpp
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Solves the Euler equations in 1D using a second order Gudonov Scheme
+ * \brief Solves the ideal MHD in their Eulerian form in 1D using the VL+CT
+ * algorithm from Stone & Gardiner 2009 and the HLLD Riemann solver
  *
  * \date 2020-06-23
  *
@@ -23,9 +24,11 @@ using std::endl;
 #include "PerfTimer.h"
 
 /*!
- * \brief Main function that invokes class methods and provides user output.
+ * \brief Solves the ideal MHD in their Eulerian form in 1D using the VL+CT
+ * algorithm from Stone & Gardiner 2009 and the HLLD Riemann solver. This main
+ * function that invokes class methods and provides user output.
  *
- * The main function provides all, or at least most, of the calls to class
+ * \details The main function provides all, or at least most, of the calls to class
  * methods. The classes used here don't do much calling between member functions
  * and so this function handles most if this. That is primarily for readability.
  *
@@ -54,7 +57,7 @@ int main()
     std::string  boundaryConditions    = "sod";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
-    std::string  riemannSolverKind     = "HLLC";  // Options: "HLLC" & "exact"
+    std::string  riemannSolverKind     = "HLLC";  // Options: "HLLD"
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
 
