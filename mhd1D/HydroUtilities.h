@@ -53,7 +53,7 @@ namespace HydroUtilities
      * \return double The velocity
      */
     inline double computeVelocity(double const &momentum,
-                           double const &density)
+                                  double const &density)
         {return momentum / density;}
 // =============================================================================
 
