@@ -24,18 +24,33 @@ using namespace HydroUtilities;
 // =============================================================================
 void Simulation1D::_setInitialConditions(std::string const &initialConditionsKind)
 {
-    if (initialConditionsKind == "sod")
+    if (initialConditionsKind == "dwShockTube")
     {
         size_t const half  = grid.numTotCells / 2;
+        double coef = 1. / std::sqrt(4. * M_PI);
+        double denL  = 1.08,
+               presL = 0.95,
+               denR  = 1.,
+               presR = 1.;
+
+        std::vector<double> velL{1.2, 0.01, 0.5},
+                            bL{4. * coef, 3.6 * coef, 2.0 * coef},
+                            velR{0.0, 0.0, 0.0},
+                            bR{4.0 * coef, 4.0 * coef, 2.0 * coef};
 
         // Iterate over just the real cells on the left side
         for (size_t i = grid.numGhostCells;
             i < half;
             i++)
         {
-            grid.density[i]  = 1.;
-            grid.momentum[i] = computeMomentum(0.0, 1.0);
-            grid.energy[i]   = computeEnergy(1.0, 1.0, 0.0, _gamma);
+            grid.density[i]     = denL;
+            grid.momentum[i][0] = computeMomentum(velL[0], denL);
+            grid.momentum[i][1] = computeMomentum(velL[1], denL);
+            grid.momentum[i][2] = computeMomentum(velL[2], denL);
+            grid.magnetic[i][0] = bL[0];
+            grid.magnetic[i][1] = bL[1];
+            grid.magnetic[i][2] = bL[2];
+            grid.energy[i]      = computeEnergy(presL, denL, velL, bL, _gamma);
         }
 
         // Iterate over the real cells on the right side
@@ -43,9 +58,57 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
             i < (grid.numTotCells - grid.numGhostCells);
             i++)
         {
-            grid.density[i]  = 0.1;
-            grid.momentum[i] = computeMomentum(0.0, 0.1);;
-            grid.energy[i]   = computeEnergy(0.1, 0.1, 0.0, _gamma);
+            grid.density[i]     = denR;
+            grid.momentum[i][0] = computeMomentum(velL[0], denR);
+            grid.momentum[i][1] = computeMomentum(velL[1], denR);
+            grid.momentum[i][2] = computeMomentum(velL[2], denR);
+            grid.magnetic[i][0] = bR[0];
+            grid.magnetic[i][1] = bR[1];
+            grid.magnetic[i][2] = bR[2];
+            grid.energy[i]      = computeEnergy(presR, denR, velR, bR, _gamma);
+        }
+    }
+    else if (initialConditionsKind == "bwShockTube")
+    {
+        size_t const half  = grid.numTotCells / 2;
+        double denL  = 1.0,
+               presL = 1.0,
+               denR  = 0.125,
+               presR = 0.1;
+
+        std::vector<double> velL{0.0, 0.0, 0.0},
+                            bL{0.75, 1.0, 0.0},
+                            velR{0.0, 0.0, 0.0},
+                            bR{0.75, -1.0, 0.0};
+
+        // Iterate over just the real cells on the left side
+        for (size_t i = grid.numGhostCells;
+            i < half;
+            i++)
+        {
+            grid.density[i]     = denL;
+            grid.momentum[i][0] = computeMomentum(velL[0], denL);
+            grid.momentum[i][1] = computeMomentum(velL[1], denL);
+            grid.momentum[i][2] = computeMomentum(velL[2], denL);
+            grid.magnetic[i][0] = bL[0];
+            grid.magnetic[i][1] = bL[1];
+            grid.magnetic[i][2] = bL[2];
+            grid.energy[i]      = computeEnergy(presL, denL, velL, bL, _gamma);
+        }
+
+        // Iterate over the real cells on the right side
+        for (size_t i = half;
+            i < (grid.numTotCells - grid.numGhostCells);
+            i++)
+        {
+            grid.density[i]     = denR;
+            grid.momentum[i][0] = computeMomentum(velL[0], denR);
+            grid.momentum[i][1] = computeMomentum(velL[1], denR);
+            grid.momentum[i][2] = computeMomentum(velL[2], denR);
+            grid.magnetic[i][0] = bR[0];
+            grid.magnetic[i][1] = bR[1];
+            grid.magnetic[i][2] = bR[2];
+            grid.energy[i]      = computeEnergy(presR, denR, velR, bR, _gamma);
         }
     }
     else if (initialConditionsKind == "indexCheck")
