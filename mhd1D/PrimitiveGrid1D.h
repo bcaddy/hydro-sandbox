@@ -21,10 +21,15 @@
 struct PrimitiveGrid1D
 {
 public:
+    /// The total number of cells including ghost cells
+    size_t numTotCells;
+
     /// The density in a cell. Measure in kilograms/cubic meter
     std::vector<double> density;
     /// The velocity in a specific cell. Measured in meters per second
-    std::vector<double> velocity;
+    std::vector<std::vector<double>> velocity;
+    /// The magnetic on the i-1/2 face of a specific cell.
+    std::vector<std::vector<double>> magnetic;
     /// The pressure in a cell. Measured in Pascals
     std::vector<double> pressure;
 
@@ -36,12 +41,13 @@ public:
      */
     PrimitiveGrid1D(size_t const &reals,
                     size_t const &ghosts)
-    {
-        size_t numTotCells = reals + 2 * ghosts;
-        density.resize(numTotCells);
-        velocity.resize(numTotCells);
-        pressure.resize(numTotCells);
-    };
+        :
+        numTotCells(reals + 2 * ghosts),
+        density(numTotCells),
+        velocity(numTotCells, std::vector<double> (3, 0)),
+        magnetic(numTotCells, std::vector<double> (3, 0)),
+        pressure(numTotCells)
+    {};
 
     /*!
      * \brief Destroy the Primitive Grid 1 D object with default destructor
