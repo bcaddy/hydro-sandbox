@@ -76,11 +76,11 @@ public:
 
     /*!
      * \brief Saves all the grid variables to their own csv files
-     * \details Calling this functions saves Grid1D::density, Grid1D::momentum,
-     * and Grid1D::energy each to their own CSV files. The
-     * files are stored in the directory given to the constructor
-     * Grid1D::Grid1D(size_t const &reals,size_t const &ghosts,std::string const &saveDir)
-     * which opens a file for each vector and saves them in that directory.
+     * \details Calling this functions saves the entire grid, each conserved
+     * variable to their own CSV files. The files are stored in the directory
+     * given to the constructor Grid1D::Grid1D(size_t const &reals,size_t const
+     * &ghosts,std::string const &saveDir) which opens a file for each vector
+     * and saves them in that directory.
      *
      */
     void saveState();

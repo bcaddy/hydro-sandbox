@@ -1,5 +1,5 @@
 /*!
-* \file test-Riemann.cpp
+* \file riemannTester.cpp
 * \author Robert 'Bob' Caddy (rvc@pitt.edu)
 * \brief Test a Riemann solver
 * \version 0.1
@@ -25,6 +25,12 @@ using std::cin;
 using std::endl;
 using namespace HydroUtilities;
 
+/*!
+ * \brief Test a Riemann solver by giving it interface states and a
+ * position/time argument
+ *
+ * \return int
+ */
 int main()
 {
     // Start timer

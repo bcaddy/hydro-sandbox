@@ -95,7 +95,11 @@ public:
     double getPressureState(){return _pressureState;};
 
 
-
+    /*!
+     * \brief Construct a new Riemann Solver object.
+     *
+     * \param gamma The ratio of the specific heats
+     */
     RiemannSolver(double const &gamma) : _gamma(gamma){};
     virtual ~RiemannSolver() = default;
 };
