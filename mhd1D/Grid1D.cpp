@@ -68,24 +68,47 @@ void Grid1D::updateBoundaries(double const &gamma)
 void Grid1D::saveState()
 {
     if (_densitySaveFile.is_open() and
-        _momentumSaveFile.is_open() and
+        _momentumXSaveFile.is_open() and
+        _momentumYSaveFile.is_open() and
+        _momentumZSaveFile.is_open() and
+        _magneticXSaveFile.is_open() and
+        _magneticYSaveFile.is_open() and
+        _magneticZSaveFile.is_open() and
         _energySaveFile.is_open())
     {
-        _densitySaveFile  << density[numGhostCells];
-        _momentumSaveFile << momentum[numGhostCells];
-        _energySaveFile << energy[numGhostCells];
+
+        _densitySaveFile   << density[numGhostCells];
+        _momentumXSaveFile << momentum[numGhostCells][0];
+        _momentumYSaveFile << momentum[numGhostCells][1];
+        _momentumZSaveFile << momentum[numGhostCells][2];
+        _magneticXSaveFile << magnetic[numGhostCells][0];
+        _magneticYSaveFile << magnetic[numGhostCells][1];
+        _magneticZSaveFile << magnetic[numGhostCells][2];
+        _energySaveFile    << energy[numGhostCells];
 
         for (size_t i = numGhostCells + 1;
              i < (numTotCells - numGhostCells);
              i++)
         {
-            _densitySaveFile  << "," << density[i];
-            _momentumSaveFile << "," << momentum[i];
-            _energySaveFile << "," << energy[i];
+
+            _densitySaveFile   << "," << density[i];
+            _momentumXSaveFile << "," << momentum[i][0];
+            _momentumYSaveFile << "," << momentum[i][1];
+            _momentumZSaveFile << "," << momentum[i][2];
+            _magneticXSaveFile << "," << magnetic[i][0];
+            _magneticYSaveFile << "," << magnetic[i][1];
+            _magneticZSaveFile << "," << magnetic[i][2];
+            _energySaveFile    << "," << energy[i];
         }
-        _densitySaveFile  << std::endl;
-        _momentumSaveFile << std::endl;
-        _energySaveFile << std::endl;
+
+        _densitySaveFile   << std::endl;
+        _momentumXSaveFile << std::endl;
+        _momentumYSaveFile << std::endl;
+        _momentumZSaveFile << std::endl;
+        _magneticXSaveFile << std::endl;
+        _magneticYSaveFile << std::endl;
+        _magneticZSaveFile << std::endl;
+        _energySaveFile    << std::endl;
     }
     else
     {
@@ -115,7 +138,15 @@ Grid1D::Grid1D(size_t const &reals,
     if (saveDir != "0")
     {
         _densitySaveFile.open(saveDir + "Density.csv");
-        _momentumSaveFile.open(saveDir + "Momentum.csv");
+
+        _momentumXSaveFile.open(saveDir + "MomentumX.csv");
+        _momentumYSaveFile.open(saveDir + "MomentumY.csv");
+        _momentumZSaveFile.open(saveDir + "MomentumZ.csv");
+
+        _magneticXSaveFile.open(saveDir + "MagneticX.csv");
+        _magneticYSaveFile.open(saveDir + "MagneticY.csv");
+        _magneticZSaveFile.open(saveDir + "MagneticZ.csv");
+
         _energySaveFile.open(saveDir + "Energy.csv");
     }
 }
@@ -123,9 +154,14 @@ Grid1D::Grid1D(size_t const &reals,
 Grid1D::~Grid1D()
 {
     // Close the file if it's open
-    if (_densitySaveFile.is_open())  _densitySaveFile.close();
-    if (_momentumSaveFile.is_open()) _momentumSaveFile.close();
-    if (_energySaveFile.is_open())  _energySaveFile.close();
+    if (_densitySaveFile.is_open())   _densitySaveFile.close();
+    if (_momentumXSaveFile.is_open()) _momentumXSaveFile.close();
+    if (_momentumYSaveFile.is_open()) _momentumYSaveFile.close();
+    if (_momentumZSaveFile.is_open()) _momentumZSaveFile.close();
+    if (_magneticXSaveFile.is_open()) _magneticXSaveFile.close();
+    if (_magneticYSaveFile.is_open()) _magneticYSaveFile.close();
+    if (_magneticZSaveFile.is_open()) _magneticZSaveFile.close();
+    if (_energySaveFile.is_open())    _energySaveFile.close();
 
 }
 // =============================================================================

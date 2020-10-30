@@ -69,11 +69,11 @@ private:
      * tube.
      *
      * \param[in] initialConditionsKind The type of initial conditions to use.
-     *            Options are "sod", "indexCheck", "advectionStep",  and
-     *            "advectionGauss".
+     *            Options are:
      *            | Keyword        | Initial Conditions                                                       |
      *            |----------------|--------------------------------------------------------------------------|
-     *            | sod            | A sod shock tube                                                         |
+     *            | dwShockTube    | MHD Shock tube from Dai & Woodward 1994                                  |
+     *            | bwShockTube    | MHD Shock tube from Brio & Wu 1988                                       |
      *            | indexCheck     | Set each primitive variable to the value of the grid index at that point |
      *            | advectionStep  | Step function advection                                                  |
      *            | advectionGauss | Gaussion function advection                                              |

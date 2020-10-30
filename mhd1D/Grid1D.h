@@ -29,8 +29,21 @@ private:
 
     /// Save file object for the density
     std::ofstream _densitySaveFile;
-    /// Save file object for the momentum
-    std::ofstream _momentumSaveFile;
+
+    /// Save file object for the momentum in the X direction
+    std::ofstream _momentumXSaveFile;
+    /// Save file object for the momentum in the Y direction
+    std::ofstream _momentumYSaveFile;
+    /// Save file object for the momentum in the Z direction
+    std::ofstream _momentumZSaveFile;
+
+    /// Save file object for the magnetic field in the X direction
+    std::ofstream _magneticXSaveFile;
+    /// Save file object for the magnetic field in the Y direction
+    std::ofstream _magneticYSaveFile;
+    /// Save file object for the magnetic field in the Z direction
+    std::ofstream _magneticZSaveFile;
+
     /// Save file object for the energy
     std::ofstream _energySaveFile;
 
