@@ -19,29 +19,7 @@
 // =============================================================================
 void Grid1D::updateBoundaries(double const &gamma)
 {
-    if (boundaryConditionKind == "sod")
-    {
-        for (size_t j = 0; j < numGhostCells; j++)
-        {
-            // Compute indices
-            int rightGhost = numTotCells - numGhostCells + j;
-            int leftGhost  = j;
-
-            // Update Density BC's
-            density[leftGhost]  = 1.0;
-            density[rightGhost] = 0.1;
-
-            // Update Momentum BC's
-            momentum[leftGhost]  = 0.0;
-            momentum[rightGhost] = 0.0;
-
-            // Update Energy BC's
-            energy[leftGhost]  = 1. / (gamma - 1.);
-            energy[rightGhost] = 0.1 / (gamma - 1);
-        }
-
-    }
-    else if (boundaryConditionKind == "periodic")
+    if (boundaryConditionKind == "periodic")
     {
         // Set boundary conditions (periodic)
         for (size_t j = 0; j < numGhostCells; j++)
@@ -56,13 +34,20 @@ void Grid1D::updateBoundaries(double const &gamma)
             density[leftGhost]  = density[rightReal];
             density[rightGhost] = density[leftReal];
 
-            // Update Momentum BC's
-            momentum[leftGhost]  = momentum[rightReal];
-            momentum[rightGhost] = momentum[leftReal];
-
             // Update Energy BC's
             energy[leftGhost]  = energy[rightReal];
             energy[rightGhost] = energy[leftReal];
+
+            for (size_t i = 0; i < 3; i++)
+            {
+                // Update Momentum BC's
+                momentum[leftGhost][i]  = momentum[rightReal][i];
+                momentum[rightGhost][i] = momentum[leftReal][i];
+
+                // Update Magnetic field BC's
+                magnetic[leftGhost][i]  = magnetic[rightReal][i];
+                magnetic[rightGhost][i] = magnetic[leftReal][i];
+            }
         }
     }
     else if (boundaryConditionKind == "pass")
@@ -120,12 +105,12 @@ Grid1D::Grid1D(size_t const &reals,
     numGhostCells(ghosts),
     numRealCells(reals),
     numTotCells(2*numGhostCells + numRealCells),
-    boundaryConditionKind(boundaryConditions)
+    boundaryConditionKind(boundaryConditions),
+    density(numTotCells),
+    momentum(numTotCells, std::vector<double> (3, 0)),
+    magnetic(numTotCells, std::vector<double> (3, 0)),
+    energy(numTotCells)
 {
-    density.resize(numTotCells);
-    momentum.resize(numTotCells);
-    energy.resize(numTotCells);
-
     // Open files if saving is enabled
     if (saveDir != "0")
     {

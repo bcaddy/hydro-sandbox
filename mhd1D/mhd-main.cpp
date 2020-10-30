@@ -49,12 +49,12 @@ int main()
 
     // ===== Settings ==========================================================
     double const physicalLength        = 1.;
-    double const gamma                 = 1.4;
+    double const gamma                 = 5./3.;
     double const cfl                   = 0.4;
     double const maxTime               = 0.2;
     size_t const numRealCells          = 1000;
-    std::string  initialConditionsKind = "sod";
-    std::string  boundaryConditions    = "sod";
+    std::string  initialConditionsKind = "dwShockTube";
+    std::string  boundaryConditions    = "pass";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
     std::string  riemannSolverKind     = "HLLC";  // Options: "HLLD"

@@ -45,7 +45,9 @@ public:
     /// The density in a cell. Measure in kilograms/cubic meter
     std::vector<double> density;
     /// The momentum in a specific cell. Measured in kilogram meters per second
-    std::vector<double> momentum;
+    std::vector<std::vector<double>> momentum;
+    /// The magnetic field on the i-1/2 face of a specific cell.
+    std::vector<std::vector<double>> magnetic;
     /// The energy in a cell. Measured in Joules
     std::vector<double> energy;
 
