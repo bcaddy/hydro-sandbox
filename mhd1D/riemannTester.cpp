@@ -18,12 +18,12 @@
 #include "RiemannSolver.h"
 #include "HllcRiemannSolver.h"
 #include "Grid1D.h"
-#include "HydroUtilities.h"
+#include "mhdUtilities.h"
 
 using std::cout;
 using std::cin;
 using std::endl;
-using namespace HydroUtilities;
+using namespace mhdUtilities;
 
 /*!
  * \brief Test a Riemann solver by giving it interface states and a

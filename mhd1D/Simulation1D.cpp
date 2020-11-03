@@ -16,10 +16,10 @@
 #include <memory>
 
 #include "Simulation1D.h"
-#include "HydroUtilities.h"
+#include "mhdUtilities.h"
 #include "HllcRiemannSolver.h"
 
-using namespace HydroUtilities;
+using namespace mhdUtilities;
 
 // =============================================================================
 void Simulation1D::_setInitialConditions(std::string const &initialConditionsKind)

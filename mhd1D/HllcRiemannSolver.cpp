@@ -14,9 +14,9 @@
 #include <stdexcept>
 
 #include "HllcRiemannSolver.h"
-#include "HydroUtilities.h"
+#include "mhdUtilities.h"
 
-using namespace HydroUtilities;
+using namespace mhdUtilities;
 
 // =============================================================================
 void HllcRiemannSolver::riemannMain(double const &densityL,
