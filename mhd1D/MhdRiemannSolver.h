@@ -60,11 +60,14 @@ public:
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
+     * \param[in] magneticL The magnetic field on the left side of the interface
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
      * \param[in] pressureR The pressure on the right side of the interface
+     * \param[in] magneticR The magnetic field on the right side of the interface
      * \param[out] densityFlux The density flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
+     * \param[out] magneticFlux The magnetic field flux that is being solved for
      * \param[out] energyFlux The energy flux that is being solved for
      * \param[in] posOverT OPTIONAL: The value of the position divided by the
      * current time. Alway equal to zero for numerical solutions and as such
@@ -79,7 +82,8 @@ public:
                              double const &pressureR,
                              std::vector<double> magneticR,
                              double &densityFlux,
-                             double &momentumFlux,
+                             std::vector<double> &momentumFlux,
+                             std::vector<double> &magneticFlux,
                              double &energyFlux,
                              double const &posOverT = 0.0) = 0;
 
