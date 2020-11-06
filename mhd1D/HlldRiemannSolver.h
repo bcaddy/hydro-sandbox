@@ -1,7 +1,8 @@
 /*!
- * \file HllcRiemannSolver.h
+ * \file HlldRiemannSolver.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Contains the HllcRiemannSolver class for solving the Riemann Problem.
+ * \brief Contains the HlldRiemannSolver class for solving the MHD Riemann
+ * Problem.
  * \version 0.1
  * \date 2020-10-09
  *
@@ -11,14 +12,13 @@
 
 #pragma once
 
-#include "RiemannSolver.h"
+#include "MhdRiemannSolver.h"
 
 /*!
- * \brief Solves the Riemann problem approximately using the HLLC Riemann solver
- *        detailed in Batten et al. 1997 <em>"On the Choice of Wavespeeds for the
- *        HLLC Riemann Solver"</em>
+ * \brief Solves the Riemann problem approximately using the HLLD Riemann solver
+ *        detailed in Miyoshi & Kusano 2005
  */
-class HllcRiemannSolver : public RiemannSolver
+class HlldRiemannSolver : public MhdRiemannSolver
 {
 private:
     /// The energy on the left side of the interface
@@ -27,17 +27,21 @@ private:
     /// The energy on the right side of the interface
     double _energyR;
 
-    /// The approximate wave speed of the left acoustic wave
+    /// The approximate wave speed of the left magnetosonic wave
     double _sL;
+    /// The approximate wave speed of the right magnetosonic wave
+    double _sR;
+
+    /// The approximate wave speed of the left Alfven wave
+    double _sStarL;
+    /// The approximate wave speed of the right Alfven wave
+    double _sStarR;
 
     /// The approximate wave speed of the middel contact wave
     double _sM;
 
-    /// The approximate wave speed of the right acoustic wave
-    double _sR;
-
     /*!
-     * \brief Compute the S_M, S_L, and S_R wave speeds for the HLLC solver
+     * \brief Compute the S_M, S_L, and S_R wave speeds for the HLLD solver
      *
      */
     void _computeWaveSpeeds();
@@ -63,7 +67,7 @@ private:
 
     /*!
      * \brief Compute the F_L^* or F_R^* flux by computing approximate values
-     * for the star state and using them to compute the star state HLLC flux
+     * for the star state and using them to compute the star state HLLD flux
      *
      * \param[in] density The density of the state
      * \param[in] velocity The velocity of the state
@@ -86,8 +90,8 @@ private:
 public:
         /*!
      * \brief Solves the Riemann problem approximately by calling and organizing
-     * member functions. Uses the same HLLC Riemann solver as in Batten et al.
-     * 1997 <em>"On the Choice of Wavespeeds for the HLLC Riemann Solver"</em>
+     * member functions. Uses the same HLLD Riemann solver as in Miyoshi &
+     * Kusano 2005
      *
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
@@ -118,11 +122,11 @@ public:
      *
      * \param[in] gamma The ratio of specific heats
      */
-    HllcRiemannSolver(double const &gamma): RiemannSolver(gamma) {};
+    HlldRiemannSolver(double const &gamma): MhdRiemannSolver(gamma) {};
 
     /*!
-     * \brief Destroy the Hllc Riemann Solver object using default destructors
+     * \brief Destroy the Hlld Riemann Solver object using default destructors
      *
      */
-    ~HllcRiemannSolver() = default;
+    ~HlldRiemannSolver() = default;
 };

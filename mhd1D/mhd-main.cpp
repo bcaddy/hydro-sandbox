@@ -57,7 +57,7 @@ int main()
     std::string  boundaryConditions    = "pass";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
-    std::string  riemannSolverKind     = "HLLC";  // Options: "HLLD"
+    std::string  riemannSolverKind     = "HLLD";  // Options: "HLLD"
     std::string  saveDir               = "../data/";
     // ===== End Settings ======================================================
 

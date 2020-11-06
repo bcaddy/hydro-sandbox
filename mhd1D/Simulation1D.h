@@ -15,7 +15,7 @@
 
 #include "Grid1D.h"
 #include "PrimitiveGrid1D.h"
-#include "RiemannSolver.h"
+#include "MhdRiemannSolver.h"
 
 /*!
  * \brief Solves the Euler equations

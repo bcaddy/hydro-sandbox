@@ -1,7 +1,7 @@
 /*!
- * \file RiemannSolver.h
+ * \file MhdRiemannSolver.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Contains the base virtual class for all Riemann Solvers
+ * \brief Contains the base virtual class for all MHD Riemann Solvers
  * \version 0.1
  * \date 2020-10-15
  *
@@ -11,13 +11,15 @@
 
 #pragma once
 
+#include <vector>
+
 /*!
- * \brief A (mostly) pure virtual base class for all Riemann solvers. Contains
+ * \brief A (mostly) pure virtual base class for all MHD Riemann solvers. Contains
  * all the member variables that are common to all Riemann solver along with a
  * pure virtual declaration of the riemannMain method
  *
  */
-class RiemannSolver
+class MhdRiemannSolver
 {
 protected:
     /// The ratio of specific heats gamma
@@ -26,23 +28,29 @@ protected:
     /// The density on the left side of the interface
     double _densityL;
     /// The velocity on the left side of the interface
-    double _velocityL;
+    std::vector<double> _velocityL;
     /// The pressure on the left side of the interface
     double _pressureL;
+    /// The magnetic field
+    std::vector<double> _magneticL;
 
     /// The density on the right side of the interface
     double _densityR;
     /// The velocity on the right side of the interface
-    double _velocityR;
+    std::vector<double> _velocityR;
     /// The pressure on the right side of the interface
     double _pressureR;
+    /// The magnetic field
+    std::vector<double> _magneticR;
 
     /// The density of the found state
     double _densityState;
     /// The velocity of the found state
-    double _velocityState;
+    std::vector<double> _velocityState;
     /// The pressure of the found state
     double _pressureState;
+    /// The magnetic field
+    std::vector<double> _magneticState;
 
 public:
     /*!
@@ -83,9 +91,9 @@ public:
     /*!
      * \brief Get the Velocity State object
      *
-     * \return double The velocity of the current state
+     * \return std::vector<double> The velocity of the current state
      */
-    double getVelocityState(){return _velocityState;};
+    std::vector<double> getVelocityState(){return _velocityState;};
 
     /*!
      * \brief Get the Pressure State object
@@ -94,12 +102,26 @@ public:
      */
     double getPressureState(){return _pressureState;};
 
+    /*!
+     * \brief Get the magnetic field State object
+     *
+     * \return std::vector<double> The magnetic field of the current state
+     */
+    std::vector<double> getMagneticState(){return _magneticState;};
+
+
+
 
     /*!
      * \brief Construct a new Riemann Solver object.
      *
      * \param gamma The ratio of the specific heats
      */
-    RiemannSolver(double const &gamma) : _gamma(gamma){};
-    virtual ~RiemannSolver() = default;
+    MhdRiemannSolver(double const &gamma)
+        : _gamma(gamma),
+          _magneticL(3),
+          _magneticR(3),
+          _magneticState(3)
+        {};
+    virtual ~MhdRiemannSolver() = default;
 };

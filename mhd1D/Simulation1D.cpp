@@ -17,7 +17,7 @@
 
 #include "Simulation1D.h"
 #include "mhdUtilities.h"
-#include "HllcRiemannSolver.h"
+#include "HlldRiemannSolver.h"
 
 using namespace mhdUtilities;
 
@@ -475,9 +475,9 @@ Simulation1D::Simulation1D(double const &physicalLength,
     _setInitialConditions(initialConditionsKind);
 
     // Choose the Riemann Solver
-    if (riemannSolverKind == "HLLC")
+    if (riemannSolverKind == "HLLD")
     {
-        _riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(_gamma));
+        _riemannSolver = std::unique_ptr<RiemannSolver>(new HlldRiemannSolver(_gamma));
     }
     else
     {

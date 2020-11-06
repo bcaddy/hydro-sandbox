@@ -15,8 +15,8 @@
 #include <chrono>
 #include <vector>
 #include <memory>
-#include "RiemannSolver.h"
-#include "HllcRiemannSolver.h"
+#include "MhdRiemannSolver.h"
+#include "HlldRiemannSolver.h"
 #include "Grid1D.h"
 #include "mhdUtilities.h"
 
@@ -55,7 +55,7 @@ int main()
     // ===== Grid & Solver ===================================================
     Grid1D grid(numSamples, 0, "pass", "../data/");
 
-    std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new HllcRiemannSolver(gamma));
+    std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new HlldRiemannSolver(gamma));
     // ===== End Arrays & Solver ===============================================
 
     // ===== Compute the Solution ==============================================

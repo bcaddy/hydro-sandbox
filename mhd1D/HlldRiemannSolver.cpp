@@ -1,7 +1,7 @@
 /*!
- * \file HllcRiemannSolver.cpp
+ * \file HlldRiemannSolver.cpp
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Implementation of the HllcRiemannSolver class
+ * \brief Implementation of the HlldRiemannSolver class
  * \version 0.1
  * \date 2020-10-09
  *
@@ -13,13 +13,13 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "HllcRiemannSolver.h"
+#include "HlldRiemannSolver.h"
 #include "mhdUtilities.h"
 
 using namespace mhdUtilities;
 
 // =============================================================================
-void HllcRiemannSolver::riemannMain(double const &densityL,
+void HlldRiemannSolver::riemannMain(double const &densityL,
                                     double const &velocityL,
                                     double const &pressureL,
                                     double const &densityR,
@@ -67,14 +67,14 @@ void HllcRiemannSolver::riemannMain(double const &densityL,
     }
     else
     {
-        throw std::runtime_error("Error in HLLC Riemann Solver: No state chosen");
+        throw std::runtime_error("Error in HLLD Riemann Solver: No state chosen");
     }
 }
 // =============================================================================
 
 
 // =============================================================================
-void HllcRiemannSolver::_computeStandardFluxes(double const &density,
+void HlldRiemannSolver::_computeStandardFluxes(double const &density,
                                                double const &velocity,
                                                double const &pressure,
                                                double const &energy,
@@ -96,7 +96,7 @@ void HllcRiemannSolver::_computeStandardFluxes(double const &density,
 
 
 // =============================================================================
-void HllcRiemannSolver::_computeStarFluxes(double const &density,
+void HlldRiemannSolver::_computeStarFluxes(double const &density,
                                            double const &velocity,
                                            double const &pressure,
                                            double const &energy,
@@ -142,7 +142,7 @@ void HllcRiemannSolver::_computeStarFluxes(double const &density,
 
 
 // =============================================================================
-void HllcRiemannSolver::_computeWaveSpeeds()
+void HlldRiemannSolver::_computeWaveSpeeds()
 {
     // Square root of density ratios
     double denRatio = std::sqrt(_densityR/_densityL);
