@@ -71,11 +71,13 @@ public:
      * defaults to it
      */
     virtual void riemannMain(double const &densityL,
-                             double const &velocityL,
+                             std::vector<double> const &velocityL,
                              double const &pressureL,
+                             std::vector<double> const &magneticL,
                              double const &densityR,
-                             double const &velocityR,
+                             std::vector<double> const &velocityR,
                              double const &pressureR,
+                             std::vector<double> magneticR,
                              double &densityFlux,
                              double &momentumFlux,
                              double &energyFlux,

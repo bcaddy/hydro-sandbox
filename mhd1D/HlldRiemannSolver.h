@@ -23,9 +23,13 @@ class HlldRiemannSolver : public MhdRiemannSolver
 private:
     /// The energy on the left side of the interface
     double _energyL;
-
     /// The energy on the right side of the interface
     double _energyR;
+
+    /// The density in the left star state
+    double _densityStarL;
+    /// The density in the right star state
+    double _densityStarR;
 
     /// The approximate wave speed of the left magnetosonic wave
     double _sL;
@@ -96,9 +100,11 @@ public:
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
      * \param[in] pressureL The pressure on the left side of the interface
+     * \param[in] magneticL The magnetic field on the left side of the interface
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
      * \param[in] pressureR The pressure on the right side of the interface
+     * \param[in] magneticR The magnetic field on the right side of the interface
      * \param[out] densityFlux The density flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
      * \param[out] energyFlux The energy flux that is being solved for
@@ -107,11 +113,13 @@ public:
      * defaults to it
      */
     void riemannMain(double const &densityL,
-                     double const &velocityL,
+                     std::vector<double> const &velocityL,
                      double const &pressureL,
+                     std::vector<double> magneticL,
                      double const &densityR,
-                     double const &velocityR,
+                     std::vector<double> const &velocityR,
                      double const &pressureR,
+                     std::vector<double> magneticR,
                      double &densityFlux,
                      double &momentumFlux,
                      double &energyFlux,

@@ -20,11 +20,13 @@ using namespace mhdUtilities;
 
 // =============================================================================
 void HlldRiemannSolver::riemannMain(double const &densityL,
-                                    double const &velocityL,
+                                    std::vector<double> const &velocityL,
                                     double const &pressureL,
+                                    std::vector<double> magneticL,
                                     double const &densityR,
-                                    double const &velocityR,
+                                    std::vector<double> const &velocityR,
                                     double const &pressureR,
+                                    std::vector<double> magneticR,
                                     double &densityFlux,
                                     double &momentumFlux,
                                     double &energyFlux,
@@ -34,11 +36,13 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     _densityL  = densityL;
     _velocityL = velocityL;
     _pressureL = std::max(pressureL, 1.0E-20);
-    _energyL   = computeEnergy(_pressureL, _densityL, _velocityL, _gamma);
+    _magneticL = magneticL;
+    _energyL   = computeEnergy(_pressureL, _densityL, _velocityL, _magneticL, _gamma);
     _densityR  = densityR;
     _velocityR = velocityR;
     _pressureR = std::max(pressureR, 1.0E-20);
-    _energyR   = computeEnergy(_pressureR, _densityR, _velocityR, _gamma);
+    _magneticR = magneticR;
+    _energyR   = computeEnergy(_pressureR, _densityR, _velocityR, _magneticR, _gamma);
 
     // Compute the wave speeds. This compute the _sL, _sM, and _sR approximate
     // wave speeds
@@ -144,34 +148,31 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
 // =============================================================================
 void HlldRiemannSolver::_computeWaveSpeeds()
 {
-    // Square root of density ratios
-    double denRatio = std::sqrt(_densityR/_densityL);
-
-    // Compute the enthalpies
-    double hL = (_energyL + _pressureL) / _densityL;
-    double hR = (_energyR + _pressureR) / _densityR;
-
-    double hTilde = (hL + hR * denRatio) / (1 + denRatio);
-
-    // Compute the tilde velocity and sound speed
-    double velTilde = (_velocityL + _velocityR * denRatio) / (1 + denRatio);
-    double cTilde = std::sqrt( (_gamma - 1)
-                               * (hTilde - 0.5 * std::pow(velTilde, 2)) );
+    // Compute the fast magnetosonic wave speeds
+    double magSonicL, magSonicR;  // The speeds of the left and right fast magnetosonic waves
+    double magSonicL = magnetosonicSpeed(_pressureL, _densityL, _magneticL, _gamma);
+    double magSonicR = magnetosonicSpeed(_pressureR, _densityR, _magneticR, _gamma);
 
     // Compute the S_L and S_R wave speeds
-    _sL = std::min( _velocityL - soundSpeed(_pressureL, _densityL, _gamma),
-                    velTilde - cTilde);
-    _sR = std::max( _velocityR + soundSpeed(_pressureR, _densityR, _gamma),
-                    velTilde + cTilde);
+    _sL = std::min(_velocityL[0], _velocityR[0]) - std::max(magSonicL, magSonicR);
+    _sL = std::max(_velocityL[0], _velocityR[0]) + std::max(magSonicL, magSonicR);
 
     // Compute the S_M wave speed
     _sM = // Numerator
-          ( _densityR * _velocityR * (_sR - _velocityR)
-          - _densityL * _velocityL * (_sL - _velocityL)
+          ( _densityR * _velocityR[0] * (_sR - _velocityR[0])
+          - _densityL * _velocityL[0] * (_sL - _velocityL[0])
           + _pressureL - _pressureR)
           /
           // Denominator
-          ( _densityR * (_sR - _velocityR)
-          - _densityL * (_sL - _velocityL));
+          ( _densityR * (_sR - _velocityR[0])
+          - _densityL * (_sL - _velocityL[0]));
+
+    // Compute the densities in the star state
+    _densityStarL = _densityL * (_sL - _velocityL[0]) / (_sL - _sM);
+    _densityStarL = _densityR * (_sR - _velocityR[0]) / (_sR - _sM);
+
+    // Compute the S_L^* and S_R^* wave speeds
+    _sStarL = _sM - std::abs(_magneticL[0]) / std::sqrt(_densityStarL);
+    _sStarL = _sM + std::abs(_magneticR[0]) / std::sqrt(_densityStarR);
 }
 // =============================================================================
