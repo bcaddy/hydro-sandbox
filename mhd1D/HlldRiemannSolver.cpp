@@ -116,10 +116,10 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
                  * (std::inner_product(velocity.begin(), velocity.end(), magnetic.begin(), 0));
 
     // Set member variables to the current state for retrieval if needed
-    _densityState  = density;
-    _velocityState = velocity;
-    _magneticState = magnetic;
-    _pressureState = pressureTot - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);
+    _densityState     = density;
+    _velocityState    = velocity;
+    _magneticState    = magnetic;
+    _pressureState    = pressureTot - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);
     _pressureTotState = pressureTot;
 }
 // =============================================================================
@@ -139,34 +139,28 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
                                            std::vector<double> &magneticFlux,
                                            double &energyFlux)
 {
-    // First we must compute the standard flux
-    double densityFluxSide, energyFluxSide;
-    std::vector<double> momentumFluxSide(3), magneticFluxSide(3);
-    _computeStandardFluxes(density, velocity, pressureTot, magnetic, energy,
-                           densityFluxSide, momentumFluxSide, magneticFluxSide, energyFluxSide);
-
-    // At this point the various State member variables are the state in the L
-    // or R state so we can use them to compute the L* or R* state
-
     // Compute the star state (between the fast magnetosonic wave and the Alfven wave)
         // density has already been found and is in densityStarSide
         // v_x^* is S_M
-    // Compute the velocity and magnetic field
+    // Declare all the star state variables
     std::vector<double> velocityStar(3), magneticStar(3);
     double densityStar, pressureTotStar, energyStar;
+
+    // Set known quantities
     velocityStar[0] = _sM;
     magneticStar[0] = magnetic[0];
 
+    // Compute the magnetosonic speed
     double magSonicSide = magnetosonicSpeed(pressure, density, magnetic, _gamma);
 
-    // Check for divide by zero errors
+    // Check for divide-by-zero errors
     if ( (_sM == velocity[0])
          and ((sSide == velocity[0] + magSonicSide) or (sSide == velocity[0] - magSonicSide))
          and (magnetic[0] * magnetic[0] >= _gamma * pressure)
          and (magnetic[1] == 0.)
          and (magnetic[2] == 0.))
     {
-        // This is the divide by zero case
+        // This is the divide-by-zero case
         densityStar = density;
         velocityStar = velocity;
         pressureTotStar = pressureTot;
@@ -175,8 +169,10 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
     }
     else
     {
-        densityStar = densityStarSide;
-        pressureTotStar =
+        // This is the standard case where we have no divide-by-zero errors
+
+        densityStar = densityStarSide;  // Density in the star state
+        pressureTotStar =  // Total pressure in the star state
             ( _densityR * _pressureTotL * (_sR - _velocityR[0])
             - _densityL * _pressureTotR * (_sL - _velocityL[0])
             + _densityL * _densityR
@@ -186,40 +182,54 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
             /
             (_densityR * (_sR - _velocityR[0]) - _densityL * (_sL - _velocityL[0]));
 
+        // Compute the denominator that is used for both velocity and magnetic
+        // field computations
         double denom = density * (sSide - velocity[0]) * (sSide - _sM) - magnetic[0] * magnetic[0];
 
+        // Compute the velocity and magnetic field in the star state
         velocityStar[1] = velocity[1] - magnetic[0] * magnetic[1] * (_sM - velocity[0]) / denom;
         velocityStar[2] = velocity[2] - magnetic[0] * magnetic[2] * (_sM - velocity[0]) / denom;
         magneticStar[1] = magnetic[1] * (density * std::pow(sSide - velocity[0], 2) - magnetic[0] * magnetic[0]) / denom;
         magneticStar[2] = magnetic[2] * (density * std::pow(sSide - velocity[0], 2) - magnetic[0] * magnetic[0]) / denom;
     }
-    // Now we'll work on computing the pressure and energy in the state
+
+    // Now we'll compute the energy in the state
     energyStar =
         ( energy * (sSide - velocity[0])
         - pressureTot * velocity[0]
         + pressureTotStar * _sM
         + magnetic[0] * (std::inner_product(velocity.begin(), velocity.end(), magnetic.begin(), 0)
-                    - std::inner_product(velocityStar.begin(), velocityStar.end(), magneticStar.begin(), 0)))
+                      -  std::inner_product(velocityStar.begin(), velocityStar.end(), magneticStar.begin(), 0)))
         / (sSide - _sM);
 
-    // Now we actually compute the HLLD Flux. Note that the _xxxxState variables
-    // are all from the standard flux function
-    densityFlux = densityFluxSide + sSide * (densityStar - density);
-    energyFlux  = energyFluxSide  + sSide * (energyStar  - energy);
+    // Compute the standard flux
+    double densityFluxSide, energyFluxSide;
+    std::vector<double> momentumFluxSide(3), magneticFluxSide(3);
+    _computeStandardFluxes(density, velocity, pressureTot, magnetic, energy,
+                           densityFluxSide, momentumFluxSide, magneticFluxSide, energyFluxSide);
+
+    // Now we actually compute the HLLD Star State Flux
     for (size_t i = 0; i < 3; i++)
     {
         momentumFlux[i] = momentumFluxSide[i] + sSide * (velocityStar[i] - densityStar);
         magneticFlux[i] = magneticFluxSide[i] + sSide * (magneticStar[i] - magnetic[i]);
     }
-    magneticFlux[0] = 0.0;
+    densityFlux = densityFluxSide + sSide * (densityStar - density);
+    energyFlux  = energyFluxSide  + sSide * (energyStar  - energy);
+    magneticFlux[0] = 0.0;  // The flux in the x-direction is always zero
 
     // Set member variables to the current state for retrieval if needed
-    _densityState  = densityStar;
-    _velocityState = velocityStar;
-    _magneticState = magneticStar;
-    _pressureState = pressureTotStar - 0.5 * std::inner_product(magneticStar.begin(), magneticStar.end(), magneticStar.begin(), 0);
+    _densityState     = densityStar;
+    _velocityState    = velocityStar;
+    _magneticState    = magneticStar;
+    _pressureState    = pressureTotStar - 0.5 * std::inner_product(magneticStar.begin(), magneticStar.end(), magneticStar.begin(), 0);
     _pressureTotState = pressureTotStar;
 }
+// =============================================================================
+
+
+// =============================================================================
+
 // =============================================================================
 
 
