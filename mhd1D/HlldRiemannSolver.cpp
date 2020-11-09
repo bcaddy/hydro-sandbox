@@ -54,33 +54,33 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     // Now we need to figure out which state we're in
     if (posOverT < _sL)
     {
-        _computeStandardFluxes(_densityL, _velocityL, _pressureTotL, _energyL,
-                               densityFlux, momentumFlux, energyFlux);
+        _computeStandardFluxes(_densityL, _velocityL, _pressureTotL, _magneticL, _energyL,
+                               densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sL <= posOverT) and (posOverT <= _sStarL) )
     {
-        _computeStarFluxes(_densityL, _velocityL, _pressureTotL, _energyL, _sL,
-                           densityFlux, momentumFlux, energyFlux);
+        _computeStarFluxes(_densityL, _velocityL, _pressureTotL, _magneticL, _energyL, _sL,
+                           densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sStarL <= posOverT) and (posOverT <= _sM) )
     {
-        _computeStarStarFluxes(_densityL, _velocityL, _pressureTotL, _energyL, _sL,
-                               densityFlux, momentumFlux, energyFlux);
+        _computeStarStarFluxes(_densityL, _velocityL, _pressureTotL, _magneticL, _energyL, _sStarL,
+                               densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sM <= posOverT) and (posOverT <= _sStarR) )
     {
-        _computeStarStarFluxes(_densityL, _velocityL, _pressureTotL, _energyL, _sL,
-                               densityFlux, momentumFlux, energyFlux);
+        _computeStarStarFluxes(_densityR, _velocityR, _pressureTotR, _magneticR, _energyR, _sStarR,
+                               densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sStarR <= posOverT) and (posOverT <= _sR) )
     {
-        _computeStarFluxes(_densityR, _velocityR, _pressureTotR, _energyR, _sR,
-                            densityFlux, momentumFlux, energyFlux);
+        _computeStarFluxes(_densityR, _velocityR, _pressureTotR, _magneticR, _energyR, _sR,
+                           densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if (_sR < posOverT)
     {
-        _computeStandardFluxes(_densityR, _velocityR, _pressureTotR, _energyR,
-                               densityFlux, momentumFlux, energyFlux);
+        _computeStandardFluxes(_densityR, _velocityR, _pressureTotR, _magneticR, _energyR,
+                               densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else
     {
@@ -130,16 +130,18 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
                                            double &energyFlux)
 {
     // Compute the state in the star region
-
+    ;
     // Compute the standard flux
-    double sideDensityFlux, sideMomentumFlux, sideEnergyFlux;
-    _computeStandardFluxes(density, velocity, pressure, energy,
-                           sideDensityFlux, sideMomentumFlux, sideEnergyFlux);
+    /// \todo update this
+    // double sideDensityFlux, sideMomentumFlux, sideEnergyFlux;
+    // _computeStandardFluxes(density, velocity, pressure, energy,
+    //                        sideDensityFlux, sideMomentumFlux, sideEnergyFlux);
 
     // Compute and return the fluxes
-    densityFlux  = ;//??
-    momentumFlux = ;//??
-    energyFlux   = ;//??
+    /// \todo update this
+    // densityFlux  = ;//??
+    // momentumFlux = ;//??
+    // energyFlux   = ;//??
 
     // Set member variables to the current state for retrieval if needed
 }
