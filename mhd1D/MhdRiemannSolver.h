@@ -53,6 +53,8 @@ protected:
     std::vector<double> _velocityState;
     /// The pressure of the found state
     double _pressureState;
+    /// The total pressure of the found state
+    double _pressureTotState;
     /// The magnetic field
     std::vector<double> _magneticState;
 
@@ -111,6 +113,13 @@ public:
      * \return double The pressure of the current state
      */
     double getPressureState(){return _pressureState;};
+
+    /*!
+     * \brief Get the Total Pressure State object
+     *
+     * \return double The total pressure of the current state
+     */
+    double getPressureState(){return _pressureTotState;};
 
     /*!
      * \brief Get the magnetic field State object

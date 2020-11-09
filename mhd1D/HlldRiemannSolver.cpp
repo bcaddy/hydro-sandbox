@@ -93,7 +93,7 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
 // =============================================================================
 void HlldRiemannSolver::_computeStandardFluxes(double const &density,
                                                std::vector<double> const &velocity,
-                                               double const &pressure,
+                                               double const &pressureTot,
                                                std::vector<double> const &magnetic,
                                                double const &energy,
                                                double &densityFlux,
@@ -103,24 +103,30 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
 {
     // Compute the regular fluxes for the left or right states
     densityFlux     = density  * velocity[0];
-    momentumFlux[0] = density  * std::pow(velocity[0], 2) + computeTotalPressure(;
-    // \todo Start here.
 
-    energyFlux   = velocity * (energy + pressure);
+    momentumFlux[0] = density  * velocity[0] * velocity[0] + pressureTot - magnetic[0] * magnetic[0];
+    momentumFlux[1] = density  * velocity[0] * velocity[1] - magnetic[0] * magnetic[1];
+    momentumFlux[3] = density  * velocity[0] * velocity[3] - magnetic[0] * magnetic[3];
+
+    magneticFlux[0] = 0.;
+    magneticFlux[1] = magnetic[1] * velocity[0] - magnetic[0] * velocity[1];
+    magneticFlux[2] = magnetic[2] * velocity[0] - magnetic[0] * velocity[2];
+
+    energyFlux = velocity[0] * (energy + pressureTot) - magnetic[0]
+                 * (std::inner_product(velocity.begin(), velocity.end(), magnetic.begin(), 0));
 
     // Set member variables to the current state for retrieval if needed
     _densityState  = density;
     _velocityState = velocity;
     _magneticState = magnetic;
-    _pressureState = pressure;
-}
+    _pressureState = pressureTot - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);
 // =============================================================================
 
 
 // =============================================================================
 void HlldRiemannSolver::_computeStarFluxes(double const &density,
                                            std::vector<double> const &velocity,
-                                           double const &pressure,
+                                           double const &pressureTot,
                                            std::vector<double> const &magnetic,
                                            double const &energy,
                                            double const &sSide,
@@ -129,13 +135,19 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
                                            std::vector<double> &magneticFlux,
                                            double &energyFlux)
 {
-    // Compute the state in the star region
-    ;
-    // Compute the standard flux
-    /// \todo update this
-    // double sideDensityFlux, sideMomentumFlux, sideEnergyFlux;
-    // _computeStandardFluxes(density, velocity, pressure, energy,
-    //                        sideDensityFlux, sideMomentumFlux, sideEnergyFlux);
+    // First we must compute the standard flux
+    double sideDensityFlux, sideEnergyFlux;
+    std::vector<double> sideMomentumFlux(3), sideMagneticFlux(3);
+    _computeStandardFluxes(density, velocity, pressureTot, magnetic, energy,
+                           sideDensityFlux, sideMomentumFlux, sideMagneticFlux, sideEnergyFlux);
+
+    // At this point the various State member variables are the state in the L
+    // or R state so we can use them to compute the L* or R* state
+
+    // Compute the star state (between the fast magnetosonic wave and the Alfven wave)
+    
+
+
 
     // Compute and return the fluxes
     /// \todo update this

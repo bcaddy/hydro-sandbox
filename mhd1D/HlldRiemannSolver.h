@@ -55,7 +55,7 @@ private:
      *
      * \param[in] density The density of the state
      * \param[in] velocity The velocity of the state
-     * \param[in] pressure The pressure of the state
+     * \param[in] pressureTot The total pressure of the state
      * \param[in] magnetic the magnetic field of the state
      * \param[in] energy The energy of the state
      * \param[out] densityFlux The density flux
@@ -65,7 +65,7 @@ private:
      */
     void _computeStandardFluxes(double const &density,
                                 std::vector<double> const &velocity,
-                                double const &pressure,
+                                double const &pressureTot,
                                 std::vector<double> const &magnetic,
                                 double const &energy,
                                 double &densityFlux,
@@ -79,7 +79,7 @@ private:
      *
      * \param[in] density The density of the state
      * \param[in] velocity The velocity of the state
-     * \param[in] pressure The pressure of the state
+     * \param[in] pressureTot The total pressure of the state
      * \param[in] magnetic the magnetic field of the state
      * \param[in] energy The energy of the state
      * \param[in] sSide The wave speed estimate for that side
@@ -90,7 +90,7 @@ private:
      */
     void _computeStarFluxes(double const &density,
                             std::vector<double> const &velocity,
-                            double const &pressure,
+                            double const &pressureTot,
                             std::vector<double> const &magnetic,
                             double const &energy,
                             double const &sSide,
