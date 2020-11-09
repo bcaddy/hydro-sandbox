@@ -36,14 +36,14 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     // Copy arguments to member variables
     _densityL  = densityL;
     _velocityL = velocityL;
-    _pressureL = std::max(pressureL, 1.0E-20);  /// \todo Replace this with the total pressure
+    _pressureTotL = computeTotalPressure(std::max(pressureL, 1.0E-20), magneticL);
     _magneticL = magneticL;
-    _energyL   = computeEnergy(_pressureL, _densityL, _velocityL, _magneticL, _gamma);
+    _energyL   = computeEnergy(_pressureTotL, _densityL, _velocityL, _magneticL, _gamma);
     _densityR  = densityR;
     _velocityR = velocityR;
-    _pressureR = std::max(pressureR, 1.0E-20);  /// \todo Replace this with the total pressure
+    _pressureTotR = computeTotalPressure(std::max(pressureR, 1.0E-20), magneticR);
     _magneticR = magneticR;
-    _energyR   = computeEnergy(_pressureR, _densityR, _velocityR, _magneticR, _gamma);
+    _energyR   = computeEnergy(_pressureTotR, _densityR, _velocityR, _magneticR, _gamma);
 
     // Compute the wave speeds. This compute the _sL, _sM, and _sR approximate
     // wave speeds
@@ -52,32 +52,32 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     // Now we need to figure out which state we're in
     if (posOverT < _sL)
     {
-        _computeStandardFluxes(_densityL, _velocityL, _pressureL, _energyL,
+        _computeStandardFluxes(_densityL, _velocityL, _pressureTotL, _energyL,
                                densityFlux, momentumFlux, energyFlux);
     }
     else if ( (_sL <= posOverT) and (posOverT <= _sStarL) )
     {
-        _computeStarFluxes(_densityL, _velocityL, _pressureL, _energyL, _sL,
+        _computeStarFluxes(_densityL, _velocityL, _pressureTotL, _energyL, _sL,
                            densityFlux, momentumFlux, energyFlux);
     }
     else if ( (_sStarL <= posOverT) and (posOverT <= _sM) )
     {
-        _computeStarStarFluxes(_densityL, _velocityL, _pressureL, _energyL, _sL,
+        _computeStarStarFluxes(_densityL, _velocityL, _pressureTotL, _energyL, _sL,
                                densityFlux, momentumFlux, energyFlux);
     }
     else if ( (_sM <= posOverT) and (posOverT <= _sStarR) )
     {
-        _computeStarStarFluxes(_densityL, _velocityL, _pressureL, _energyL, _sL,
+        _computeStarStarFluxes(_densityL, _velocityL, _pressureTotL, _energyL, _sL,
                                densityFlux, momentumFlux, energyFlux);
     }
     else if ( (_sStarR <= posOverT) and (posOverT <= _sR) )
     {
-        _computeStarFluxes(_densityR, _velocityR, _pressureR, _energyR, _sR,
+        _computeStarFluxes(_densityR, _velocityR, _pressureTotR, _energyR, _sR,
                             densityFlux, momentumFlux, energyFlux);
     }
     else if (_sR < posOverT)
     {
-        _computeStandardFluxes(_densityR, _velocityR, _pressureR, _energyR,
+        _computeStandardFluxes(_densityR, _velocityR, _pressureTotR, _energyR,
                                densityFlux, momentumFlux, energyFlux);
     }
     else
@@ -129,7 +129,7 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
 {
     // Compute the state in the star region
     double densityStar  = density * (sSide - velocity) / (sSide - _sM);
-    double pressureStar = _pressureL
+    double pressureStar = _pressureTotL
                           + _densityL * (_velocityL - _sL) * (_velocityL - _sM);
     double momentumStar = (
                             density * velocity * (sSide - velocity)
@@ -168,8 +168,8 @@ void HlldRiemannSolver::_computeWaveSpeeds()
 {
     // Compute the fast magnetosonic wave speeds
     double magSonicL, magSonicR;  // The speeds of the left and right fast magnetosonic waves
-    double magSonicL = magnetosonicSpeed(_pressureL, _densityL, _magneticL, _gamma);
-    double magSonicR = magnetosonicSpeed(_pressureR, _densityR, _magneticR, _gamma);
+    double magSonicL = magnetosonicSpeed(_pressureTotL, _densityL, _magneticL, _gamma);
+    double magSonicR = magnetosonicSpeed(_pressureTotR, _densityR, _magneticR, _gamma);
 
     // Compute the S_L and S_R wave speeds
     _sL = std::min(_velocityL[0], _velocityR[0]) - std::max(magSonicL, magSonicR);
@@ -179,7 +179,7 @@ void HlldRiemannSolver::_computeWaveSpeeds()
     _sM = // Numerator
           ( _densityR * _velocityR[0] * (_sR - _velocityR[0])
           - _densityL * _velocityL[0] * (_sL - _velocityL[0])
-          + _pressureL - _pressureR)
+          + _pressureTotL - _pressureTotR)
           /
           // Denominator
           ( _densityR * (_sR - _velocityR[0])

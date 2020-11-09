@@ -29,8 +29,8 @@ protected:
     double _densityL;
     /// The velocity on the left side of the interface
     std::vector<double> _velocityL;
-    /// The pressure on the left side of the interface
-    double _pressureL;
+    /// The total pressure on the left side of the interface
+    double _pressureTotL;
     /// The magnetic field
     std::vector<double> _magneticL;
 
@@ -38,8 +38,8 @@ protected:
     double _densityR;
     /// The velocity on the right side of the interface
     std::vector<double> _velocityR;
-    /// The pressure on the right side of the interface
-    double _pressureR;
+    /// The total pressure on the right side of the interface
+    double _pressureTotR;
     /// The magnetic field
     std::vector<double> _magneticR;
 
