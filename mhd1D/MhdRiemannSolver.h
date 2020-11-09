@@ -55,8 +55,10 @@ protected:
     double _pressureState;
     /// The total pressure of the found state
     double _pressureTotState;
-    /// The magnetic field
+    /// The magnetic field of the found state
     std::vector<double> _magneticState;
+    /// The energy of the found state
+    double _energyState;
 
 public:
     /*!

@@ -83,7 +83,7 @@ private:
      * \param[in] pressureTot The total pressure of the state
      * \param[in] magnetic the magnetic field of the state
      * \param[in] energy The energy of the state
-     * \param[in] sSide The wave speed estimate for that side
+     * \param[in] sSide The magnetosonic wave speed estimate for that side
      * \param[in] densityStarSide The density on that side of the star region
      * \param[out] densityFlux The density flux
      * \param[out] momentumFlux The momentum flux
@@ -102,6 +102,43 @@ private:
                             std::vector<double> &momentumFlux,
                             std::vector<double> &magneticFlux,
                             double &energyFlux);
+
+    /*!
+     * \brief Compute the F_L^** or F_R^** flux by computing approximate values
+     * for the double star state and using them to compute the double star state
+     * HLLD flux
+     *
+     * \param[in] density The density of the state
+     * \param[in] velocity The velocity of the state
+     * \param[in] pressure The pressure of the state
+     * \param[in] pressureTot The total pressure of the state
+     * \param[in] magnetic the magnetic field of the state
+     * \param[in] energy The energy of the state
+     * \param[in] sSide The magnetosonic wave speed estimate for that side
+     * \param[in] sStarSide The Alfven wave speed estimate for that side
+     * \param[in] densityStarSide The density on that side of the star region
+     * \param[in] sideSign Which side to compute. -1.0 is left and 1.0 is right.
+     * This is used in the computation of the double star state energy and so it
+     * MUST be one of those two values
+     * \param[out] densityFlux The density flux
+     * \param[out] momentumFlux The momentum flux
+     * \param[out] magneticFlux The magnetic field flux
+     * \param[out] energyFlux The energy flux
+     */
+    void _computeDblStarFluxes(double const &density,
+                               std::vector<double> const &velocity,
+                               double const &pressure,
+                               double const &pressureTot,
+                               std::vector<double> const &magnetic,
+                               double const &energy,
+                               double const &sSide,
+                               double const &sStarSide,
+                               double const &densityStarSide,
+                               double const &sideSign,
+                               double &densityFlux,
+                               std::vector<double> &momentumFlux,
+                               std::vector<double> &magneticFlux,
+                               double &energyFlux);
 
 public:
         /*!
