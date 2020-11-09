@@ -79,10 +79,12 @@ private:
      *
      * \param[in] density The density of the state
      * \param[in] velocity The velocity of the state
+     * \param[in] pressure The pressure of the state
      * \param[in] pressureTot The total pressure of the state
      * \param[in] magnetic the magnetic field of the state
      * \param[in] energy The energy of the state
      * \param[in] sSide The wave speed estimate for that side
+     * \param[in] densityStarSide The density on that side of the star region
      * \param[out] densityFlux The density flux
      * \param[out] momentumFlux The momentum flux
      * \param[out] magneticFlux The magnetic field flux
@@ -90,10 +92,12 @@ private:
      */
     void _computeStarFluxes(double const &density,
                             std::vector<double> const &velocity,
+                            double const &pressure,
                             double const &pressureTot,
                             std::vector<double> const &magnetic,
                             double const &energy,
                             double const &sSide,
+                            double const &densityStarSide,
                             double &densityFlux,
                             std::vector<double> &momentumFlux,
                             std::vector<double> &magneticFlux,
