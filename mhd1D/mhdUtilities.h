@@ -132,20 +132,13 @@ namespace mhdUtilities
     /*!
      * \brief Compute the total pressure in a cell
      *
-     * \param[in] energy The energy
-     * \param[in] density The density
-     * \param[in] velocity The velocity
+     * \param[in] pressure The pressure from internal energy
      * \param[in] magnetic The magnetic field
-     * \param[in] gamma The ratio of specific heats
      * \return double The total pressure
      */
-    inline double computeTotalPressure(double const &energy,
-                                       double const &density,
-                                       std::vector<double> const &velocity,
-                                       std::vector<double> const &magnetic,
-                                       double const &gamma)
-        {return computePressure(energy, density, velocity, magnetic, gamma)
-                + 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);}
+    inline double computeTotalPressure(double const &pressure,
+                                       std::vector<double> const &magnetic)
+        {return pressure + 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);}
 // =============================================================================
 
 // =============================================================================
