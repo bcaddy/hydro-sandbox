@@ -46,7 +46,7 @@ int main()
     std::vector<double> const velocityL = {1.2, 0.01, 0.5};
     std::vector<double> const magneticL = {4. * coef, 3.6 * coef, 2.0 * coef};
     double const pressureL              = 0.95;
-    double const gamma                  = 1.4;
+    double const gamma                  = 5./3.;
     double const xSize                  = 1.0;
     double const tMax                   = 0.2;
     size_t const numSamples             = 100;
