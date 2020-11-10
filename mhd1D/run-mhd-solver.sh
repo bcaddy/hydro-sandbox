@@ -26,7 +26,7 @@ echo -e "\nRunning..."
 cd "${REPO_ROOT}/visualization"
 
 echo -e "\n\nGenerating Plot..."
-./euler-solver-plotter.py ${1}
+./mhd-plotter.py ${1}
 
 echo -e "\nDownloading Plot..."
 "${HOME}/.iterm2/it2dl" output-euler.mp4
