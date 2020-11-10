@@ -36,20 +36,22 @@ int main()
     // Start timer
     auto start = std::chrono::high_resolution_clock::now();
 
-
     // ===== Settings for Sod Shock Tube =======================================
-    double const densityR   = 1.0;
-    double const velocityR  = 0.0;
-    double const pressureR  = 1.0;
-    double const densityL   = 0.1;
-    double const velocityL  = 0.0;
-    double const pressureL  = 0.1;
-    double const gamma      = 1.4;
-    double const xSize      = 1.0;
-    double const tMax       = 0.2;
-    size_t const numSamples = 100;
-    double const diaphPos   = 0.5 * xSize;
-    double const deltaX     = xSize / static_cast<double>(numSamples);
+    double const coef = 1. / std::sqrt(4. * M_PI);
+    double const densityR               = 1.0;
+    std::vector<double> const velocityR = {0.0, 0.0, 0.0};
+    std::vector<double> const magneticR = {4.0*coef, 4.0*coef, 2.0*coef};
+    double const pressureR              = 1.0;
+    double const densityL               = 1.08;
+    std::vector<double> const velocityL = {1.2, 0.01, 0.5};
+    std::vector<double> const magneticL = {4. * coef, 3.6 * coef, 2.0 * coef};
+    double const pressureL              = 0.95;
+    double const gamma                  = 1.4;
+    double const xSize                  = 1.0;
+    double const tMax                   = 0.2;
+    size_t const numSamples             = 100;
+    double const diaphPos               = 0.5 * xSize;
+    double const deltaX                 = xSize / static_cast<double>(numSamples);
     // ===== End Settings for Sod Shock Tube  ==================================
 
     // ===== Grid & Solver ===================================================
@@ -59,33 +61,43 @@ int main()
     // ===== End Arrays & Solver ===============================================
 
     // ===== Compute the Solution ==============================================
-    // for (size_t i = 0; i < numSamples; i++)
-    // {
-    //     // Compute posOverT
-    //     double position  = (static_cast<double>(i) - 0.5) * deltaX;
-    //     double posOverT  = (position - diaphPos) / tMax;
+    for (size_t i = 0; i < numSamples; i++)
+    {
+        // Compute posOverT
+        double position  = (static_cast<double>(i) - 0.5) * deltaX;
+        double posOverT  = (position - diaphPos) / tMax;
 
-    //     // Run solver
-    //     double denFlux, momFlux, eneFlux;  // Variables for fluxes that I'm not using
-    //     riemannSolver->riemannMain(densityR,
-    //                                velocityR,
-    //                                pressureR,
-    //                                densityL,
-    //                                velocityL,
-    //                                pressureL,
-    //                                denFlux,
-    //                                momFlux,
-    //                                eneFlux,
-    //                                posOverT);
+        // Run solver
+        double denFlux, eneFlux;  // Variables for fluxes that I'm not using
+        std::vector<double> magFlux(3), momFlux(3);
+        riemannSolver->riemannMain(densityR,
+                                   velocityR,
+                                   pressureR,
+                                   magneticR,
+                                   densityL,
+                                   velocityL,
+                                   pressureL,
+                                   magneticL,
+                                   denFlux,
+                                   momFlux,
+                                   magFlux,
+                                   eneFlux,
+                                   posOverT);
 
-    //     // Get the state values
-    //     grid.density[i]  = riemannSolver->getDensityState();
-    //     grid.momentum[i] = computeMomentum(riemannSolver->getVelocityState(),
-    //                                        riemannSolver->getDensityState());
-    //     grid.energy[i]   = computeEnergy(riemannSolver->getPressureState(),
-    //                                      riemannSolver->getDensityState(),
-    //                                      riemannSolver->getVelocityState(), gamma);
-    // }
+        // Get the state values
+        grid.density[i]  = riemannSolver->getDensityState();
+        for (size_t j = 0; j < 3; j++)
+        {
+            grid.momentum[i][j] = computeMomentum(riemannSolver->getVelocityState()[j],
+                                                  riemannSolver->getDensityState());
+        }
+        grid.magnetic[i] = riemannSolver->getMagneticState();
+        grid.energy[i]   = computeEnergy(riemannSolver->getPressureState(),
+                                         riemannSolver->getDensityState(),
+                                         riemannSolver->getVelocityState(),
+                                         riemannSolver->getMagneticState(),
+                                         gamma);
+    }
     // ===== Done Computing the Solution =======================================
 
     // ===== Save the arrays ===================================================
