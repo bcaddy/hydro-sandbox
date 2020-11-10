@@ -88,7 +88,7 @@ public:
                              double const &densityR,
                              std::vector<double> const &velocityR,
                              double const &pressureR,
-                             std::vector<double> magneticR,
+                             std::vector<double> const &magneticR,
                              double &densityFlux,
                              std::vector<double> &momentumFlux,
                              std::vector<double> &magneticFlux,

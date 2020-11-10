@@ -55,37 +55,37 @@ int main()
     // ===== Grid & Solver ===================================================
     Grid1D grid(numSamples, 0, "pass", "../data/");
 
-    std::unique_ptr<RiemannSolver> riemannSolver = std::unique_ptr<RiemannSolver>(new HlldRiemannSolver(gamma));
+    std::unique_ptr<MhdRiemannSolver> riemannSolver = std::unique_ptr<MhdRiemannSolver>(new HlldRiemannSolver(gamma));
     // ===== End Arrays & Solver ===============================================
 
     // ===== Compute the Solution ==============================================
-    for (size_t i = 0; i < numSamples; i++)
-    {
-        // Compute posOverT
-        double position  = (static_cast<double>(i) - 0.5) * deltaX;
-        double posOverT  = (position - diaphPos) / tMax;
+    // for (size_t i = 0; i < numSamples; i++)
+    // {
+    //     // Compute posOverT
+    //     double position  = (static_cast<double>(i) - 0.5) * deltaX;
+    //     double posOverT  = (position - diaphPos) / tMax;
 
-        // Run solver
-        double denFlux, momFlux, eneFlux;  // Variables for fluxes that I'm not using
-        riemannSolver->riemannMain(densityR,
-                                   velocityR,
-                                   pressureR,
-                                   densityL,
-                                   velocityL,
-                                   pressureL,
-                                   denFlux,
-                                   momFlux,
-                                   eneFlux,
-                                   posOverT);
+    //     // Run solver
+    //     double denFlux, momFlux, eneFlux;  // Variables for fluxes that I'm not using
+    //     riemannSolver->riemannMain(densityR,
+    //                                velocityR,
+    //                                pressureR,
+    //                                densityL,
+    //                                velocityL,
+    //                                pressureL,
+    //                                denFlux,
+    //                                momFlux,
+    //                                eneFlux,
+    //                                posOverT);
 
-        // Get the state values
-        grid.density[i]  = riemannSolver->getDensityState();
-        grid.momentum[i] = computeMomentum(riemannSolver->getVelocityState(),
-                                           riemannSolver->getDensityState());
-        grid.energy[i]   = computeEnergy(riemannSolver->getPressureState(),
-                                         riemannSolver->getDensityState(),
-                                         riemannSolver->getVelocityState(), gamma);
-    }
+    //     // Get the state values
+    //     grid.density[i]  = riemannSolver->getDensityState();
+    //     grid.momentum[i] = computeMomentum(riemannSolver->getVelocityState(),
+    //                                        riemannSolver->getDensityState());
+    //     grid.energy[i]   = computeEnergy(riemannSolver->getPressureState(),
+    //                                      riemannSolver->getDensityState(),
+    //                                      riemannSolver->getVelocityState(), gamma);
+    // }
     // ===== Done Computing the Solution =======================================
 
     // ===== Save the arrays ===================================================

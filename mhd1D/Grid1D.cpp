@@ -128,11 +128,11 @@ Grid1D::Grid1D(size_t const &reals,
     numGhostCells(ghosts),
     numRealCells(reals),
     numTotCells(2*numGhostCells + numRealCells),
-    boundaryConditionKind(boundaryConditions),
     density(numTotCells),
     momentum(numTotCells, std::vector<double> (3, 0)),
     magnetic(numTotCells, std::vector<double> (3, 0)),
-    energy(numTotCells)
+    energy(numTotCells),
+    boundaryConditionKind(boundaryConditions)
 {
     // Open files if saving is enabled
     if (saveDir != "0")

@@ -132,13 +132,7 @@ private:
      * for the double star state and using them to compute the double star state
      * HLLD flux
      *
-     * \param[in] density The density of the state
-     * \param[in] velocity The velocity of the state
-     * \param[in] pressure The pressure of the state
-     * \param[in] pressureTot The total pressure of the state
      * \param[in] magnetic the magnetic field of the state
-     * \param[in] energy The energy of the state
-     * \param[in] sSide The magnetosonic wave speed estimate for that side
      * \param[in] sStarSide The Alfven wave speed estimate for that side
      * \param[in] densityStarSide The density on that side of the star region
      * \param[in] sideSign Which side to compute. -1.0 is left and 1.0 is right.
@@ -149,13 +143,7 @@ private:
      * \param[out] magneticFlux The magnetic field flux
      * \param[out] energyFlux The energy flux
      */
-    void _computeDblStarFluxes(double const &density,
-                               std::vector<double> const &velocity,
-                               double const &pressure,
-                               double const &pressureTot,
-                               std::vector<double> const &magnetic,
-                               double const &energy,
-                               double const &sSide,
+    void _computeDblStarFluxes(std::vector<double> const &magnetic,
                                double const &sStarSide,
                                double const &densityStarSide,
                                double const &sideSign,
@@ -189,11 +177,11 @@ public:
     void riemannMain(double const &densityL,
                      std::vector<double> const &velocityL,
                      double const &pressureL,
-                     std::vector<double> magneticL,
+                     std::vector<double> const &magneticL,
                      double const &densityR,
                      std::vector<double> const &velocityR,
                      double const &pressureR,
-                     std::vector<double> magneticR,
+                     std::vector<double> const &magneticR,
                      double &densityFlux,
                      std::vector<double> &momentumFlux,
                      std::vector<double> &magneticFlux,

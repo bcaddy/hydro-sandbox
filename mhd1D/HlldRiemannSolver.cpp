@@ -22,11 +22,11 @@ using namespace mhdUtilities;
 void HlldRiemannSolver::riemannMain(double const &densityL,
                                     std::vector<double> const &velocityL,
                                     double const &pressureL,
-                                    std::vector<double> magneticL,
+                                    std::vector<double> const &magneticL,
                                     double const &densityR,
                                     std::vector<double> const &velocityR,
                                     double const &pressureR,
-                                    std::vector<double> magneticR,
+                                    std::vector<double> const &magneticR,
                                     double &densityFlux,
                                     std::vector<double> &momentumFlux,
                                     std::vector<double> &magneticFlux,
@@ -64,12 +64,12 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     }
     else if ( (_sStarL <= posOverT) and (posOverT <= _sM) )
     {
-        _computeDblStarFluxes(_densityL, _velocityL, _pressureL, _pressureTotL, _magneticL, _energyL, _sL, _sStarL, _densityStarL, -1.0,
+        _computeDblStarFluxes(_magneticL, _sStarL, _densityStarL, -1.0,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sM <= posOverT) and (posOverT <= _sStarR) )
     {
-        _computeDblStarFluxes(_densityR, _velocityR, _pressureR, _pressureTotR, _magneticR, _energyR, _sR, _sStarR, _densityStarR, 1.0,
+        _computeDblStarFluxes(_magneticR, _sStarR, _densityStarR, 1.0,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sStarR <= posOverT) and (posOverT <= _sR) )
@@ -261,13 +261,7 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
 
 
 // =============================================================================
-void HlldRiemannSolver::_computeDblStarFluxes(double const &density,
-                                              std::vector<double> const &velocity,
-                                              double const &pressure,
-                                              double const &pressureTot,
-                                              std::vector<double> const &magnetic,
-                                              double const &energy,
-                                              double const &sSide,
+void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magnetic,
                                               double const &sStarSide,
                                               double const &densityStarSide,
                                               double const &sideSign,
@@ -287,7 +281,7 @@ void HlldRiemannSolver::_computeDblStarFluxes(double const &density,
     // All that is left is v_y, v_z, B_y, B_z, and energy
 
     // Lets declare all our variables to store the double star state
-    double densityDblStar, pressureDblStar, pressureTotDblStar, energyDblStar;
+    double densityDblStar, pressureTotDblStar, energyDblStar;
     std::vector<double> velocityDblStar(3), magneticDblStar(3);
 
     // We will also need to have all the values for both star states computed to
@@ -335,7 +329,6 @@ void HlldRiemannSolver::_computeDblStarFluxes(double const &density,
     // star state starting with the known quantities
     densityDblStar     = densityStarSide;
     velocityDblStar[0] = _sM;
-    pressureDblStar    = _pressureState;
     pressureTotDblStar = _pressureTotState;
     magneticDblStar[0] = magnetic[0];
 
