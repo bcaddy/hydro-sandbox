@@ -121,7 +121,7 @@ public:
      *
      * \return double The total pressure of the current state
      */
-    double getPressureState(){return _pressureTotState;};
+    double getPressureTotState(){return _pressureTotState;};
 
     /*!
      * \brief Get the magnetic field State object

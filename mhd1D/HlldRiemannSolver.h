@@ -44,6 +44,10 @@ private:
     /// The approximate wave speed of the middel contact wave
     double _sM;
 
+    /// Indicates if we'll run into a divide by zero error. True(1) for yes,
+    /// False(0) for no
+    bool _divZero;
+
     /*!
      * \brief Compute the S_M, S_L, and S_R wave speeds for the HLLD solver
      *
@@ -72,6 +76,26 @@ private:
                                 std::vector<double> &momentumFlux,
                                 std::vector<double> &magneticFlux,
                                 double &energyFlux);
+
+    /*!
+     * \brief Compute the velocity and magnetic field in the star region. Also,
+     * determine the _divZero member variable
+     *
+     * \param[in] density The density of that side of the interface
+     * \param[in] velocity The velocity of that side of the interface
+     * \param[in] pressure The pressure of that side of the interface
+     * \param[in] magnetic The magnetic field of that side of the interface
+     * \param[in] sSide The speed of the magnetosonic wave for the side being computed
+     * \param[out] velocityStar The velocity in the star state
+     * \param[out] magneticStar The magnetic field in the star state
+     */
+    void _computeVandBStar(double const &density,
+                           std::vector<double> const &velocity,
+                           double const &pressure,
+                           std::vector<double> const &magnetic,
+                           double const &sSide,
+                           std::vector<double> &velocityStar,
+                           std::vector<double> &magneticStar);
 
     /*!
      * \brief Compute the F_L^* or F_R^* flux by computing approximate values
