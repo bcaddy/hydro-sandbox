@@ -106,7 +106,7 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
 
     momentumFlux[0] = density  * velocity[0] * velocity[0] + pressureTot - magnetic[0] * magnetic[0];
     momentumFlux[1] = density  * velocity[0] * velocity[1] - magnetic[0] * magnetic[1];
-    momentumFlux[3] = density  * velocity[0] * velocity[3] - magnetic[0] * magnetic[3];
+    momentumFlux[2] = density  * velocity[0] * velocity[2] - magnetic[0] * magnetic[2];
 
     magneticFlux[0] = 0.;
     magneticFlux[1] = magnetic[1] * velocity[0] - magnetic[0] * velocity[1];
