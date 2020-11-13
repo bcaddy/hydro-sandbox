@@ -12,14 +12,17 @@
 
 # set -x #echo all commands
 
+EXE="./mhd-solver.exe"
+
 # Get options
-while getopts ":f:t:" opt; do
+while getopts "f:t" opt; do
     case $opt in
         f)  # Set the FPS
             fps = ${OPTARG}
             ;;
         t)  # Set the FPS
-            riemannTester = ${OPTARG}
+            riemannTester="riemannTester"
+            EXE="./riemannTester.exe"
             ;;
         \?)
             echo "Invalid option: -${OPTARG}" >&2
@@ -42,7 +45,7 @@ echo -e "\nCompiling..."
 make ${riemannTester}
 
 echo -e "\nRunning..."
-"./mhd-solver.exe"
+${EXE}
 
 cd "${REPO_ROOT}/visualization"
 
