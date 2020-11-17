@@ -37,15 +37,27 @@ int main()
     auto start = std::chrono::high_resolution_clock::now();
 
     // ===== Settings for Sod Shock Tube =======================================
-    double const coef = 1. / std::sqrt(4. * M_PI);
-    double const densityR               = 1.0;
+    // Dai & Woodward Shock tube
+    // double const coef                   = 1. / std::sqrt(4. * M_PI);
+    // double const densityL               = 1.08;
+    // std::vector<double> const velocityL = {1.2, 0.01, 0.5};
+    // std::vector<double> const magneticL = {4. * coef, 3.6 * coef, 2.0 * coef};
+    // double const pressureL              = 0.95;
+    // double const densityR               = 1.0;
+    // std::vector<double> const velocityR = {0.0, 0.0, 0.0};
+    // std::vector<double> const magneticR = {4.0*coef, 4.0*coef, 2.0*coef};
+    // double const pressureR              = 1.0;
+
+    // Brio & Wu Shock tube
+    double const densityL               = 1.0;
+    double const pressureL              = 1.0;
+    std::vector<double> const velocityL = {0.0, 0.0, 0.0};
+    std::vector<double> const magneticL = {0.75, 1.0, 0.0};
+    double const densityR               = 0.125;
+    double const pressureR              = 0.1;
     std::vector<double> const velocityR = {0.0, 0.0, 0.0};
-    std::vector<double> const magneticR = {4.0*coef, 4.0*coef, 2.0*coef};
-    double const pressureR              = 1.0;
-    double const densityL               = 1.08;
-    std::vector<double> const velocityL = {1.2, 0.01, 0.5};
-    std::vector<double> const magneticL = {4. * coef, 3.6 * coef, 2.0 * coef};
-    double const pressureL              = 0.95;
+    std::vector<double> const magneticR = {0.75, -1.0, 0.0};
+
     double const gamma                  = 5./3.;
     double const xSize                  = 1.0;
     double const tMax                   = 0.2;
