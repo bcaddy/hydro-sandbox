@@ -47,6 +47,7 @@ int main()
     // std::vector<double> const velocityR = {0.0, 0.0, 0.0};
     // std::vector<double> const magneticR = {4.0*coef, 4.0*coef, 2.0*coef};
     // double const pressureR              = 1.0;
+    // double const tMax                   = 0.2;
 
     // Brio & Wu Shock tube
     double const densityL               = 1.0;
@@ -57,11 +58,11 @@ int main()
     double const pressureR              = 0.1;
     std::vector<double> const velocityR = {0.0, 0.0, 0.0};
     std::vector<double> const magneticR = {0.75, -1.0, 0.0};
+    double const tMax                   = 0.1;
 
     double const gamma                  = 5./3.;
     double const xSize                  = 1.0;
-    double const tMax                   = 0.2;
-    size_t const numSamples             = 100;
+    size_t const numSamples             = 800;
     double const diaphPos               = 0.5 * xSize;
     double const deltaX                 = xSize / static_cast<double>(numSamples);
     // ===== End Settings for Sod Shock Tube  ==================================

@@ -409,7 +409,7 @@ void HlldRiemannSolver::_computeWaveSpeeds()
 
     // Compute the densities in the star state
     _densityStarL = _densityL * (_sL - _velocityL[0]) / (_sL - _sM);
-    _densityStarL = _densityR * (_sR - _velocityR[0]) / (_sR - _sM);
+    _densityStarR = _densityR * (_sR - _velocityR[0]) / (_sR - _sM);
 
     // Compute the S_L^* and S_R^* wave speeds
     _sStarL = _sM - std::abs(_magneticL[0]) / std::sqrt(_densityStarL);
