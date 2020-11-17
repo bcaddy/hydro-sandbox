@@ -395,7 +395,7 @@ void HlldRiemannSolver::_computeWaveSpeeds()
 
     // Compute the S_L and S_R wave speeds
     _sL = std::min(_velocityL[0], _velocityR[0]) - std::max(magSonicL, magSonicR);
-    _sL = std::max(_velocityL[0], _velocityR[0]) + std::max(magSonicL, magSonicR);
+    _sR = std::max(_velocityL[0], _velocityR[0]) + std::max(magSonicL, magSonicR);
 
     // Compute the S_M wave speed
     _sM = // Numerator
