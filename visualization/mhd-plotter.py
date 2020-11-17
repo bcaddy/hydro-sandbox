@@ -70,13 +70,16 @@ def main():
     supTitleText  = "Time Evolution of Initial Conditions Using Euler Equations"
     densityColor  = 'blue'                      # color of the density plot
     velocityColor = 'purple'                    # color of the velocity plots
-    magneticColor = 'yellow'                    # color of the magnetic field plots
+    magneticColor = 'tab:orange'                # color of the magnetic field plots
     pressureColor = 'green'                     # color of the pressure plot
     ieColor       = 'red'                       # color of the specific internal energy plot
     linestyle     = '-'                         # The line style
     linewidth     = 0.5                         # How wide to make the lines
     marker        = "."                         # Marker kind for points
     markersize    = 3                           # Size of the marker
+    figSizeScale  = 2.                          # Scaling factor for the figure size
+    figHeight     = 4.8 * figSizeScale          # height of the plot in inches, default is 4.8
+    figWidth      = 7.0 * figSizeScale          # width of the plot in inches, default is 6.4
 
     # Video Settings
     OutFile       = "output-euler.mp4"          # Output filename
@@ -163,53 +166,66 @@ def main():
     # End Computing Limits
     # Setup Plots
     # ==========================================================================
-    # Create 9 subplots in a column
-    fig, subPlot = plt.subplots(3, 3)
+    # Create 9 subplots
+    fig, subPlot = plt.subplots(3, 3, figsize = (figWidth, figHeight))
 
     # Super Title
     fig.suptitle(supTitleText)
 
     # Shared x-label
-    subPlot[1,0].set_xlabel("Position")
-    subPlot[1,1].set_xlabel("Position")
-    subPlot[1,2].set_xlabel("Position")
+    subPlot[2,0].set_xlabel("Position")
+    subPlot[2,1].set_xlabel("Position")
+    subPlot[2,2].set_xlabel("Position")
 
     # Density subplot
     subPlot[0,0].set_ylim(densityLowLim, densityHighLim)
     subPlot[0,0].set_ylabel("Density")
-    subPlot[0,0].grid(True)
+    subPlot[0,0].minorticks_on()
+    subPlot[0,0].grid(which = "both")
 
     # Pressure subplot
     subPlot[0,1].set_ylim(pressureLowLim, pressureHighLim)
     subPlot[0,1].set_ylabel("Pressure")
-    subPlot[0,1].grid(True)
+    subPlot[0,1].minorticks_on()
+    subPlot[0,1].grid(which = "both")
 
     # Specific Internal Energy subplot
     subPlot[0,2].set_ylim(ieLowLim, ieHighLim)
     subPlot[0,2].set_ylabel("Internal Energy")
-    subPlot[0,2].grid(True)
+    subPlot[0,2].minorticks_on()
+    subPlot[0,2].grid(which = "both")
 
     # Velocity subplots
     subPlot[1,0].set_ylim(velocityLowLimX, velocityHighLimX)
-    subPlot[1,0].set_ylabel("X Velocity")
-    subPlot[1,0].grid(True)
+    subPlot[1,0].set_ylabel(r'$V_x$')
+    subPlot[1,0].minorticks_on()
+    subPlot[1,0].grid(which = "both")
+
     subPlot[1,1].set_ylim(velocityLowLimY, velocityHighLimY)
-    subPlot[1,1].set_ylabel("Y Velocity")
-    subPlot[1,1].grid(True)
+    subPlot[1,1].set_ylabel(r'$V_y$')
+    subPlot[1,1].minorticks_on()
+    subPlot[1,1].grid(which = "both")
+
     subPlot[1,2].set_ylim(velocityLowLimZ, velocityHighLimZ)
-    subPlot[1,2].set_ylabel("Z Velocity")
-    subPlot[1,2].grid(True)
+    subPlot[1,2].set_ylabel(r'$V_z$')
+    subPlot[1,2].minorticks_on()
+    subPlot[1,2].grid(which = "both")
 
     # Magnetic Field subplots
     subPlot[2,0].set_ylim(magneticLowLimX, magneticHighLimX)
-    subPlot[2,0].set_ylabel("X Magnetic Field")
-    subPlot[2,0].grid(True)
+    subPlot[2,0].set_ylabel(r'$B_x$')
+    subPlot[2,0].minorticks_on()
+    subPlot[2,0].grid(which = "both")
+
     subPlot[2,1].set_ylim(magneticLowLimY, magneticHighLimY)
-    subPlot[2,1].set_ylabel("Y Magnetic Field")
-    subPlot[2,1].grid(True)
+    subPlot[2,1].set_ylabel(r'$B_y$')
+    subPlot[2,1].minorticks_on()
+    subPlot[2,1].grid(which = "both")
+    
     subPlot[2,2].set_ylim(magneticLowLimZ, magneticHighLimZ)
-    subPlot[2,2].set_ylabel("Z Magnetic Field")
-    subPlot[2,2].grid(True)
+    subPlot[2,2].set_ylabel(r'$B_z$')
+    subPlot[2,2].minorticks_on()
+    subPlot[2,2].grid(which = "both")
 
     # Set plots
     densityPlot, = subPlot[0,0].plot(positions,
@@ -296,7 +312,7 @@ def main():
                            label      = "Z Magnetic Field"
                            )
 
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.tight_layout()#rect=[0, 0.03, 1, 0.95])
     fig.subplots_adjust(top=0.88)
     # ==========================================================================
     # End Setup Plots
