@@ -413,6 +413,6 @@ void HlldRiemannSolver::_computeWaveSpeeds()
 
     // Compute the S_L^* and S_R^* wave speeds
     _sStarL = _sM - std::abs(_magneticL[0]) / std::sqrt(_densityStarL);
-    _sStarL = _sM + std::abs(_magneticR[0]) / std::sqrt(_densityStarR);
+    _sStarR = _sM + std::abs(_magneticR[0]) / std::sqrt(_densityStarR);
 }
 // =============================================================================
