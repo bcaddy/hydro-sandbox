@@ -39,15 +39,15 @@ namespace mhdUtilities
     {
         // Compute the sound speed
         double bSquared, term1, term2, cF;
-        bSquared = std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);
+        bSquared = std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0);
         term1 = gamma * pressure + bSquared;
         // Make term2 negative to compute the slow magnetic sonic speed.
         // Uncomment line below and add suitable arguments to the function to
         // enable computing either the slow or fast MS waves
-        term2 = std::sqrt( std::pow(gamma * pressure + bSquared,2) - 4. * gamma * pressure * std::pow(magnetic[0], 2));
+        term2 = std::sqrt( term1*term1 - 4. * gamma * pressure * magnetic[0]*magnetic[0]);
         // term2 = (waveType == "fast")? term2: -term2;
 
-        cF = std::sqrt( (term1 + term2) / (0.5 * density) );
+        cF = std::sqrt( (term1 + term2) / (2.0 * density) );
 
         // Check for Nan values in the speeds
         if (std::isnan(cF))
@@ -124,8 +124,8 @@ namespace mhdUtilities
                                   double const &gamma)
         {return (gamma - 1)
               * ( energy
-              - 0.5 * density * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0)
-              - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0));}
+              - 0.5 * density * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0.0)
+              - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0));}
 // =============================================================================
 
 // =============================================================================
@@ -138,7 +138,7 @@ namespace mhdUtilities
      */
     inline double computeTotalPressure(double const &pressure,
                                        std::vector<double> const &magnetic)
-        {return pressure + 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0);}
+        {return pressure + 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0);}
 // =============================================================================
 
 // =============================================================================
@@ -160,7 +160,7 @@ namespace mhdUtilities
         {return (pressure/(gamma - 1))
          + 0.5 *
          ( density
-         * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0)
-         + std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0));}
+         * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0.0)
+         + std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0));}
 // =============================================================================
 }

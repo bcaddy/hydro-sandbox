@@ -82,14 +82,14 @@ int main()
         // Run solver
         double denFlux, eneFlux;  // Variables for fluxes that I'm not using
         std::vector<double> magFlux(3), momFlux(3);
-        riemannSolver->riemannMain(densityR,
-                                   velocityR,
-                                   pressureR,
-                                   magneticR,
-                                   densityL,
+        riemannSolver->riemannMain(densityL,
                                    velocityL,
                                    pressureL,
                                    magneticL,
+                                   densityR,
+                                   velocityR,
+                                   pressureR,
+                                   magneticR,
                                    denFlux,
                                    momFlux,
                                    magFlux,
