@@ -53,5 +53,5 @@ echo -e "\n\nGenerating Plot..."
 ./mhd-plotter.py ${fps}
 
 echo -e "\nDownloading Plot..."
-"${HOME}/.iterm2/it2dl" output-euler.mp4
+"${HOME}/.iterm2/it2dl" output-mhd.mp4
 echo -e "Download Complete."

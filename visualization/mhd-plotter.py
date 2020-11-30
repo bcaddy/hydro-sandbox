@@ -67,7 +67,7 @@ def main():
     gamma         = 5./3.
 
     # Plot Settings
-    supTitleText  = "Time Evolution of Initial Conditions Using Euler Equations"
+    supTitleText  = "Time Evolution of Initial Conditions Using MHD Euler Equations"
     densityColor  = 'blue'                      # color of the density plot
     velocityColor = 'purple'                    # color of the velocity plots
     magneticColor = 'tab:orange'                # color of the magnetic field plots
@@ -82,7 +82,7 @@ def main():
     figWidth      = 7.0 * figSizeScale          # width of the plot in inches, default is 6.4
 
     # Video Settings
-    OutFile       = "output-euler.mp4"          # Output filename
+    OutFile       = "output-mhd.mp4"          # Output filename
     Duration      = 10.                         # How long the video is in seconds
     dpi           = 150                         # Dots per inch
     index         = 0                           # Initialize index
@@ -221,7 +221,7 @@ def main():
     subPlot[2,1].set_ylabel(r'$B_y$')
     subPlot[2,1].minorticks_on()
     subPlot[2,1].grid(which = "both")
-    
+
     subPlot[2,2].set_ylim(magneticLowLimZ, magneticHighLimZ)
     subPlot[2,2].set_ylabel(r'$B_z$')
     subPlot[2,2].minorticks_on()
