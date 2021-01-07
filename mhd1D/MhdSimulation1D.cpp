@@ -1,7 +1,7 @@
 /*!
- * \file Simulation1D.cpp
+ * \file MhdSimulation1D.cpp
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Implementation of Simulation1D Class
+ * \brief Implementation of MhdSimulation1D Class
  * \version 0.1
  * \date 2020-07-14
  *
@@ -15,14 +15,14 @@
 #include <numeric>
 #include <memory>
 
-#include "Simulation1D.h"
+#include "MhdSimulation1D.h"
 #include "mhdUtilities.h"
 #include "HlldRiemannSolver.h"
 
 using namespace mhdUtilities;
 
 // =============================================================================
-void Simulation1D::_setInitialConditions(std::string const &initialConditionsKind)
+void MhdSimulation1D::_setInitialConditions(std::string const &initialConditionsKind)
 {
     if (initialConditionsKind == "dwShockTube")
     {
@@ -177,7 +177,7 @@ void Simulation1D::_setInitialConditions(std::string const &initialConditionsKin
 // =============================================================================
 
 // =============================================================================
-double Simulation1D::_slope(std::vector<double> const &primitive,
+double MhdSimulation1D::_slope(std::vector<double> const &primitive,
                             size_t const &idx)
 {
     if (limiterKind == "zeroSlope")  // Always return zero slope
@@ -244,7 +244,7 @@ double Simulation1D::_slope(std::vector<double> const &primitive,
 // =============================================================================
 
 // =============================================================================
-void Simulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
+void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
 {
     // Compute all the primitive values
     std::vector<double> velocity(grid.numTotCells), pressure(grid.numTotCells);
@@ -288,7 +288,7 @@ void Simulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
 
 // =============================================================================
 // Implement the piecewise constant reconstruction of the interface states
-void Simulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid)
+void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid)
 {
     // Loop through every element of the grid and compute the interface states.
     // Note that we have to go 1 element farther than usual since we need the
@@ -319,7 +319,7 @@ void Simulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid)
 // =============================================================================
 
 // =============================================================================
-void Simulation1D::computeTimeStep()
+void MhdSimulation1D::computeTimeStep()
 {
     // Find the maximum speed in the simulation
     double vMaxTemp, vMax = 0.;
@@ -345,7 +345,7 @@ void Simulation1D::computeTimeStep()
 // =============================================================================
 
 // =============================================================================
-void Simulation1D::interfaceStates(std::string const &algoStep)
+void MhdSimulation1D::interfaceStates(std::string const &algoStep)
 {
     if (algoStep == "first reconstruction")
     {
@@ -369,13 +369,13 @@ void Simulation1D::interfaceStates(std::string const &algoStep)
     }
     else
     {
-        throw std::invalid_argument("Invalid option for Simulation1D::interfaceStates");
+        throw std::invalid_argument("Invalid option for MhdSimulation1D::interfaceStates");
     }
 }
 // =============================================================================
 
 // =============================================================================
-void Simulation1D::solveRiemann()
+void MhdSimulation1D::solveRiemann()
 {
     // Loop through the grid and solve the Riemann problem at each interface
     for (size_t i = 1;
@@ -397,7 +397,7 @@ void Simulation1D::solveRiemann()
 
 // =============================================================================
 // Performe the conservative update
-void Simulation1D::conservativeUpdate(std::string const &timeChoice)
+void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
 {
     // Choose which grid to update
     std::unique_ptr<Grid1D> sourceGrid;
@@ -417,7 +417,7 @@ void Simulation1D::conservativeUpdate(std::string const &timeChoice)
     }
     else
     {
-        throw std::invalid_argument("Invalid option for Simulation1D::conservativeUpdate");
+        throw std::invalid_argument("Invalid option for MhdSimulation1D::conservativeUpdate");
     }
 
     for (size_t i = 1;
@@ -445,7 +445,7 @@ void Simulation1D::conservativeUpdate(std::string const &timeChoice)
 
 // =============================================================================
 // Constructor
-Simulation1D::Simulation1D(double const &physicalLength,
+MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
                            double const &gamma,
                            double const &CFL,
                            size_t const &reals,
@@ -477,7 +477,7 @@ Simulation1D::Simulation1D(double const &physicalLength,
     // Choose the Riemann Solver
     if (riemannSolverKind == "HLLD")
     {
-        _riemannSolver = std::unique_ptr<RiemannSolver>(new HlldRiemannSolver(_gamma));
+        _riemannSolver = std::unique_ptr<MhdRiemannSolver>(new HlldRiemannSolver(_gamma));
     }
     else
     {

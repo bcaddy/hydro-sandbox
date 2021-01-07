@@ -20,7 +20,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-#include "Simulation1D.h"
+#include "MhdSimulation1D.h"
 #include "PerfTimer.h"
 
 /*!
@@ -62,16 +62,16 @@ int main()
     // ===== End Settings ======================================================
 
     // ===== Initialize Simulation Class =======================================
-    Simulation1D sim(physicalLength,
-                     gamma,
-                     cfl,
-                     numRealCells,
-                     initialConditionsKind,
-                     reconstructionKind,
-                     limiterKind,
-                     riemannSolverKind,
-                     boundaryConditions,
-                     saveDir);
+    MhdSimulation1D sim(physicalLength,
+                        gamma,
+                        cfl,
+                        numRealCells,
+                        initialConditionsKind,
+                        reconstructionKind,
+                        limiterKind,
+                        riemannSolverKind,
+                        boundaryConditions,
+                        saveDir);
     // ===== End initializing Simulation Class =================================
 
     // Save the initial state

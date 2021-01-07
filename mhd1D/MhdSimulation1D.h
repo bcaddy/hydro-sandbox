@@ -1,7 +1,7 @@
 /*!
- * \file Simulation1D.h
+ * \file MhdSimulation1D.h
  * \author Robert 'Bob' Caddy (rvc@pitt.edu)
- * \brief Contains the Simulation1D class for solving the 1D Euler equations.
+ * \brief Contains the MhdSimulation1D class for solving the 1D Euler equations.
  * \date 2020-06-25
  *
  * \copyright Copyright (c) 2020
@@ -25,7 +25,7 @@
  * does the conservative update, keeps track of the time, etc.
  *
  */
-class Simulation1D
+class MhdSimulation1D
 {
 private:
     /// The physical length of the simulation in meters
@@ -62,7 +62,7 @@ private:
     /// The object used to solve the Riemann Problem. Uses the RiemannSolver
     /// virtual base class and chooses between different Riemann Solver
     /// algorithms
-    std::unique_ptr<RiemannSolver> _riemannSolver;
+    std::unique_ptr<MhdRiemannSolver> _riemannSolver;
 
     /*!
      * \brief Set the initial conditions. Currently only supports a Sod shock
@@ -83,7 +83,7 @@ private:
     /*!
      * \brief Slope of a given primitive variable
      *
-     * \details Computes the slope. Uses Simulation1D::limiterKind to choose
+     * \details Computes the slope. Uses MhdSimulation1D::limiterKind to choose
      *          which limiter to use.
      *          | limiterKind | Which Limiter/Slope is used?                |
      *          |-------------|---------------------------------------------|
@@ -147,7 +147,7 @@ public:
     double getTimeStep() { return _timeStep; };
 
     /*!
-     * \brief Increases the current time by the value of Simulation1D::_timeStep
+     * \brief Increases the current time by the value of MhdSimulation1D::_timeStep
      *
      */
     void updateCurrentTime() { currentTime += _timeStep; };
@@ -165,10 +165,10 @@ public:
     /*!
      * \brief Compute all the interface states.
      *
-     * \details Calls either Simulation1D::_piecewiseConstant or
-     *          Simulation1D::_piecewiseLinear depending on if
-     *          Simulation1D::reconstructionKind is "PCM" or "PCL" respectively
-     *          or just calls Simulation1D::_piecewiseConstant for the first
+     * \details Calls either MhdSimulation1D::_piecewiseConstant or
+     *          MhdSimulation1D::_piecewiseLinear depending on if
+     *          MhdSimulation1D::reconstructionKind is "PCM" or "PCL" respectively
+     *          or just calls MhdSimulation1D::_piecewiseConstant for the first
      *          reconstruction in the Van Leer algorithm
      *
      * \param[in] algoStep What part of the Van Leer algorithm to compute the
@@ -198,7 +198,7 @@ public:
     void conservativeUpdate(std::string const &timeChoice);
 
     /*!
-     * \brief Construct a new Simulation1D object.
+     * \brief Construct a new MhdSimulation1D object.
      *
      * \details Sets the private const variables (_limiterKind, _physLen, _cflNum,
      * _deltaX). Initializes the grid and the temporary grid and then sets the
@@ -219,18 +219,18 @@ public:
      * \param[in] boundaryConditions Which kind of boundary conditions to use
      * \param[in] saveDir The directory to save the grid to
      */
-    Simulation1D(double const &physicalLength,
-                 double const &gamma,
-                 double const &CFL,
-                 size_t const &reals,
-                 std::string const &initialConditionsKind,
-                 std::string const &reconstructionKind,
-                 std::string const &limiterKind,
-                 std::string const &riemannSolverKind,
-                 std::string const &boundaryConditions,
-                 std::string const &saveDir);
+    MhdSimulation1D(double const &physicalLength,
+                    double const &gamma,
+                    double const &CFL,
+                    size_t const &reals,
+                    std::string const &initialConditionsKind,
+                    std::string const &reconstructionKind,
+                    std::string const &limiterKind,
+                    std::string const &riemannSolverKind,
+                    std::string const &boundaryConditions,
+                    std::string const &saveDir);
     /*!
-     * \brief Destroy the Simulation1D object. Uses the default constructor
+     * \brief Destroy the MhdSimulation1D object. Uses the default constructor
      */
-    ~Simulation1D()=default;
+    ~MhdSimulation1D()=default;
 };
