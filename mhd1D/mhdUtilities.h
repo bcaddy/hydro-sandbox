@@ -82,15 +82,22 @@ namespace mhdUtilities
 
 // =============================================================================
     /*!
-     * \brief Compute the velocity in a cell
+     * \brief Compute the velocity vector in the cell
      *
-     * \param momentum The momentum
-     * \param density The density
-     * \return double The velocity
+     * \param[in] momentum The momentum in the cell
+     * \param[in] density The density in the cell
+     * \return std::vector<double> The velocity in the cell
      */
-    inline double computeVelocity(double const &momentum,
-                                  double const &density)
-        {return momentum / density;}
+    inline std::vector<double> computeVelocity(std::vector<double> const &momentum,
+                                               double const &density)
+    {
+        std::vector<double> velocity(3);
+        for (int i = 0; i < 3; i++)
+        {
+            velocity[i] = momentum[i] / density;
+        }
+        return velocity;
+    }
 // =============================================================================
 
 // =============================================================================
