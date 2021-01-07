@@ -350,26 +350,41 @@ void MhdSimulation1D::computeTimeStep()
     // Compute all the cell centered magnetic fields
     _centeredMagneticField(grid);
 
-    // Find the maximum speed in the simulation
-    double vMaxTemp, vMax = 0.;
+    // Find the minimum crossing time in the simulation
+    double tMin = __DBL_MAX__;
 
     for (size_t i = grid.numGhostCells;
          i < (grid.numTotCells - grid.numGhostCells);
          i++)
     {
-        double velocity = computeVelocity(grid.momentum[i], grid.density[i]);
-        double pressure = computePressure(grid.energy[i], grid.density[i], velocity, _gamma);
+        std::vector<double> velocity = computeVelocity(grid.momentum[i], grid.density[i]);
 
-        // Compute the maximum wave speed
-        vMaxTemp = std::abs(velocity) +
-                   soundSpeed(pressure, grid.density[i], _gamma);
-        if (vMax < vMaxTemp)
+        double pressure = computePressure(grid.energy[i],
+                                          grid.density[i],
+                                          velocity,
+                                          grid.magnetic[i],
+                                          _gamma);
+
+        double magSonicSpeed = magnetosonicSpeed(pressure,
+                                                 grid.density[i],
+                                                 grid.magnetic[i],
+                                                 _gamma);
+
+        // Compute the minimum time to cross a cell (ie the maximum wave speed)
+        std::vector<double> crossTimes(3);
+        crossTimes[0] = _deltaX / (std::abs(velocity[0]) + magSonicSpeed);
+        crossTimes[1] = _deltaY / (std::abs(velocity[1]) + magSonicSpeed);
+        crossTimes[2] = _deltaZ / (std::abs(velocity[2]) + magSonicSpeed);
+
+        // Check if the value is smaller than the stored value or not
+        double localMin = *std::min_element(crossTimes.begin(), crossTimes.end());
+        if (localMin < tMin)
         {
-            vMax = vMaxTemp;
+            tMin = localMin;
         }
     }
-
-    _timeStep = _cflNum * _deltaX / vMax;
+    // compute the time step
+    _timeStep = _cflNum * tMin;
 }
 // =============================================================================
 
