@@ -347,6 +347,9 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
 // =============================================================================
 void MhdSimulation1D::computeTimeStep()
 {
+    // Compute all the cell centered magnetic fields
+    _centeredMagneticField(grid);
+
     // Find the maximum speed in the simulation
     double vMaxTemp, vMax = 0.;
 
@@ -486,6 +489,8 @@ MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
     : _physLen(physicalLength),
       _cflNum(CFL),
       _deltaX(_physLen / static_cast<double>(reals)),
+      _deltaY(_deltaX),
+      _deltaZ(_deltaX),
       _gamma(gamma),
       _magCentered(reals + _numGhosts, std::vector<double> (3, 0)),
       _interfaceL(reals, _numGhosts),

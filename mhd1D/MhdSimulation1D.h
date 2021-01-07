@@ -34,6 +34,10 @@ private:
     double const _cflNum;
     /// The physical size of each cell in meters
     double const _deltaX;
+    /// The physical size of each cell in meters
+    double const _deltaY;
+    /// The physical size of each cell in meters
+    double const _deltaZ;
     /// The ratio of specific heats $\gamma$
     double const _gamma;
     /// The time step for each interation
