@@ -42,6 +42,9 @@ private:
     /// The number of ghost cells
     size_t _numGhosts = 3;
 
+    /// The cell centered magnetic fields
+    std::vector<std::vector<double>> _magCentered;
+
     /// The vector to store the primitive variables at the left side of the
     /// interface. _interfaceL.member[i] is the state on the left side
     /// of the i-1/2 interface
@@ -79,6 +82,13 @@ private:
      *            | advectionGauss | Gaussion function advection                                              |
      */
     void _setInitialConditions(std::string const &initialConditionsKind);
+
+    /*!
+     * \brief Compute the cell centered magnetic field
+     *
+     * \param[in] activeGrid The grid to compute centered fields for
+     */
+    void _centeredMagneticField(Grid1D const &activeGrid);
 
     /*!
      * \brief Slope of a given primitive variable

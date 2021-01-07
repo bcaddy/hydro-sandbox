@@ -177,6 +177,32 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
 // =============================================================================
 
 // =============================================================================
+void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
+{
+    // Loop through every element of the grid and compute the cell centered
+    // electric fields. Note that we have to go 1 element farther than usual
+    // since we need the centered state on both sides of the real part of the
+    // grid
+    for (size_t i = 1;
+         i < grid.numTotCells;
+         i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            // TODO in 3D this would be averaging the two faces. Since I'm in 1D
+            // the faces are the same so I'm averaging the same value. This it
+            // should be something like
+            // _magCentered[i][j] = 0.5 * (activeGrid.magnetic[i][j]
+            //                           + activeGrid.magnetic[i+1][j]);
+            _magCentered[i][j] = 0.5 * (activeGrid.magnetic[i][j]
+                                      + activeGrid.magnetic[i][j]);
+        }
+
+    }
+}
+// =============================================================================
+
+// =============================================================================
 double MhdSimulation1D::_slope(std::vector<double> const &primitive,
                             size_t const &idx)
 {
@@ -461,6 +487,7 @@ MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
       _cflNum(CFL),
       _deltaX(_physLen / static_cast<double>(reals)),
       _gamma(gamma),
+      _magCentered(reals + _numGhosts, std::vector<double> (3, 0)),
       _interfaceL(reals, _numGhosts),
       _interfaceR(reals, _numGhosts),
       _flux(reals, _numGhosts),
