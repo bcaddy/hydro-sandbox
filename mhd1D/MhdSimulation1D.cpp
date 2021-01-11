@@ -270,6 +270,109 @@ double MhdSimulation1D::_slope(std::vector<double> const &primitive,
 // =============================================================================
 
 // =============================================================================
+void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
+{
+    // First we need to compute the cell centered electric fields
+    // =========================================================================
+    // Declare a 4D vector of shape Nx3x3x3 to store the 3D centered field in each cell
+    std::vector<std::vector<std::vector<std::vector<double>>>>
+    electricCentered(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
+                      3, std::vector<std::vector<double>>(
+                      3, std::vector<double>(
+                      3, 0.0))));
+
+    for (size_t i = 0; i < grid.numTotCells; i++)
+    {
+        // Compute the electric field using a cross product
+        std::vector<double> eRef(3, 0.0), velocity(3, 0.0);
+        velocity = computeVelocity(activeGrid.momentum[i], activeGrid.density[i];
+        eRef[0] = velocity[2] * activeGrid.magnetic[i][1] - velocity[1] * activeGrid.magnetic[i][2];
+        eRef[1] = velocity[0] * activeGrid.magnetic[i][2] - velocity[2] * activeGrid.magnetic[i][0];
+        eRef[2] = velocity[1] * activeGrid.magnetic[i][0] - velocity[0] * activeGrid.magnetic[i][1];
+
+        // Now assign the values to the correct parts of the 4D vector
+        for (size_t j = 0; j < 3; j++)
+        {
+            for (size_t k = 0; k < 3; k++)
+            {
+                for (size_t m = 0; m < 3; m++)
+                {
+                    electricCentered[i][j][k][m] = eRef[m];
+                }
+            }
+        }
+    }
+    // Finished computing the centered electric fields
+    // =========================================================================
+
+
+    // Then make a 3x3xN virtual grid. Each grid point stores the i-1/2
+    // value in that dimension
+    // =========================================================================
+    std::vector<std::vector<std::vector<std::vector<double>>>>
+    magGrid(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
+            3, std::vector<std::vector<double>>(
+            3, std::vector<double>(
+            3, 0.0)))),
+    magFlux(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
+            3, std::vector<std::vector<double>>(
+            3, std::vector<double>(
+            3, 0.0))));;
+
+    for (size_t i = 0; i < grid.numTotCells; i++)
+    {
+        for (size_t j = 0; j < 3; j++)
+        {
+            for (size_t k = 0; k < 3; k++)
+            {
+                for (size_t m = 0; m < 3; m++)
+                {
+                    magGrid[i][j][k][m] = activeGrid.magnetic[i][m];
+                    magFlux[i][j][k][m] = _flux.magnetic[i][m];
+                }
+            }
+        }
+    }
+    // =========================================================================
+
+
+    // Then iterate over that grid as to compute all the CT electrid fields as
+    // expected in a full 3D simulation
+    // =========================================================================
+    for (size_t i = 1; i < grid.numTotCells; i++)   // Loop in x-direction
+    {
+        for (int j = 1; j < 3; j++)  // Loop in y-direction
+        {
+            for (int k = 1; k < 3; k++)  // Loop in z-direction
+            {
+                for (int m = 0; m < 3; m++)  // Loop over vector elements
+                {
+                    double firstTerm = 0.25 * ( magFlux[i][j][k][m]
+                                              + magFlux[i][j-1][k][m]
+                                              + 0.0 // actually the flux through the i,j-1/2,k face. It is zero in 1D
+                                              + 0.0 // actually the flux through the i-1,j-1/2,k face. It is zero in 1D
+                                              );
+                }
+            }
+        }
+    }
+
+
+
+
+    // Done computing the CT electric fields
+    // =========================================================================
+}
+// =============================================================================
+
+// =============================================================================
+double MhdSimulation1D::_ctSlope()
+{
+    
+}
+// =============================================================================
+
+// =============================================================================
 void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
 {
     // Compute all the primitive values
@@ -512,6 +615,10 @@ MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
       _interfaceR(reals, _numGhosts),
       _flux(reals, _numGhosts),
       _gridHalfTime(reals, _numGhosts, boundaryConditions),
+      _edgeFields(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
+                  3, std::vector<std::vector<double>>(
+                  3, std::vector<double>(
+                  3, 0.0)))),
       grid(reals, _numGhosts, boundaryConditions, saveDir),
       currentTime(0.0),
       reconstructionKind(reconstructionKind),

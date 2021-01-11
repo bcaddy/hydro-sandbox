@@ -66,6 +66,11 @@ private:
     /// The grid to store the half time step conserved variables
     Grid1D _gridHalfTime;
 
+    /// The 4D vector of shape Nx3x3x3 to store the 3D edge fields in each
+    /// cell. These are the i-1/2 edges pointing in the x, y, and z directions
+    /// respectively
+    std::vector<std::vector<std::vector<std::vector<double>>>> _edgeFields;
+
     /// The object used to solve the Riemann Problem. Uses the RiemannSolver
     /// virtual base class and chooses between different Riemann Solver
     /// algorithms
@@ -112,6 +117,17 @@ private:
      */
     double _slope(std::vector<double> const &primitive,
                   size_t const &idx);
+
+    /*!
+     * \brief Compute the Constrained Transport electric fields using the
+     * algorithm from Stone & Gardiner 2009
+     *
+     * \param[in] activeGrid The grid to compute the CT fields for
+     */
+    void _ctElectricFields(Grid1D const &activeGrid);
+
+    // TODO add documentation once this is figured out
+    double _ctSlope();
 
     /*!
      * \brief Computes the interface states using the Piecewise Linear Method
