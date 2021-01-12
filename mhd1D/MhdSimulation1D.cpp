@@ -313,8 +313,17 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
     magGrid(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
             3, std::vector<std::vector<double>>(
             3, std::vector<double>(
-            3, 0.0)))),
-    magFlux(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
+            3, 0.0))));
+
+    // declare the 5d vector used to hold the magnetic fluxes. Indices are as follows
+    // [x position]
+    // [y position]
+    // [z position]
+    // [which face, i-1/2, j-1/2, or z-1/2 in that order]
+    // [the flux in each direction, x, y, and z respectively]
+    std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>
+    magFlux(grid.numTotCells, std::vector<std::vector<std::vector<std::vector<double>>>>(
+            3, std::vector<std::vector<std::vector<double>>>(
             3, std::vector<std::vector<double>>(
             3, std::vector<double>(
             3, 0.0))));;
@@ -328,7 +337,7 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
                 for (size_t m = 0; m < 3; m++)
                 {
                     magGrid[i][j][k][m] = activeGrid.magnetic[i][m];
-                    magFlux[i][j][k][m] = _flux.magnetic[i][m];
+                    magFlux[i][j][k][0][m] = _flux.magnetic[i][m];
                 }
             }
         }
@@ -347,11 +356,17 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
             {
                 for (int m = 0; m < 3; m++)  // Loop over vector elements
                 {
-                    double firstTerm = 0.25 * ( magFlux[i][j][k][m]
-                                              + magFlux[i][j-1][k][m]
-                                              + 0.0 // actually the flux through the i,j-1/2,k face. It is zero in 1D
-                                              + 0.0 // actually the flux through the i-1,j-1/2,k face. It is zero in 1D
+                    // Compute the other two indices that will be needed
+                    int m1 = _mod3(m+1), m2 = _mod3(m+2);
+                    /// \TODO: figure out how to compute the offsets
+
+                    // Compute the first term, the sum of surrounding faces
+                    double firstTerm = 0.25 * ( magFlux[i + iOffset[0]][j + jOffset[0]][k + kOffset[0]][faceIndex[0]][m]
+                                              + magFlux[i + iOffset[1]][j + jOffset[1]][k + kOffset[1]][faceIndex[2]][m]
+                                              + magFlux[i + iOffset[2]][j + jOffset[2]][k + kOffset[2]][faceIndex[3]][m]
+                                              + magFlux[i + iOffset[3]][j + jOffset[3]][k + kOffset[3]][faceIndex[4]][m]
                                               );
+                    /// \TODO: Compute the slopes in the second and third terms
                 }
             }
         }
@@ -368,7 +383,7 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
 // =============================================================================
 double MhdSimulation1D::_ctSlope()
 {
-    
+
 }
 // =============================================================================
 
