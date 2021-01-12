@@ -126,6 +126,16 @@ private:
      */
     void _ctElectricFields(Grid1D const &activeGrid);
 
+    /*!
+     * \brief Return the mathematical modulo of x mod 3. Used extensively in CT
+     * implementations
+     *
+     * \param[in] x The number to modulo with 3
+     * \return int x modulo 3
+     */
+    int _mod3(int const &x)
+        {return (x % 3 + 3) % 3;};
+
     // TODO add documentation once this is figured out
     double _ctSlope();
 
