@@ -550,7 +550,17 @@ void MhdSimulation1D::solveRiemann()
                                     _flux.density[i],
                                     _flux.momentum[i],
                                     _flux.energy[i]);
+
+        // Capture the value of the velocities
+        for (int j = 0; j < 3; j++)
+        {
+            for (int k = 0; k < 2; k++)
+            {
+                _ctVelocities[i][j][k][0] = _riemannSolver->getVelocityState();
+            }
+        }
     }
+
 }
 // =============================================================================
 
@@ -631,6 +641,11 @@ MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
                   3, std::vector<std::vector<double>>(
                   3, std::vector<double>(
                   3, 0.0)))),
+      _ctVelocities(grid.numTotCells, std::vector<std::vector<std::vector<std::vector<double>>>>(
+                    3, std::vector<std::vector<std::vector<double>>>(
+                    3, std::vector<std::vector<double>>(
+                    3, std::vector<double>(
+                    3, 0.0))))),
       grid(reals, _numGhosts, boundaryConditions, saveDir),
       currentTime(0.0),
       reconstructionKind(reconstructionKind),

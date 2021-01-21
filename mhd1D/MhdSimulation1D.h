@@ -71,6 +71,15 @@ private:
     /// respectively
     std::vector<std::vector<std::vector<std::vector<double>>>> _edgeFields;
 
+    /// The 5D vector used to hold the velocities from the Riemann solve.
+    /// Indices are as follows
+    /// [x position]
+    /// [y position]
+    /// [z position]
+    /// [which face, i-1/2, j-1/2, or z-1/2 in that order]
+    /// [the velocity in each direction, x, y, and z respectively]
+    std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>> _ctVelocities;
+
     /// The object used to solve the Riemann Problem. Uses the RiemannSolver
     /// virtual base class and chooses between different Riemann Solver
     /// algorithms
