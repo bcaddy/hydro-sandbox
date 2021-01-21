@@ -326,7 +326,7 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
             3, std::vector<std::vector<std::vector<double>>>(
             3, std::vector<std::vector<double>>(
             3, std::vector<double>(
-            3, 0.0))));;
+            3, 0.0)))));
 
     for (size_t i = 0; i < grid.numTotCells; i++)
     {
@@ -358,13 +358,19 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
                 {
                     // Compute the other two indices that will be needed
                     int m1 = _mod3(m+1), m2 = _mod3(m+2);
-                    /// \TODO: figure out how to compute the offsets
+
+                    // All our offset arrays
+                    std::vector<int> firstOffset(3, 0.0), secondOffset(3, 0.0);
+
+                    /// Compute the offsets
+                    firstOffset[m2] = -1;
+                    secondOffset[m1] = -1;
 
                     // Compute the first term, the sum of surrounding faces
-                    double firstTerm = 0.25 * ( magFlux[i + iOffset[0]][j + jOffset[0]][k + kOffset[0]][faceIndex[0]][m]
-                                              + magFlux[i + iOffset[1]][j + jOffset[1]][k + kOffset[1]][faceIndex[2]][m]
-                                              + magFlux[i + iOffset[2]][j + jOffset[2]][k + kOffset[2]][faceIndex[3]][m]
-                                              + magFlux[i + iOffset[3]][j + jOffset[3]][k + kOffset[3]][faceIndex[4]][m]
+                    double firstTerm = 0.25 * ( magFlux[i][j][k][m1][m]
+                                              + magFlux[i][j][k][m2][m]
+                                              + magFlux[i + firstOffset[0]][j + firstOffset[0]][k + firstOffset[0]][m1][m]
+                                              + magFlux[i + secondOffset[1]][j + secondOffset[1]][k + secondOffset[1]][m2][m]
                                               );
                     /// \TODO: Compute the slopes in the second and third terms
                 }
