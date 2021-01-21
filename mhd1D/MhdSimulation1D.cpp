@@ -285,7 +285,7 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
     {
         // Compute the electric field using a cross product
         std::vector<double> eRef(3, 0.0), velocity(3, 0.0);
-        velocity = computeVelocity(activeGrid.momentum[i], activeGrid.density[i];
+        velocity = computeVelocity(activeGrid.momentum[i], activeGrid.density[i]);
         eRef[0] = velocity[2] * activeGrid.magnetic[i][1] - velocity[1] * activeGrid.magnetic[i][2];
         eRef[1] = velocity[0] * activeGrid.magnetic[i][2] - velocity[2] * activeGrid.magnetic[i][0];
         eRef[2] = velocity[1] * activeGrid.magnetic[i][0] - velocity[0] * activeGrid.magnetic[i][1];
@@ -305,16 +305,8 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
     // Finished computing the centered electric fields
     // =========================================================================
 
-
-    // Then make a 3x3xN virtual grid. Each grid point stores the i-1/2
-    // value in that dimension
+    // Create a virtual grid for the face averaged magnetic fluxes
     // =========================================================================
-    std::vector<std::vector<std::vector<std::vector<double>>>>
-    magGrid(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
-            3, std::vector<std::vector<double>>(
-            3, std::vector<double>(
-            3, 0.0))));
-
     // declare the 5d vector used to hold the magnetic fluxes. Indices are as follows
     // [x position]
     // [y position]
@@ -336,7 +328,6 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
             {
                 for (size_t m = 0; m < 3; m++)
                 {
-                    magGrid[i][j][k][m] = activeGrid.magnetic[i][m];
                     magFlux[i][j][k][0][m] = _flux.magnetic[i][m];
                 }
             }
