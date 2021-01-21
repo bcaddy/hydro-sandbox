@@ -360,7 +360,7 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
                     int m1 = _mod3(m+1), m2 = _mod3(m+2);
 
                     // All our offset arrays
-                    std::vector<int> firstOffset(3, 0.0), secondOffset(3, 0.0);
+                    std::vector<int> firstOffset(3, 0), secondOffset(3, 0);
 
                     /// Compute the offsets
                     firstOffset[m2] = -1;
