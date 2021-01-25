@@ -145,7 +145,7 @@ private:
     int _mod3(int const &x)
         {return (x % 3 + 3) % 3;};
 
-    // TODO add documentation once this is figured out
+    // \TODO: add documentation once this is figured out
     double _ctSlope();
 
     /*!
