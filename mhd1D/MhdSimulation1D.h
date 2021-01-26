@@ -145,8 +145,21 @@ private:
     int _mod3(int const &x)
         {return (x % 3 + 3) % 3;};
 
-    // \TODO: add documentation once this is figured out
-    double _ctSlope();
+    /*!
+     * \brief Compute the upwinded slopes used in edge CT fields
+     *
+     * \param centerL The electric field in the center of the cell on the left of the edge
+     * \param faceL The electric field on the face of the cell on the left of the edge
+     * \param centerR The electric field in the center of the cell on the right of the edge
+     * \param faceR The electric field in the face of the cell on the right of the edge
+     * \param velocity The velocity on the face between the left and right cells
+     * \return double The slope of th electric field
+     */
+    double _ctSlope(double const &centerL,
+                    double const &faceL,
+                    double const &centerR,
+                    double const &faceR,
+                    double const &velocity);
 
     /*!
      * \brief Computes the interface states using the Piecewise Linear Method

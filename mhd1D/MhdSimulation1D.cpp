@@ -364,23 +364,49 @@ void MhdSimulation1D::_ctElectricFields(Grid1D const &activeGrid)
                                               + magFlux[i + secondOffset[1]][j + secondOffset[1]][k + secondOffset[1]][m2][m]
                                               );
                     /// \TODO: Compute the slopes in the second and third terms
+                    // The slopes in the m1 direction
+                    double secondTerm = 0.25 * (_ctSlope(electricCentered,
+                                                         magFlux,
+                                                         electricCentered,
+                                                         magFlux,
+                                                         _ctVelocities)
+                                              - _ctSlope(electricCentered,
+                                                         magFlux,
+                                                         electricCentered,
+                                                         magFlux,
+                                                         _ctVelocities));
                 }
             }
         }
     }
-
-
-
-
     // Done computing the CT electric fields
     // =========================================================================
 }
 // =============================================================================
 
 // =============================================================================
-double MhdSimulation1D::_ctSlope()
+double MhdSimulation1D::_ctSlope(double const &centerL,
+                                 double const &faceL,
+                                 double const &centerR,
+                                 double const &faceR,
+                                 double const &velocity)
 {
-
+    // Upwinding
+    if (velocity > 0.0)
+    {
+        // Return the slope on the left side
+        return (centerL - faceL);
+    }
+    else if (velocity < 0.0)
+    {
+        // Return the slope on the right side
+        return (centerR - faceR);
+    }
+    else
+    {
+        // Return the average of the left and right side slopes
+        return 0.5 * ((centerL - faceL) + (centerR - faceR));
+    }
 }
 // =============================================================================
 

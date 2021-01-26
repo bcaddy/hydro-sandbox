@@ -10,7 +10,8 @@
         "dynload",
         "loadtxt",
         "pyplot",
-        "timeit"
+        "timeit",
+        "upwinded"
     ],
     "files.associations": {
         "nanorc": "bat",
