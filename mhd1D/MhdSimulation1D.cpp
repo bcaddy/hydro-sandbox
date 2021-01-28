@@ -434,7 +434,7 @@ void MhdSimulation1D::interfaceStates(std::string const &algoStep)
         }
         else
         {
-            throw std::invalid_argument("Invalid kind of initial conditions");
+            throw std::invalid_argument("Invalid order of reconstruction");
         }
     }
     else
