@@ -160,11 +160,11 @@ public:
      *
      * \param[in] densityL The density on the left side of the interface
      * \param[in] velocityL The velocity on the left side of the interface
-     * \param[in] pressureL The pressure on the left side of the interface
+     * \param[in] pressureL The gas pressure on the left side of the interface
      * \param[in] magneticL The magnetic field on the left side of the interface
      * \param[in] densityR  The density on the right side of the interface
      * \param[in] velocityR The velocity on the right side of the interface
-     * \param[in] pressureR The pressure on the right side of the interface
+     * \param[in] pressureR The gas pressure on the right side of the interface
      * \param[in] magneticR The magnetic field on the right side of the interface
      * \param[out] densityFlux The density flux that is being solved for
      * \param[out] momentumFlux The momentum flux that is being solved for
