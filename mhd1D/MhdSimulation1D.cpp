@@ -356,7 +356,9 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
         _interfaceL.pressure[i] = computePressure(workingGrid.energy[i-1],
                                                  workingGrid.density[i-1],
                                                  _interfaceL.velocity[i],
+                                                 workingGrid.magnetic[i-1],
                                                  _gamma);
+        // todo: Add interfaceL.magnetic
 
         // Compute the right interfaces
         _interfaceR.density[i] = workingGrid.density[i];
@@ -365,7 +367,9 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
         _interfaceR.pressure[i] = computePressure(workingGrid.energy[i],
                                                  workingGrid.density[i],
                                                  _interfaceR.velocity[i],
+                                                 workingGrid.magnetic[i],
                                                  _gamma);
+        // todo: Add interfaceR.magnetic
     }
 }
 // =============================================================================
