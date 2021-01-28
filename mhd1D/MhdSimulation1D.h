@@ -128,14 +128,6 @@ private:
                   size_t const &idx);
 
     /*!
-     * \brief Compute the Constrained Transport electric fields using the
-     * algorithm from Stone & Gardiner 2009
-     *
-     * \param[in] activeGrid The grid to compute the CT fields for
-     */
-    void _ctElectricFields(Grid1D const &activeGrid);
-
-    /*!
      * \brief Return the mathematical modulo of x mod 3. Used extensively in CT
      * implementations
      *
@@ -245,6 +237,14 @@ public:
      * the RiemannSolver class
      */
     void solveRiemann();
+
+    /*!
+     * \brief Compute the Constrained Transport electric fields using the
+     * algorithm from Stone & Gardiner 2009
+     *
+     * \param[in] activeGrid The grid to compute the CT fields for
+     */
+    void ctElectricFields(Grid1D const &activeGrid);
 
 
     /*!
