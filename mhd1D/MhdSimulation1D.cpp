@@ -353,7 +353,9 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
                                                  _interfaceL.velocity[i],
                                                  workingGrid.magnetic[i-1],
                                                  _gamma);
-        _interfaceL.magnetic[i] = _magCentered[i-1];
+        _interfaceL.magnetic[i][0] = workingGrid.magnetic[i][0];
+        _interfaceL.magnetic[i][1] = _magCentered[i-1][1];
+        _interfaceL.magnetic[i][2] = _magCentered[i-1][2];
 
         // Compute the right interfaces
         _interfaceR.density[i] = workingGrid.density[i];
@@ -364,7 +366,9 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
                                                  _interfaceR.velocity[i],
                                                  workingGrid.magnetic[i],
                                                  _gamma);
-        _interfaceR.magnetic[i] = _magCentered[i];
+        _interfaceR.magnetic[i][0] = workingGrid.magnetic[i][0];
+        _interfaceR.magnetic[i][1] = _magCentered[i][1];
+        _interfaceR.magnetic[i][2] = _magCentered[i][2];
     }
 }
 // =============================================================================
@@ -454,11 +458,14 @@ void MhdSimulation1D::solveRiemann()
         _riemannSolver->riemannMain(_interfaceL.density[i],
                                     _interfaceL.velocity[i],
                                     _interfaceL.pressure[i],
+                                    _interfaceL.magnetic[i],
                                     _interfaceR.density[i],
                                     _interfaceR.velocity[i],
                                     _interfaceR.pressure[i],
+                                    _interfaceR.magnetic[i],
                                     _flux.density[i],
                                     _flux.momentum[i],
+                                    _flux.magnetic[i],
                                     _flux.energy[i]);
 
         // Capture the value of the velocities
