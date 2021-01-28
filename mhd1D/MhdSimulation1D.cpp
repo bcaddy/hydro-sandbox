@@ -189,13 +189,8 @@ void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
     {
         for (int j = 0; j < 3; j++)
         {
-            // TODO in 3D this would be averaging the two faces. Since I'm in 1D
-            // the faces are the same so I'm averaging the same value. This it
-            // should be something like
-            // _magCentered[i][j] = 0.5 * (activeGrid.magnetic[i][j]
-            //                           + activeGrid.magnetic[i+1][j]);
             _magCentered[i][j] = 0.5 * (activeGrid.magnetic[i][j]
-                                      + activeGrid.magnetic[i][j]);
+                                      + activeGrid.magnetic[i+1][j]);
         }
 
     }
@@ -358,7 +353,7 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
                                                  _interfaceL.velocity[i],
                                                  workingGrid.magnetic[i-1],
                                                  _gamma);
-        // todo: Add interfaceL.magnetic
+        _interfaceL.magnetic[i] = _magCentered[i-1];
 
         // Compute the right interfaces
         _interfaceR.density[i] = workingGrid.density[i];
@@ -369,7 +364,7 @@ void MhdSimulation1D::_piecewiseConstantReconstruction(Grid1D const &workingGrid
                                                  _interfaceR.velocity[i],
                                                  workingGrid.magnetic[i],
                                                  _gamma);
-        // todo: Add interfaceR.magnetic
+        _interfaceR.magnetic[i] = _magCentered[i];
     }
 }
 // =============================================================================
@@ -392,12 +387,12 @@ void MhdSimulation1D::computeTimeStep()
         double pressure = computePressure(grid.energy[i],
                                           grid.density[i],
                                           velocity,
-                                          grid.magnetic[i],
+                                          _magCentered[i],
                                           _gamma);
 
         double magSonicSpeed = magnetosonicSpeed(pressure,
                                                  grid.density[i],
-                                                 grid.magnetic[i],
+                                                 _magCentered[i],
                                                  _gamma);
 
         // Compute the minimum time to cross a cell (ie the maximum wave speed)
