@@ -567,6 +567,11 @@ void MhdSimulation1D::ctElectricFields(Grid1D const &activeGrid)
                     std::vector<int> m2Offset(3, 0), m1Offset(3, 0);
 
                     /// Compute the offsets
+                    /// \todo: consider replacing with vectors that just are the
+                    /// the indices. That way I don't have to compute it over
+                    /// and over again in indices. This level of optimization is
+                    /// worth considering but is probably at the level of
+                    /// considering cache per ALU
                     m1Offset[m1] = -1;
                     m2Offset[m2] = -1;
 
@@ -648,13 +653,41 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
                                       + (localTimeStep / _deltaX)
                                       * (_flux.density[i] - _flux.density[i+1]);
 
-        destinationGrid->momentum[i] = sourceGrid->momentum[i]
-                                      + (localTimeStep / _deltaX)
-                                      * (_flux.momentum[i] - _flux.momentum[i+1]);
-
         destinationGrid->energy[i]   = sourceGrid->energy[i]
                                       + (localTimeStep / _deltaX)
                                       * (_flux.energy[i] - _flux.energy[i+1]);
+
+        // Update momentum
+        // todo this might be better in a loop but idgaf right now
+        destinationGrid->momentum[i][0] = sourceGrid->momentum[i][0]
+                                            + (localTimeStep / _deltaX)
+                                            * (_flux.momentum[i][0] - _flux.momentum[i+1][0]);
+        destinationGrid->momentum[i][1] = sourceGrid->momentum[i][1]
+                                            + (localTimeStep / _deltaY)
+                                            * (_flux.momentum[i][1] - _flux.momentum[i+1][1]);
+        destinationGrid->momentum[i][2] = sourceGrid->momentum[i][2]
+                                            + (localTimeStep / _deltaZ)
+                                            * (_flux.momentum[i][2] - _flux.momentum[i+1][2]);
+
+        // Update magnetic field using CT fields
+        // todo this might be better in a loop but idgaf right now
+        destinationGrid->magnetic[i][0] = sourceGrid->magnetic[i][0]
+                                            - (localTimeStep / _deltaY)
+                                            * (_edgeFields[i][2][1][2] - _edgeFields[i][1][1][2])
+                                            + (localTimeStep / _deltaZ)
+                                            * (_edgeFields[i][1][2][1] - _edgeFields[i][1][1][1]);
+
+        destinationGrid->magnetic[i][2] = sourceGrid->magnetic[i][1]
+                                            - (localTimeStep / _deltaX)
+                                            * (_edgeFields[i+1][1][1][2] - _edgeFields[i][1][1][2])
+                                            + (localTimeStep / _deltaZ)
+                                            * (_edgeFields[i][1][2][0] - _edgeFields[i][1][1][0]);
+
+        destinationGrid->magnetic[i][2] = sourceGrid->magnetic[i][2]
+                                            - (localTimeStep / _deltaX)
+                                            * (_edgeFields[i+1][1][1][1] - _edgeFields[i][1][1][1])
+                                            + (localTimeStep / _deltaY)
+                                            * (_edgeFields[i][2][1][0] - _edgeFields[i][1][1][0]);
     }
 
     // Release pointers
