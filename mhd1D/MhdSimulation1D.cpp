@@ -691,16 +691,16 @@ MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
       _deltaY(_deltaX),
       _deltaZ(_deltaX),
       _gamma(gamma),
-      _magCentered(reals + _numGhosts, std::vector<double> (3, 0)),
+      _magCentered(2 * _numGhosts + reals, std::vector<double> (3, 0)),
       _interfaceL(reals, _numGhosts),
       _interfaceR(reals, _numGhosts),
       _flux(reals, _numGhosts),
       _gridHalfTime(reals, _numGhosts, boundaryConditions),
-      _edgeFields(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
+      _edgeFields(2 * _numGhosts + reals, std::vector<std::vector<std::vector<double>>>(
                   3, std::vector<std::vector<double>>(
                   3, std::vector<double>(
                   3, 0.0)))),
-      _ctVelocities(grid.numTotCells, std::vector<std::vector<std::vector<std::vector<double>>>>(
+      _ctVelocities(2 * _numGhosts + reals, std::vector<std::vector<std::vector<std::vector<double>>>>(
                     3, std::vector<std::vector<std::vector<double>>>(
                     3, std::vector<std::vector<double>>(
                     3, std::vector<double>(
