@@ -86,8 +86,7 @@ private:
     std::unique_ptr<MhdRiemannSolver> _riemannSolver;
 
     /*!
-     * \brief Set the initial conditions. Currently only supports a Sod shock
-     * tube.
+     * \brief Set the initial conditions.
      *
      * \param[in] initialConditionsKind The type of initial conditions to use.
      *            Options are:
@@ -95,9 +94,6 @@ private:
      *            |----------------|--------------------------------------------------------------------------|
      *            | dwShockTube    | MHD Shock tube from Dai & Woodward 1994                                  |
      *            | bwShockTube    | MHD Shock tube from Brio & Wu 1988                                       |
-     *            | indexCheck     | Set each primitive variable to the value of the grid index at that point |
-     *            | advectionStep  | Step function advection                                                  |
-     *            | advectionGauss | Gaussion function advection                                              |
      */
     void _setInitialConditions(std::string const &initialConditionsKind);
 

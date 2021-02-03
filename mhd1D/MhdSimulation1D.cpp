@@ -111,64 +111,6 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             grid.energy[i]      = computeEnergy(presR, denR, velR, bR, _gamma);
         }
     }
-    else if (initialConditionsKind == "indexCheck")
-    {
-        for (size_t i = grid.numGhostCells;
-             i < (grid.numTotCells-grid.numGhostCells);
-             i++)
-        {
-            double dIdx = static_cast<double>(i) + 0.001;
-            grid.density[i]  = dIdx;
-            grid.momentum[i] = computeMomentum(dIdx, dIdx);
-            grid.energy[i]   = computeEnergy(dIdx, dIdx, dIdx, _gamma);
-        }
-
-    }
-    else if (initialConditionsKind == "advectionStep")
-    {
-        double pressure = 1.0, velocity = 1.0;
-        double denLow = 1.0, denHigh = 2.0;
-
-        for (size_t i = grid.numGhostCells;
-             i < (grid.numTotCells-grid.numGhostCells);
-             i++)
-        {
-            if ( (grid.numTotCells/4 < i) and (i < grid.numTotCells/2) )
-            // if ((i > 3*grid.numRealCells/4) )
-            {
-                // We're in the high pressure region
-                grid.density[i] = denHigh;
-            }
-            else
-            {
-                // We're in the low pressure region
-                grid.density[i] = denLow;
-            }
-
-            // Set the other conserved variables
-            grid.momentum[i] = computeMomentum(velocity, grid.density[i]);
-            grid.energy[i]   = computeEnergy(pressure, grid.density[i], velocity, _gamma);
-        }
-    }
-    else if (initialConditionsKind == "advectionGauss")
-    {
-        double const pressure = 1.0, velocity = 1.0;
-        double const denLow = 10.0, amplitude = 1.0;
-
-        for (size_t i = grid.numGhostCells;
-             i < (grid.numTotCells-grid.numGhostCells);
-             i++)
-        {
-
-            double x = 4. * (static_cast<double>(i) / static_cast<double>(grid.numTotCells)) - 2.;
-
-            grid.density[i] = denLow + amplitude * std::exp( -std::pow(x,2));
-
-            // Set the other conserved variables
-            grid.momentum[i] = computeMomentum(velocity, grid.density[i]);
-            grid.energy[i]   = computeEnergy(pressure, grid.density[i], velocity, _gamma);
-        }
-    }
     else
     {
         throw std::invalid_argument("Invalid kind of initial conditions");
