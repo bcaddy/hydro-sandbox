@@ -125,7 +125,7 @@ void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
     // electric fields. Note that we have to go 1 element farther than usual
     // since we need the centered state on both sides of the real part of the
     // grid
-    for (size_t i = 1;
+    for (size_t i = 0;
          i < grid.numTotCells;
          i++)
     {
