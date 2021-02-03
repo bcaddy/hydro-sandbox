@@ -17,7 +17,7 @@
 #include "Grid1D.h"
 
 // =============================================================================
-void Grid1D::updateBoundaries(double const &gamma)
+void Grid1D::updateBoundaries()
 {
     if (boundaryConditionKind == "periodic")
     {

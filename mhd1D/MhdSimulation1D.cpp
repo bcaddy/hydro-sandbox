@@ -38,8 +38,8 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                             velR{0.0, 0.0, 0.0},
                             bR{4.0 * coef, 4.0 * coef, 2.0 * coef};
 
-        // Iterate over just the real cells on the left side
-        for (size_t i = grid.numGhostCells;
+        // Iterate over all cells on the left side
+        for (size_t i = 0;
             i < half;
             i++)
         {
@@ -55,7 +55,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
 
         // Iterate over the real cells on the right side
         for (size_t i = half;
-            i < (grid.numTotCells - grid.numGhostCells);
+            i < grid.numTotCells;
             i++)
         {
             grid.density[i]     = denR;
@@ -82,7 +82,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                             bR{0.75, -1.0, 0.0};
 
         // Iterate over just the real cells on the left side
-        for (size_t i = grid.numGhostCells;
+        for (size_t i = 0;
             i < half;
             i++)
         {
@@ -98,7 +98,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
 
         // Iterate over the real cells on the right side
         for (size_t i = half;
-            i < (grid.numTotCells - grid.numGhostCells);
+            i < grid.numTotCells;
             i++)
         {
             grid.density[i]     = denR;
@@ -456,7 +456,6 @@ void MhdSimulation1D::solveRiemann()
 
 }
 // =============================================================================
-
 
 // =============================================================================
 void MhdSimulation1D::ctElectricFields(Grid1D const &activeGrid)

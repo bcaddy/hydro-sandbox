@@ -69,10 +69,8 @@ public:
 
     /*!
      * \brief Applies the boundary conditions by updating the ghost cells
-     *
-     * \param[in] gamma The ratio of specific heats
      */
-    void updateBoundaries(double const &gamma);
+    void updateBoundaries();
 
     /*!
      * \brief Saves all the grid variables to their own csv files
