@@ -4,12 +4,11 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "HLLD Tester debug",
+            "name": "mhd-solver debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/mhd1D/riemannTester.exe",
+            "program": "${workspaceFolder}/mhd1D/mhd-solver.exe",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
@@ -31,10 +30,10 @@
             ]
         },
         {
-            "name": "mhd-solver debug",
+            "name": "HLLD Tester debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/mhd1D/mhd-solver.exe",
+            "program": "${workspaceFolder}/mhd1D/riemannTester.exe",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

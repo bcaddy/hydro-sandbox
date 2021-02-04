@@ -52,7 +52,7 @@ int main()
     double const gamma                 = 5./3.;
     double const cfl                   = 0.4;
     double const maxTime               = 0.2;
-    size_t const numRealCells          = 1000;
+    size_t const numRealCells          = 10;
     std::string  initialConditionsKind = "dwShockTube";
     std::string  boundaryConditions    = "pass";
     std::string  reconstructionKind    = "PLM";
