@@ -53,8 +53,8 @@ int main()
     double const cfl                   = 0.4;
     double const maxTime               = 0.2;
     size_t const numRealCells          = 50;
-    std::string  initialConditionsKind = "dwShockTube";
-    std::string  boundaryConditions    = "pass";
+    std::string  initialConditionsKind = "bwShockTube";
+    std::string  boundaryConditions    = "bwShockTube";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
     std::string  riemannSolverKind     = "HLLD";  // Options: "HLLD"

@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <numeric>
 #include <memory>
+#include <iostream>
 
 #include "MhdSimulation1D.h"
 #include "mhdUtilities.h"
@@ -385,6 +386,14 @@ void MhdSimulation1D::computeTimeStep()
             tMin = localMin;
         }
     }
+    if ((tMin * _cflNum) < 2.E-5)
+    {
+        // Todo: Remove this when the code is stable
+        tMin = 2.E-5/_cflNum;
+        std::cout << "Minimum time step reached. Setting to timestep to 2E-5s" << std::endl;
+    }
+
+
     // compute the time step
     _timeStep = _cflNum * tMin;
 }
