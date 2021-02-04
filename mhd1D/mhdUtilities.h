@@ -129,7 +129,7 @@ namespace mhdUtilities
                                   std::vector<double> const &velocity,
                                   std::vector<double> const &magnetic,
                                   double const &gamma)
-        {return (gamma - 1)
+        {return (gamma - 1.)
               * ( energy
               - 0.5 * density * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0.0)
               - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0));}
