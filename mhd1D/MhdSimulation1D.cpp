@@ -467,9 +467,25 @@ void MhdSimulation1D::solveRiemann()
 // =============================================================================
 
 // =============================================================================
-void MhdSimulation1D::ctElectricFields(Grid1D const &activeGrid)
+void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 {
-    // First we need to compute the cell centered electric fields
+    // First we choose the active grid
+    std::unique_ptr<Grid1D> activeGrid;
+    if (timeChoice == "Half time")
+    {
+        activeGrid = std::unique_ptr<Grid1D>(&grid);
+    }
+    else if (timeChoice == "Full time")
+    {
+        activeGrid = std::unique_ptr<Grid1D>(&_gridHalfTime);
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid option for MhdSimulation1D::ctElectricFields");
+    }
+
+
+    // We need to compute the cell centered electric fields
     // =========================================================================
     // Declare a 4D vector of shape Nx3x3x3 to store the 3D centered field in each cell
     std::vector<std::vector<std::vector<std::vector<double>>>>
@@ -482,10 +498,11 @@ void MhdSimulation1D::ctElectricFields(Grid1D const &activeGrid)
     {
         // Compute the electric field using a cross product
         std::vector<double> eRef(3, 0.0), velocity(3, 0.0);
-        velocity = computeVelocity(activeGrid.momentum[i], activeGrid.density[i]);
-        eRef[0] = velocity[2] * activeGrid.magnetic[i][1] - velocity[1] * activeGrid.magnetic[i][2];
-        eRef[1] = velocity[0] * activeGrid.magnetic[i][2] - velocity[2] * activeGrid.magnetic[i][0];
-        eRef[2] = velocity[1] * activeGrid.magnetic[i][0] - velocity[0] * activeGrid.magnetic[i][1];
+        velocity = computeVelocity(activeGrid->momentum[i], activeGrid->density[i]);
+        eRef[0]  = velocity[2] * activeGrid->magnetic[i][1] - velocity[1] * activeGrid->magnetic[i][2];
+        eRef[1]  = velocity[0] * activeGrid->magnetic[i][2] - velocity[2] * activeGrid->magnetic[i][0];
+        eRef[2]  = velocity[1] * activeGrid->magnetic[i][0] - velocity[0] * activeGrid->magnetic[i][1];
+
 
         // Now assign the values to the correct parts of the 4D vector
         for (size_t j = 0; j < 3; j++)
@@ -499,6 +516,9 @@ void MhdSimulation1D::ctElectricFields(Grid1D const &activeGrid)
             }
         }
     }
+    // We can release the activeGrid pointer now
+    activeGrid.release();
+
     // Finished computing the centered electric fields
     // =========================================================================
 
@@ -562,36 +582,36 @@ void MhdSimulation1D::ctElectricFields(Grid1D const &activeGrid)
                     // Compute the first term, the sum of surrounding faces
                     double firstTerm = 0.25 * ( magFlux[i][j][k][m1][m]
                                               + magFlux[i][j][k][m2][m]
-                                              + magFlux[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m1][m]
-                                              + magFlux[i + m1Offset[1]][j + m1Offset[1]][k + m1Offset[1]][m2][m]
+                                              + magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m]
+                                              + magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m]
                                               );
                     // The slopes in the m1 direction
                     double secondTerm = 0.25 * (// The -1/4 slopes
                                                 _ctSlope(electricCentered[i][k][k][m],
                                                          magFlux[i][j][k][m1][m],
-                                                         electricCentered[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m],
-                                                         magFlux[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m1][m],
+                                                         electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
+                                                         magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
                                                          _ctVelocities[i][j][k][m2][m2])
                                                 // The -3/4 slopes
-                                              - _ctSlope(electricCentered[i + m1Offset[1]][j + m1Offset[1]][k + m1Offset[1]][m],
+                                              - _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
                                                          magFlux[i][j][k][m1][m],
-                                                         electricCentered[i + m1Offset[1] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[1] + m2Offset[2]][m],
-                                                         magFlux[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m1][m],
-                                                         _ctVelocities[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m2][m2]));
+                                                         electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                                                         magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
+                                                         _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m2][m2]));
 
                     // The slopes in the m2 directions
                     double thirdTerm = 0.25 * (// The -1/4 slopes
-                                                _ctSlope(electricCentered[i + m1Offset[1]][j + m1Offset[1]][k + m1Offset[1]][m],
-                                                         magFlux[i + m1Offset[1]][j + m1Offset[1]][k + m1Offset[1]][m2][m],
+                                                _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
+                                                         magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
                                                          electricCentered[i][j][k][m],
                                                          magFlux[i][j][k][m2][m],
                                                          _ctVelocities[i][j][k][m1][m1])
                                                 // The -3/4 slopes
-                                              - _ctSlope(electricCentered[i + m1Offset[1] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[1] + m2Offset[2]][m],
-                                                         magFlux[i + m1Offset[1]][j + m1Offset[1]][k + m1Offset[1]][m2][m],
-                                                         electricCentered[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m],
+                                              - _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                                                         magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
+                                                         electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
                                                          magFlux[i][j][k][m2][m],
-                                                         _ctVelocities[i + m2Offset[0]][j + m2Offset[0]][k + m2Offset[0]][m1][m1]));
+                                                         _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m1]));
 
                     // Now we fill in the array of edge values
                     _edgeFields[i][j][k][m] = firstTerm + secondTerm + thirdTerm;

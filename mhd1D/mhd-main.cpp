@@ -42,6 +42,7 @@ int main()
     // Initialize timers and start overall timer
     PerfTimer overallTimer("Overall Timer");
     PerfTimer timeStepTimer("Time Step Timer");
+    PerfTimer ctFieldsTimer("CT Fields Timer");
     PerfTimer firstInterfaceTimer("First Interface Reconstruction Timer");
     PerfTimer secondInterfaceTimer("Second Interface Reconstruction Timer");
     PerfTimer riemannTimer("Riemann Solver Timer");
@@ -52,7 +53,7 @@ int main()
     double const gamma                 = 5./3.;
     double const cfl                   = 0.4;
     double const maxTime               = 0.2;
-    size_t const numRealCells          = 50;
+    size_t const numRealCells          = 10;
     std::string  initialConditionsKind = "bwShockTube";
     std::string  boundaryConditions    = "bwShockTube";
     std::string  reconstructionKind    = "PLM";
@@ -99,6 +100,11 @@ int main()
         sim.solveRiemann();
         riemannTimer.stopTimer();
 
+        // Compute the CT Fields
+        ctFieldsTimer.startTimer();
+        sim.ctElectricFields("Half time");
+        ctFieldsTimer.stopTimer();
+
         // Update the half time step grid
         sim.conservativeUpdate("half time update");
 
@@ -111,6 +117,11 @@ int main()
         riemannTimer.startTimer();
         sim.solveRiemann();
         riemannTimer.stopTimer();
+
+        // Compute the CT Fields
+        ctFieldsTimer.startTimer();
+        sim.ctElectricFields("Full time");
+        ctFieldsTimer.stopTimer();
 
         // Compute conservative update
         sim.conservativeUpdate("full time update");

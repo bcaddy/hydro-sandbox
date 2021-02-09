@@ -238,9 +238,10 @@ public:
      * \brief Compute the Constrained Transport electric fields using the
      * algorithm from Stone & Gardiner 2009
      *
-     * \param[in] activeGrid The grid to compute the CT fields for
+     * \param[in] timeChoice Choose whether to compute the CT fields with the
+     * base grid or the grid from the half time step reconstruction
      */
-    void ctElectricFields(Grid1D const &activeGrid);
+    void ctElectricFields(std::string const &timeChoice);
 
 
     /*!
