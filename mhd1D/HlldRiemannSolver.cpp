@@ -244,7 +244,7 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
     // Now we actually compute the HLLD Star State Flux
     for (size_t i = 0; i < 3; i++)
     {
-        momentumFlux[i] = momentumFluxSide[i] + sSide * (velocityStar[i] - densityStar);
+        momentumFlux[i] = momentumFluxSide[i] + sSide * (velocityStar[i] - velocity[i]);
         magneticFlux[i] = magneticFluxSide[i] + sSide * (magneticStar[i] - magnetic[i]);
     }
     densityFlux = densityFluxSide + sSide * (densityStar - density);
