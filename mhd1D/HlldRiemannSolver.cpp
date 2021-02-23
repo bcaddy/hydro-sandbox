@@ -342,7 +342,7 @@ void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magneti
     double const denom         = sqrtDenStarL + sqrtDenStarR;
 
     // Compute the double star state velocity and magnetic field
-    for (size_t i = 2; i < 3; i++)
+    for (size_t i = 1; i < 3; i++)
     {
         velocityDblStar[i] =
             (velocityStarL[i] * sqrtDenStarL
