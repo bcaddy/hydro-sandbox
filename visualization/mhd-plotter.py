@@ -98,8 +98,8 @@ def main():
         intSamples   = np.asarray(np.floor(floatSamples), dtype="int")
     else:  # if the number of simulation steps is less than the total number of frames
         totFrames  = simNumSteps
-        Fps        = int(totFrames/Duration)
-        FrameTime  = (1./Fps) * 1000
+        fps        = np.ceil(totFrames/Duration)
+        FrameTime  = (1./fps) * 1000
         intSamples = np.arange(0, simNumSteps, 1, dtype="int")
     # ==========================================================================
     # End Settings and Setup
