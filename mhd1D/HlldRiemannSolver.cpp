@@ -336,10 +336,10 @@ void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magneti
 
     // There are several terms that are common to many double star state
     // variables so we'll assign variables to them.
-    double sqrtDenStarL  = std::sqrt(_densityStarL);
-    double sqrtDenStarR  = std::sqrt(_densityStarR);
-    double signMagneticX = (magnetic[0] >= 0.)? 1.0: -1.0;
-    double denom         = sqrtDenStarL + sqrtDenStarR;
+    double const sqrtDenStarL  = std::sqrt(_densityStarL);
+    double const sqrtDenStarR  = std::sqrt(_densityStarR);
+    double const signMagneticX = (magnetic[0] >= 0.)? 1.0: -1.0;
+    double const denom         = sqrtDenStarL + sqrtDenStarR;
 
     // Compute the double star state velocity and magnetic field
     for (size_t i = 2; i < 3; i++)
