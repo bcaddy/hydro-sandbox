@@ -20,7 +20,7 @@ while getopts "f:t" opt; do
         f)  # Set the FPS
             fps = ${OPTARG}
             ;;
-        t)  # Set the FPS
+        t)  # Run the Riemann Tester
             riemannTester="riemannTester"
             EXE="./riemannTester.exe"
             ;;
