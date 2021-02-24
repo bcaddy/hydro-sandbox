@@ -294,7 +294,9 @@ void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magneti
     std::vector<double> velocityStarL(3), magneticStarL(3),
                         velocityStarR(3), magneticStarR(3),
                         momentumFluxStarSide(3), magneticFluxStarSide(3);
-
+    // todo: instead of this complicated bs try calling multiple functions, one
+    // todo: for each component in the IF statement where I choose which state I
+    // todo: am in
     if (sideSign == 1.0)
     {
         // We're on the right side
