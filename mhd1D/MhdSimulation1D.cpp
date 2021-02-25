@@ -681,10 +681,10 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
                                             + (localTimeStep / _deltaZ)
                                             * (_edgeFields[i][1][2][1] - _edgeFields[i][1][1][1]);
 
-        destinationGrid->magnetic[i][1] = sourceGrid->magnetic[i][1]
-                                            - (localTimeStep / _deltaX)
+        destinationGrid->magnetic[i][1] = sourceGrid->magnetic[i][1] // todo The sign is wrong here. make sure to check website too
+                                            + (localTimeStep / _deltaX)
                                             * (_edgeFields[i+1][1][1][2] - _edgeFields[i][1][1][2])
-                                            + (localTimeStep / _deltaZ)
+                                            - (localTimeStep / _deltaZ)
                                             * (_edgeFields[i][1][2][0] - _edgeFields[i][1][1][0]);
 
         destinationGrid->magnetic[i][2] = sourceGrid->magnetic[i][2]
