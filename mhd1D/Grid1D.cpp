@@ -82,9 +82,9 @@ void Grid1D::updateBoundaries(double const &gamma)
             energy[iL]      = computeEnergy(presL, denL, velL, bL, gamma);
 
             density[iR]     = denR;
-            momentum[iR][0] = computeMomentum(velL[0], denR);
-            momentum[iR][1] = computeMomentum(velL[1], denR);
-            momentum[iR][2] = computeMomentum(velL[2], denR);
+            momentum[iR][0] = computeMomentum(velR[0], denR);
+            momentum[iR][1] = computeMomentum(velR[1], denR);
+            momentum[iR][2] = computeMomentum(velR[2], denR);
             magnetic[iR][0] = bR[0];
             magnetic[iR][1] = bR[1];
             magnetic[iR][2] = bR[2];
