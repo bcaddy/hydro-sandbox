@@ -137,6 +137,17 @@ void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
         }
 
     }
+
+    /// \note The issue is tha we're missing the right most face-centered
+    /// magnetic field. In general to set that we need the boundary conditions
+    /// or we just set the average in the cell to the value at the face. This
+    /// last option will effectively break periodic boundary conditions. I could
+    /// also (temporarily) create a simple 1x3 vector to store the last set of
+    /// magnetic fields and address that case here
+    for (size_t i = 0; i < 3; i++)
+    {   // \HACK This solution is hacky, fix later
+        _magCentered[grid.numTotCells-1][i] = activeGrid.magnetic[grid.numTotCells-1][i];
+    }
 }
 // =============================================================================
 
