@@ -68,6 +68,10 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             grid.magnetic[i][2] = bR[2];
             grid.energy[i]      = computeEnergy(presR, denR, velR, bR, _gamma);
         }
+        // Set the last face in the magnetic field
+        grid.magnetic[grid.numTotCells][0] = bR[0];
+        grid.magnetic[grid.numTotCells][1] = bR[1];
+        grid.magnetic[grid.numTotCells][2] = bR[2];
     }
     else if (initialConditionsKind == "bwShockTube")
     {
@@ -111,6 +115,10 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             grid.magnetic[i][2] = bR[2];
             grid.energy[i]      = computeEnergy(presR, denR, velR, bR, _gamma);
         }
+        // Set the last face in the magnetic field
+        grid.magnetic[grid.numTotCells][0] = bR[0];
+        grid.magnetic[grid.numTotCells][1] = bR[1];
+        grid.magnetic[grid.numTotCells][2] = bR[2];
     }
     else
     {
@@ -127,7 +135,7 @@ void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
     // since we need the centered state on both sides of the real part of the
     // grid
     for (size_t i = 0;
-         i < (grid.numTotCells-1);
+         i < grid.numTotCells;
          i++)
     {
         for (int j = 0; j < 3; j++)
@@ -144,10 +152,6 @@ void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
     /// last option will effectively break periodic boundary conditions. I could
     /// also (temporarily) create a simple 1x3 vector to store the last set of
     /// magnetic fields and address that case here
-    for (size_t i = 0; i < 3; i++)
-    {   // \HACK This solution is hacky, fix later
-        _magCentered[grid.numTotCells-1][i] = activeGrid.magnetic[grid.numTotCells-1][i];
-    }
 }
 // =============================================================================
 

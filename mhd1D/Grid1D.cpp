@@ -52,6 +52,11 @@ void Grid1D::updateBoundaries(double const &gamma)
                 magnetic[rightGhost][i] = magnetic[leftReal][i];
             }
         }
+
+        // Set the last face in the magnetic field
+        magnetic[numTotCells][0] = magnetic[2*numGhostCells][0];
+        magnetic[numTotCells][1] = magnetic[2*numGhostCells][1];
+        magnetic[numTotCells][2] = magnetic[2*numGhostCells][2];
     }
     else if (boundaryConditionKind == "bwShockTube")
     {
@@ -90,6 +95,10 @@ void Grid1D::updateBoundaries(double const &gamma)
             magnetic[iR][2] = bR[2];
             energy[iR]      = computeEnergy(presR, denR, velR, bR, gamma);
         }
+        // Set the last face in the magnetic field
+        magnetic[numTotCells][0] = bR[0];
+        magnetic[numTotCells][1] = bR[1];
+        magnetic[numTotCells][2] = bR[2];
     }
     else if (boundaryConditionKind == "dwShockTube")
     {
@@ -129,6 +138,10 @@ void Grid1D::updateBoundaries(double const &gamma)
             magnetic[iR][2] = bR[2];
             energy[iR]      = computeEnergy(presR, denR, velR, bR, gamma);
         }
+        // Set the last face in the magnetic field
+        magnetic[numTotCells][0] = bR[0];
+        magnetic[numTotCells][1] = bR[1];
+        magnetic[numTotCells][2] = bR[2];
     }
     else if (boundaryConditionKind == "pass")
     {
@@ -210,7 +223,7 @@ Grid1D::Grid1D(size_t const &reals,
     numTotCells(2*numGhostCells + numRealCells),
     density(numTotCells),
     momentum(numTotCells, std::vector<double> (3, 0)),
-    magnetic(numTotCells, std::vector<double> (3, 0)),
+    magnetic(numTotCells + 1, std::vector<double> (3, 0)),
     energy(numTotCells),
     boundaryConditionKind(boundaryConditions)
 {
