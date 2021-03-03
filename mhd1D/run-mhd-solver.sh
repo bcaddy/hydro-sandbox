@@ -18,7 +18,7 @@ EXE="./mhd-solver.exe"
 while getopts "f:t" opt; do
     case $opt in
         f)  # Set the FPS
-            fps = ${OPTARG}
+            fps=${OPTARG}
             ;;
         t)  # Run the Riemann Tester
             riemannTester="riemannTester"
