@@ -253,7 +253,6 @@ void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
     std::vector<double> velocityX(grid.numTotCells),
                         velocityY(grid.numTotCells),
                         velocityZ(grid.numTotCells),
-                        magneticX(grid.numTotCells),
                         magneticY(grid.numTotCells),
                         magneticZ(grid.numTotCells),
                         pressure(grid.numTotCells);
@@ -274,7 +273,6 @@ void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
         velocityX[i] = tempVec[0];
         velocityY[i] = tempVec[1];
         velocityZ[i] = tempVec[2];
-        magneticX[i] = _magCentered[i][0];
         magneticY[i] = _magCentered[i][1];
         magneticZ[i] = _magCentered[i][2];
     }
@@ -290,7 +288,6 @@ void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
                                     _slope(velocityX,     i),
                                     _slope(velocityY,     i),
                                     _slope(velocityZ,     i),
-                                    _slope(magneticX,     i),
                                     _slope(magneticY,     i),
                                     _slope(magneticZ,     i),
                                     _slope(pressure,      i)};
@@ -301,20 +298,20 @@ void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
         _interfaceL.velocity[i+1][0] = velocityX[i]           +  0.5 * slopes[1];
         _interfaceL.velocity[i+1][1] = velocityY[i]           +  0.5 * slopes[2];
         _interfaceL.velocity[i+1][2] = velocityZ[i]           +  0.5 * slopes[3];
-        _interfaceL.magnetic[i+1][0] = magneticX[i]           +  0.5 * slopes[4];
-        _interfaceL.magnetic[i+1][1] = magneticY[i]           +  0.5 * slopes[5];
-        _interfaceL.magnetic[i+1][2] = magneticZ[i]           +  0.5 * slopes[6];
-        _interfaceL.pressure[i+1]    = pressure[i]            +  0.5 * slopes[7];
+        _interfaceL.magnetic[i+1][0] = workingGrid.magnetic[i+1][0];
+        _interfaceL.magnetic[i+1][1] = magneticY[i]           +  0.5 * slopes[4];
+        _interfaceL.magnetic[i+1][2] = magneticZ[i]           +  0.5 * slopes[5];
+        _interfaceL.pressure[i+1]    = pressure[i]            +  0.5 * slopes[6];
 
         // i-1/2,R state
         _interfaceR.density[i]     = workingGrid.density[i] -  0.5 * slopes[0];
         _interfaceR.velocity[i][0] = velocityX[i]           -  0.5 * slopes[1];
         _interfaceR.velocity[i][1] = velocityY[i]           -  0.5 * slopes[2];
         _interfaceR.velocity[i][2] = velocityZ[i]           -  0.5 * slopes[3];
-        _interfaceR.magnetic[i][0] = magneticX[i]           -  0.5 * slopes[4];
-        _interfaceR.magnetic[i][1] = magneticY[i]           -  0.5 * slopes[5];
-        _interfaceR.magnetic[i][2] = magneticZ[i]           -  0.5 * slopes[6];
-        _interfaceR.pressure[i]    = pressure[i]            -  0.5 * slopes[7];
+        _interfaceR.magnetic[i][0] = workingGrid.magnetic[i][0];
+        _interfaceR.magnetic[i][1] = magneticY[i]           -  0.5 * slopes[4];
+        _interfaceR.magnetic[i][2] = magneticZ[i]           -  0.5 * slopes[5];
+        _interfaceR.pressure[i]    = pressure[i]            -  0.5 * slopes[6];
         // ===== Finished computing the i+1/2,L and i-1/2,R interface states ===
     }
 }
