@@ -471,7 +471,7 @@ void MhdSimulation1D::solveRiemann()
 // =============================================================================
 void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 {
-    // First we choose the active grid
+    // First we choose the working grid
     std::unique_ptr<Grid1D> workingGrid;
     if (timeChoice == "Half time")
     {
