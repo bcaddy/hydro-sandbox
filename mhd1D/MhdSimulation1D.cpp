@@ -472,14 +472,14 @@ void MhdSimulation1D::solveRiemann()
 void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 {
     // First we choose the active grid
-    std::unique_ptr<Grid1D> activeGrid;
+    std::unique_ptr<Grid1D> workingGrid;
     if (timeChoice == "Half time")
     {
-        activeGrid = std::unique_ptr<Grid1D>(&grid);
+        workingGrid = std::unique_ptr<Grid1D>(&grid);
     }
     else if (timeChoice == "Full time")
     {
-        activeGrid = std::unique_ptr<Grid1D>(&_gridHalfTime);
+        workingGrid = std::unique_ptr<Grid1D>(&_gridHalfTime);
     }
     else
     {
@@ -500,10 +500,10 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     {
         // Compute the electric field using a cross product
         std::vector<double> eRef(3, 0.0), velocity(3, 0.0);
-        velocity = computeVelocity(activeGrid->momentum[i], activeGrid->density[i]);
-        eRef[0]  = velocity[2] * activeGrid->magnetic[i][1] - velocity[1] * activeGrid->magnetic[i][2];
-        eRef[1]  = velocity[0] * activeGrid->magnetic[i][2] - velocity[2] * activeGrid->magnetic[i][0];
-        eRef[2]  = velocity[1] * activeGrid->magnetic[i][0] - velocity[0] * activeGrid->magnetic[i][1];
+        velocity = computeVelocity(workingGrid->momentum[i], workingGrid->density[i]);
+        eRef[0]  = velocity[2] * workingGrid->magnetic[i][1] - velocity[1] * workingGrid->magnetic[i][2];
+        eRef[1]  = velocity[0] * workingGrid->magnetic[i][2] - velocity[2] * workingGrid->magnetic[i][0];
+        eRef[2]  = velocity[1] * workingGrid->magnetic[i][0] - velocity[0] * workingGrid->magnetic[i][1];
 
 
         // Now assign the values to the correct parts of the 4D vector
@@ -518,8 +518,8 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
             }
         }
     }
-    // We can release the activeGrid pointer now
-    activeGrid.release();
+    // We can release the workingGrid pointer now
+    workingGrid.release();
 
     // Finished computing the centered electric fields
     // =========================================================================
