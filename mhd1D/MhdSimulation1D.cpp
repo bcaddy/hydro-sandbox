@@ -128,7 +128,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
 // =============================================================================
 
 // =============================================================================
-void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
+void MhdSimulation1D::_centeredMagneticField(Grid1D const &workingGrid)
 {
     // Loop through every element of the grid and compute the cell centered
     // electric fields. Note that we have to go 1 element farther than usual
@@ -140,8 +140,8 @@ void MhdSimulation1D::_centeredMagneticField(Grid1D const &activeGrid)
     {
         for (int j = 0; j < 3; j++)
         {
-            _magCentered[i][j] = 0.5 * (activeGrid.magnetic[i][j]
-                                      + activeGrid.magnetic[i+1][j]);
+            _magCentered[i][j] = 0.5 * (workingGrid.magnetic[i][j]
+                                      + workingGrid.magnetic[i+1][j]);
         }
 
     }

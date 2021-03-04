@@ -100,9 +100,9 @@ private:
     /*!
      * \brief Compute the cell centered magnetic field
      *
-     * \param[in] activeGrid The grid to compute centered fields for
+     * \param[in] workingGrid The grid to compute centered fields for
      */
-    void _centeredMagneticField(Grid1D const &activeGrid);
+    void _centeredMagneticField(Grid1D const &workingGrid);
 
     /*!
      * \brief Slope of a given primitive variable
