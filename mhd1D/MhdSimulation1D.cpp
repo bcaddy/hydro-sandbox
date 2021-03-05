@@ -471,6 +471,8 @@ void MhdSimulation1D::solveRiemann()
 // =============================================================================
 void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 {
+    // We need to compute the cell centered electric fields
+    // =========================================================================
     // First we choose the working grid
     std::unique_ptr<Grid1D> workingGrid;
     if (timeChoice == "Half time")
@@ -486,9 +488,6 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
         throw std::invalid_argument("Invalid option for MhdSimulation1D::ctElectricFields");
     }
 
-
-    // We need to compute the cell centered electric fields
-    // =========================================================================
     // Declare a 4D vector of shape Nx3x3x3 to store the 3D centered field in each cell
     std::vector<std::vector<std::vector<std::vector<double>>>>
     electricCentered(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
@@ -496,6 +495,8 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                       3, std::vector<double>(
                       3, 0.0))));
 
+    // Loop through the cells to compute all the electric fields then assign
+    // them to their correct spots
     for (size_t i = 0; i < grid.numTotCells; i++)
     {
         // Compute the electric field using a cross product
