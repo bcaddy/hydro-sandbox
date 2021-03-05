@@ -583,41 +583,41 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     m2Offset[m2] = -1;
 
                     // Compute the first term, the sum of surrounding faces
-                    double firstTerm = 0.25 * ( magFlux[i][j][k][m1][m]
-                                              + magFlux[i][j][k][m2][m]
-                                              + magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m]
-                                              + magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m]
-                                              );
+                    double firstTerm = ( magFlux[i][j][k][m1][m]
+                                       + magFlux[i][j][k][m2][m]
+                                       + magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m]
+                                       + magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m]);
+
                     // The slopes in the m1 direction
-                    double secondTerm = 0.25 * (// The -1/4 slopes
-                                                _ctSlope(electricCentered[i][k][k][m],
-                                                         magFlux[i][j][k][m1][m],
-                                                         electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
-                                                         magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
-                                                         _ctVelocities[i][j][k][m2][m2])
-                                                // The -3/4 slopes
-                                              - _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
-                                                         magFlux[i][j][k][m1][m],
-                                                         electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
-                                                         magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
-                                                         _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m2][m2]));
+                    double secondTerm = // The -1/4 slopes
+                                        _ctSlope(electricCentered[i][k][k][m],
+                                                 magFlux[i][j][k][m1][m],
+                                                 electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
+                                                 magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
+                                                 _ctVelocities[i][j][k][m2][m2])
+                                        // The -3/4 slopes
+                                        - _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
+                                                   magFlux[i][j][k][m1][m],
+                                                   electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                                                   magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
+                                                   _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m2][m2]);
 
                     // The slopes in the m2 directions
-                    double thirdTerm = 0.25 * (// The -1/4 slopes
-                                                _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
-                                                         magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
-                                                         electricCentered[i][j][k][m],
-                                                         magFlux[i][j][k][m2][m],
-                                                         _ctVelocities[i][j][k][m1][m1])
-                                                // The -3/4 slopes
-                                              - _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
-                                                         magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
-                                                         electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
-                                                         magFlux[i][j][k][m2][m],
-                                                         _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m1]));
+                    double thirdTerm =  // The -1/4 slopes
+                                        _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
+                                                magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
+                                                electricCentered[i][j][k][m],
+                                                magFlux[i][j][k][m2][m],
+                                                _ctVelocities[i][j][k][m1][m1])
+                                        // The -3/4 slopes
+                                        - _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                                                magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
+                                                electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
+                                                magFlux[i][j][k][m2][m],
+                                                _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m1]);
 
                     // Now we fill in the array of edge values
-                    _edgeFields[i][j][k][m] = firstTerm + secondTerm + thirdTerm;
+                    _edgeFields[i][j][k][m] = 0.25 * (firstTerm + secondTerm + thirdTerm);
                 }
             }
         }
