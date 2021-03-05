@@ -69,6 +69,11 @@ private:
     /// The 4D vector of shape Nx3x3x3 to store the 3D edge fields in each
     /// cell. These are the i-1/2 edges pointing in the x, y, and z directions
     /// respectively
+    /// Indices are as follows
+    /// [x position]
+    /// [y position]
+    /// [z position]
+    /// [electric field in the x, y, or z in that order. Always at the -1/2, -1/2 edge]
     std::vector<std::vector<std::vector<std::vector<double>>>> _edgeFields;
 
     /// The 5D vector used to hold the velocities from the Riemann solve.
