@@ -160,8 +160,8 @@ def main():
 
     # Specific Internal Energy
     pad = np.max(np.abs([ieData.min(), ieData.max()])) * 0.05
-    ieLowLim = ieData.min() - pad
-    ieHighLim = ieData.max() + pad
+    ieLowLim =-2.#ieData.min() - pad
+    ieHighLim = 2.#ieData.max() + pad
     # ==========================================================================
     # End Computing Limits
     # Setup Plots
