@@ -131,8 +131,8 @@ namespace mhdUtilities
                                   double const &gamma)
         {return (gamma - 1.)
               * ( energy
-              - 0.5 * density * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0.0)
-              - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0));}
+              - 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
+              - 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]));}
 // =============================================================================
 
 // =============================================================================
@@ -145,7 +145,7 @@ namespace mhdUtilities
      */
     inline double computeTotalPressure(double const &pressure,
                                        std::vector<double> const &magnetic)
-        {return pressure + 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0);}
+        {return pressure + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);}
 // =============================================================================
 
 // =============================================================================
@@ -165,9 +165,7 @@ namespace mhdUtilities
                                 std::vector<double> const &magnetic,
                                 double const &gamma)
         {return (pressure/(gamma - 1))
-         + 0.5 *
-         ( density
-         * std::inner_product(velocity.begin(), velocity.end(), velocity.begin(), 0.0)
-         + std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0));}
+         + 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
+         + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);}
 // =============================================================================
 }
