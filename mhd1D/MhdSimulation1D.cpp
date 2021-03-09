@@ -670,10 +670,10 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
                                             + (localTimeStep / _deltaX)
                                             * (_flux.momentum[i][0] - _flux.momentum[i+1][0]);
         destinationGrid->momentum[i][1] = sourceGrid->momentum[i][1]
-                                            + (localTimeStep / _deltaY)
+                                            + (localTimeStep / _deltaX)
                                             * (_flux.momentum[i][1] - _flux.momentum[i+1][1]);
         destinationGrid->momentum[i][2] = sourceGrid->momentum[i][2]
-                                            + (localTimeStep / _deltaZ)
+                                            + (localTimeStep / _deltaX)
                                             * (_flux.momentum[i][2] - _flux.momentum[i+1][2]);
 
         // Update magnetic field using CT fields
