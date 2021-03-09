@@ -632,18 +632,15 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
 {
     // Choose which grid to update
-    std::unique_ptr<Grid1D> sourceGrid;
     std::unique_ptr<Grid1D> destinationGrid;
     double localTimeStep;
     if (timeChoice == "half time update")
     {
-        sourceGrid      = std::unique_ptr<Grid1D>(&grid);
         destinationGrid = std::unique_ptr<Grid1D>(&_gridHalfTime);
         localTimeStep = 0.5 * _timeStep;
     }
     else if (timeChoice == "full time update")
     {
-        sourceGrid      = std::unique_ptr<Grid1D>(&grid);
         destinationGrid = std::unique_ptr<Grid1D>(&grid);
         localTimeStep = _timeStep;
     }
@@ -656,11 +653,11 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
          i < grid.numTotCells - 1;
          i++)
     {
-        destinationGrid->density[i]  = sourceGrid->density[i]
+        destinationGrid->density[i]  = grid.density[i]
                                       + (localTimeStep / _deltaX)
                                       * (_flux.density[i] - _flux.density[i+1]);
 
-        destinationGrid->energy[i]   = sourceGrid->energy[i]
+        destinationGrid->energy[i]   = grid.energy[i]
                                       + (localTimeStep / _deltaX)
                                       * (_flux.energy[i] - _flux.energy[i+1]);
 
@@ -669,7 +666,7 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
         for (size_t j = 0; j < 3; j++)
         {
             // Update momentum
-            destinationGrid->momentum[i][j] = sourceGrid->momentum[i][j]
+            destinationGrid->momentum[i][j] = grid.momentum[i][j]
                                                 + (localTimeStep / _deltaX)
                                                 * (_flux.momentum[i][j] - _flux.momentum[i+1][j]);
 
@@ -680,15 +677,14 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
             j1Offset[j1] = 1;
             j2Offset[j2] = 1;
 
-            destinationGrid->magnetic[i][j] = sourceGrid->magnetic[i][j]
+            destinationGrid->magnetic[i][j] = grid.magnetic[i][j]
                                                 + (localTimeStep / deltas[j2])
                                                 * (_edgeFields[i+j2Offset[0]][1+j2Offset[1]][1+j2Offset[2]][j1] - _edgeFields[i][1][1][j1])
                                                 - (localTimeStep / deltas[j1])
                                                 * (_edgeFields[i+j1Offset[0]][1+j1Offset[1]][1+j1Offset[2]][j2] - _edgeFields[i][1][1][j2]);
         }
     }
-    // Release pointers
-    sourceGrid.release();
+    // Release pointer
     destinationGrid.release();
 }
 // =============================================================================
