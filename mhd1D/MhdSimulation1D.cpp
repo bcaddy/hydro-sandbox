@@ -221,27 +221,27 @@ double MhdSimulation1D::_slope(std::vector<double> const &primitive,
 // =============================================================================
 
 // =============================================================================
-double MhdSimulation1D::_ctSlope(double const &centerL,
-                                 double const &faceL,
-                                 double const &centerR,
-                                 double const &faceR,
+double MhdSimulation1D::_ctSlope(double const &centerNeg,
+                                 double const &faceNeg,
+                                 double const &centerPos,
+                                 double const &facePos,
                                  double const &velocity)
 {
     // Upwinding
     if (velocity > 0.0)
     {
         // Return the slope on the left side
-        return (centerL - faceL);
+        return (centerNeg - faceNeg);
     }
     else if (velocity < 0.0)
     {
         // Return the slope on the right side
-        return (centerR - faceR);
+        return (centerPos - facePos);
     }
     else
     {
         // Return the average of the left and right side slopes
-        return 0.5 * ((centerL - faceL) + (centerR - faceR));
+        return 0.5 * ((centerNeg - faceNeg) + (centerPos - facePos));
     }
 }
 // =============================================================================

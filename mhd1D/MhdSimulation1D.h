@@ -139,19 +139,29 @@ private:
         {return (x % 3 + 3) % 3;};
 
     /*!
-     * \brief Compute the upwinded slopes used in edge CT fields
+     * \brief Compute the upwinded slopes used in edge CT fields. The "negative"
+     * direction is always on the negative coordinate side of the face. I.e. if
+     * the face is in the yz plane then this is the value of the electric field
+     * in the center of the cell on the negative x-side of the face. The
+     * "positive" direction is opposite and in the positive coordinate direction
      *
-     * \param centerL The electric field in the center of the cell on the left of the edge
-     * \param faceL The electric field on the face of the cell on the left of the edge
-     * \param centerR The electric field in the center of the cell on the right of the edge
-     * \param faceR The electric field in the face of the cell on the right of the edge
-     * \param velocity The velocity on the face between the left and right cells
+     * \param centerNeg The electric field in the center of the cell on negative
+     *                  side of the edge.
+     * \param faceNeg The electric field on the face of the cell on the negative
+     *                side of the edge
+     * \param centerPos The electric field in the center of the cell on the
+     *                  positive side of the edge
+     * \param facePos The electric field in the face of the cell on the positive
+     *                side of the edge
+     * \param velocity The velocity on the face that is perpendicular to the
+     *                 face. I.e. the velocity in the x-direction if the face is
+     *                 in the yz-plane
      * \return double The slope of th electric field
      */
-    double _ctSlope(double const &centerL,
-                    double const &faceL,
-                    double const &centerR,
-                    double const &faceR,
+    double _ctSlope(double const &centerNeg,
+                    double const &faceNeg,
+                    double const &centerPos,
+                    double const &facePos,
                     double const &velocity);
 
     /*!
