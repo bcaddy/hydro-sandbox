@@ -664,39 +664,29 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
                                       + (localTimeStep / _deltaX)
                                       * (_flux.energy[i] - _flux.energy[i+1]);
 
-        // Update momentum
-        // todo this might be better in a loop but idgaf right now
-        destinationGrid->momentum[i][0] = sourceGrid->momentum[i][0]
-                                            + (localTimeStep / _deltaX)
-                                            * (_flux.momentum[i][0] - _flux.momentum[i+1][0]);
-        destinationGrid->momentum[i][1] = sourceGrid->momentum[i][1]
-                                            + (localTimeStep / _deltaX)
-                                            * (_flux.momentum[i][1] - _flux.momentum[i+1][1]);
-        destinationGrid->momentum[i][2] = sourceGrid->momentum[i][2]
-                                            + (localTimeStep / _deltaX)
-                                            * (_flux.momentum[i][2] - _flux.momentum[i+1][2]);
+        // Update momentum and magnetic field
+        std::vector<double> deltas = {_deltaX, _deltaY, _deltaZ};
+        for (size_t j = 0; j < 3; j++)
+        {
+            // Update momentum
+            destinationGrid->momentum[i][j] = sourceGrid->momentum[i][j]
+                                                + (localTimeStep / _deltaX)
+                                                * (_flux.momentum[i][j] - _flux.momentum[i+1][j]);
 
-        // Update magnetic field using CT fields
-        // todo this might be better in a loop but idgaf right now
-        destinationGrid->magnetic[i][0] = sourceGrid->magnetic[i][0]
-                                            - (localTimeStep / _deltaY)
-                                            * (_edgeFields[i][2][1][2] - _edgeFields[i][1][1][2])
-                                            + (localTimeStep / _deltaZ)
-                                            * (_edgeFields[i][1][2][1] - _edgeFields[i][1][1][1]);
+            // Update magnetic field
+            // Compute the modulos
+            int j1 = _mod3(j+1), j2 = _mod3(j+2);
+            std::vector<size_t> j2Offset(3, 0), j1Offset(3, 0);
+            j1Offset[j1] = 1;
+            j2Offset[j2] = 1;
 
-        destinationGrid->magnetic[i][1] = sourceGrid->magnetic[i][1]
-                                            + (localTimeStep / _deltaX)
-                                            * (_edgeFields[i+1][1][1][2] - _edgeFields[i][1][1][2])
-                                            - (localTimeStep / _deltaZ)
-                                            * (_edgeFields[i][1][2][0] - _edgeFields[i][1][1][0]);
-
-        destinationGrid->magnetic[i][2] = sourceGrid->magnetic[i][2]
-                                            - (localTimeStep / _deltaX)
-                                            * (_edgeFields[i+1][1][1][1] - _edgeFields[i][1][1][1])
-                                            + (localTimeStep / _deltaY)
-                                            * (_edgeFields[i][2][1][0] - _edgeFields[i][1][1][0]);
+            destinationGrid->magnetic[i][j] = sourceGrid->magnetic[i][j]
+                                                + (localTimeStep / deltas[j2])
+                                                * (_edgeFields[i+j2Offset[0]][1+j2Offset[1]][1+j2Offset[2]][j1] - _edgeFields[i][1][1][j1])
+                                                - (localTimeStep / deltas[j1])
+                                                * (_edgeFields[i+j1Offset[0]][1+j1Offset[1]][1+j1Offset[2]][j2] - _edgeFields[i][1][1][j2]);
+        }
     }
-
     // Release pointers
     sourceGrid.release();
     destinationGrid.release();
@@ -706,15 +696,15 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
 // =============================================================================
 // Constructor
 MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
-                           double const &gamma,
-                           double const &CFL,
-                           size_t const &reals,
-                           std::string const &initialConditionsKind,
-                           std::string const &reconstructionKind,
-                           std::string const &limiterKind,
-                           std::string const &riemannSolverKind,
-                           std::string const &boundaryConditions,
-                           std::string const &saveDir)
+                                 double const &gamma,
+                                 double const &CFL,
+                                 size_t const &reals,
+                                 std::string const &initialConditionsKind,
+                                 std::string const &reconstructionKind,
+                                 std::string const &limiterKind,
+                                 std::string const &riemannSolverKind,
+                                 std::string const &boundaryConditions,
+                                 std::string const &saveDir)
 
     // Start by initializing all the const member variables
     : _physLen(physicalLength),

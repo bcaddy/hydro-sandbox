@@ -9,6 +9,7 @@
         "diaph",
         "dynload",
         "loadtxt",
+        "modulos",
         "pyplot",
         "timeit",
         "upwinded"
