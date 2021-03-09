@@ -561,11 +561,11 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     // =========================================================================
     for (size_t i = 1; i < grid.numTotCells; i++)   // Loop in x-direction
     {
-        for (int j = 1; j < 3; j++)  // Loop in y-direction
+        for (size_t j = 1; j < 3; j++)  // Loop in y-direction
         {
-            for (int k = 1; k < 3; k++)  // Loop in z-direction
+            for (size_t k = 1; k < 3; k++)  // Loop in z-direction
             {
-                for (int m = 0; m < 3; m++)  // Loop over vector elements
+                for (size_t m = 0; m < 3; m++)  // Loop over vector elements
                 {
                     // Compute the other two indices that will be needed
                     int m1 = _mod3(m+1), m2 = _mod3(m+2);
