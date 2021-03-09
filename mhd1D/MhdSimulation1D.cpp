@@ -590,7 +590,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 
                     // The slopes in the m1 direction
                     double secondTerm = // The -1/4 slopes
-                                        _ctSlope(electricCentered[i][k][k][m],
+                                        _ctSlope(electricCentered[i][j][k][m],
                                                  magFlux[i][j][k][m1][m],
                                                  electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
                                                  magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
