@@ -34,7 +34,7 @@
             "name": "euler-vl-solver debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Euler1D-VL/euler-solver.exe",
+            "program": "${workspaceFolder}/euler1D-VL/euler-solver.exe",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
