@@ -120,6 +120,53 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         grid.magnetic[grid.numTotCells][1] = bR[1];
         grid.magnetic[grid.numTotCells][2] = bR[2];
     }
+    else if (initialConditionsKind == "chollaSodShockTube")
+    {
+        size_t const half  = grid.numTotCells / 2;
+        double denL  = 1.0,
+               presL = 1.0,
+               denR  = 0.1,
+               presR = 0.1;
+
+        std::vector<double> velL{0.0, 0.0, 0.0},
+                            bL{0.0, 0.0, 0.0},
+                            velR{0.0, 0.0, 0.0},
+                            bR{0.0, 0.0, 0.0};
+
+        // Iterate over just the real cells on the left side
+        for (size_t i = 0;
+            i < half;
+            i++)
+        {
+            grid.density[i]     = denL;
+            grid.momentum[i][0] = computeMomentum(velL[0], denL);
+            grid.momentum[i][1] = computeMomentum(velL[1], denL);
+            grid.momentum[i][2] = computeMomentum(velL[2], denL);
+            grid.magnetic[i][0] = bL[0];
+            grid.magnetic[i][1] = bL[1];
+            grid.magnetic[i][2] = bL[2];
+            grid.energy[i]      = computeEnergy(presL, denL, velL, bL, _gamma);
+        }
+
+        // Iterate over the real cells on the right side
+        for (size_t i = half;
+            i < grid.numTotCells;
+            i++)
+        {
+            grid.density[i]     = denR;
+            grid.momentum[i][0] = computeMomentum(velL[0], denR);
+            grid.momentum[i][1] = computeMomentum(velL[1], denR);
+            grid.momentum[i][2] = computeMomentum(velL[2], denR);
+            grid.magnetic[i][0] = bR[0];
+            grid.magnetic[i][1] = bR[1];
+            grid.magnetic[i][2] = bR[2];
+            grid.energy[i]      = computeEnergy(presR, denR, velR, bR, _gamma);
+        }
+        // Set the last face in the magnetic field
+        grid.magnetic[grid.numTotCells][0] = bR[0];
+        grid.magnetic[grid.numTotCells][1] = bR[1];
+        grid.magnetic[grid.numTotCells][2] = bR[2];
+    }
     else
     {
         throw std::invalid_argument("Invalid kind of initial conditions");

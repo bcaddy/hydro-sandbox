@@ -143,6 +143,48 @@ void Grid1D::updateBoundaries(double const &gamma)
         magnetic[numTotCells][1] = bR[1];
         magnetic[numTotCells][2] = bR[2];
     }
+    else if (boundaryConditionKind == "chollaSodShockTube")
+    {
+        // Choose Values
+        double denL  = 1.0,
+        presL = 1.0,
+        denR  = 0.1,
+        presR = 0.1;
+
+        std::vector<double> velL{0.0, 0.0, 0.0},
+                            bL{0.0, 0.0, 0.0},
+                            velR{0.0, 0.0, 0.0},
+                            bR{0.0, 0.0, 0.0};
+
+        for (size_t iL = 0; iL < numGhostCells; iL++)
+        {
+            // Compute right most index
+            size_t iR = numTotCells - 1 - iL;
+
+            // Set the left ghost cells
+            density[iL]     = denL;
+            momentum[iL][0] = computeMomentum(velL[0], denL);
+            momentum[iL][1] = computeMomentum(velL[1], denL);
+            momentum[iL][2] = computeMomentum(velL[2], denL);
+            magnetic[iL][0] = bL[0];
+            magnetic[iL][1] = bL[1];
+            magnetic[iL][2] = bL[2];
+            energy[iL]      = computeEnergy(presL, denL, velL, bL, gamma);
+
+            density[iR]     = denR;
+            momentum[iR][0] = computeMomentum(velR[0], denR);
+            momentum[iR][1] = computeMomentum(velR[1], denR);
+            momentum[iR][2] = computeMomentum(velR[2], denR);
+            magnetic[iR][0] = bR[0];
+            magnetic[iR][1] = bR[1];
+            magnetic[iR][2] = bR[2];
+            energy[iR]      = computeEnergy(presR, denR, velR, bR, gamma);
+        }
+        // Set the last face in the magnetic field
+        magnetic[numTotCells][0] = bR[0];
+        magnetic[numTotCells][1] = bR[1];
+        magnetic[numTotCells][2] = bR[2];
+    }
     else if (boundaryConditionKind == "pass")
     {
         ; // Pass

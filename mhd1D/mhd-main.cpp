@@ -52,10 +52,10 @@ int main()
     double const physicalLength        = 1.;
     double const gamma                 = 5./3.;
     double const cfl                   = 0.4;
-    double const maxTime               = 0.1; //0.1 for B&W shock tube, 0.2 for D&W shock tube
+    double const maxTime               = 0.2; //0.1 for B&W shock tube, 0.2 for D&W and sod
     size_t const numRealCells          = 100;
-    std::string  initialConditionsKind = "bwShockTube";
-    std::string  boundaryConditions    = "bwShockTube";
+    std::string  initialConditionsKind = "chollaSodShockTube";
+    std::string  boundaryConditions    = "chollaSodShockTube";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
     std::string  riemannSolverKind     = "HLLD";  // Options: "HLLD"
