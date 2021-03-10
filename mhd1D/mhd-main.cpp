@@ -52,7 +52,7 @@ int main()
     double const physicalLength        = 1.;
     double const gamma                 = 5./3.;
     double const cfl                   = 0.4;
-    double const maxTime               = 0.2;
+    double const maxTime               = 0.1; //0.1 for B&W shock tube, 0.2 for D&W shock tube
     size_t const numRealCells          = 100;
     std::string  initialConditionsKind = "bwShockTube";
     std::string  boundaryConditions    = "bwShockTube";
