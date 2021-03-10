@@ -34,10 +34,10 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                denR  = 1.,
                presR = 1.;
 
-        std::vector<double> velL{1.2, 0.01, 0.5},
-                            bL{4. * coef, 3.6 * coef, 2.0 * coef},
-                            velR{0.0, 0.0, 0.0},
-                            bR{4.0 * coef, 4.0 * coef, 2.0 * coef};
+        std::vector<double> velL={1.2, 0.01, 0.5},
+                            bL={4. * coef, 3.6 * coef, 2.0 * coef},
+                            velR={0.0, 0.0, 0.0},
+                            bR={4.0 * coef, 4.0 * coef, 2.0 * coef};
 
         // Iterate over all cells on the left side
         for (size_t i = 0;
@@ -81,10 +81,10 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                denR  = 0.125,
                presR = 0.1;
 
-        std::vector<double> velL{0.0, 0.0, 0.0},
-                            bL{0.75, 1.0, 0.0},
-                            velR{0.0, 0.0, 0.0},
-                            bR{0.75, -1.0, 0.0};
+        std::vector<double> velL={0.0, 0.0, 0.0},
+                            bL={0.75, 1.0, 0.0},
+                            velR={0.0, 0.0, 0.0},
+                            bR={0.75, -1.0, 0.0};
 
         // Iterate over just the real cells on the left side
         for (size_t i = 0;
@@ -128,10 +128,10 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                denR  = 0.1,
                presR = 0.1;
 
-        std::vector<double> velL{0.0, 0.0, 0.0},
-                            bL{0.0, 0.0, 0.0},
-                            velR{0.0, 0.0, 0.0},
-                            bR{0.0, 0.0, 0.0};
+        std::vector<double> velL={0.0, 0.0, 0.0},
+                            bL={0.0, 0.0, 0.0},
+                            velR={0.0, 0.0, 0.0},
+                            bR={0.0, 0.0, 0.0};
 
         // Iterate over just the real cells on the left side
         for (size_t i = 0;
