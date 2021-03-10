@@ -53,7 +53,7 @@ int main()
     double const gamma                 = 5./3.;
     double const cfl                   = 0.4;
     double const maxTime               = 0.2; //0.1 for B&W shock tube, 0.2 for D&W and sod
-    size_t const numRealCells          = 100;
+    size_t const numRealCells          = 1'000;
     std::string  initialConditionsKind = "chollaSodShockTube";
     std::string  boundaryConditions    = "chollaSodShockTube";
     std::string  reconstructionKind    = "PLM";
