@@ -60,9 +60,9 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             i++)
         {
             grid.density[i]     = denR;
-            grid.momentum[i][0] = computeMomentum(velL[0], denR);
-            grid.momentum[i][1] = computeMomentum(velL[1], denR);
-            grid.momentum[i][2] = computeMomentum(velL[2], denR);
+            grid.momentum[i][0] = computeMomentum(velR[0], denR);
+            grid.momentum[i][1] = computeMomentum(velR[1], denR);
+            grid.momentum[i][2] = computeMomentum(velR[2], denR);
             grid.magnetic[i][0] = bR[0];
             grid.magnetic[i][1] = bR[1];
             grid.magnetic[i][2] = bR[2];
@@ -107,9 +107,9 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             i++)
         {
             grid.density[i]     = denR;
-            grid.momentum[i][0] = computeMomentum(velL[0], denR);
-            grid.momentum[i][1] = computeMomentum(velL[1], denR);
-            grid.momentum[i][2] = computeMomentum(velL[2], denR);
+            grid.momentum[i][0] = computeMomentum(velR[0], denR);
+            grid.momentum[i][1] = computeMomentum(velR[1], denR);
+            grid.momentum[i][2] = computeMomentum(velR[2], denR);
             grid.magnetic[i][0] = bR[0];
             grid.magnetic[i][1] = bR[1];
             grid.magnetic[i][2] = bR[2];
@@ -154,9 +154,9 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             i++)
         {
             grid.density[i]     = denR;
-            grid.momentum[i][0] = computeMomentum(velL[0], denR);
-            grid.momentum[i][1] = computeMomentum(velL[1], denR);
-            grid.momentum[i][2] = computeMomentum(velL[2], denR);
+            grid.momentum[i][0] = computeMomentum(velR[0], denR);
+            grid.momentum[i][1] = computeMomentum(velR[1], denR);
+            grid.momentum[i][2] = computeMomentum(velR[2], denR);
             grid.magnetic[i][0] = bR[0];
             grid.magnetic[i][1] = bR[1];
             grid.magnetic[i][2] = bR[2];
