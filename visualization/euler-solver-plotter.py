@@ -53,7 +53,7 @@ def main():
     simNumCells   = len(densityData[0,:])
     simNumSteps   = len(densityData[:,0])
     positions     = np.linspace(0.,simPhysLength,simNumCells)
-    gamma         = 1.4
+    gamma         = 5./3.
 
     # Plot Settings
     supTitleText  = "Time Evolution of Initial Conditions Using Euler Equations"
