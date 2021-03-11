@@ -55,3 +55,6 @@ echo -e "\n\nGenerating Plot..."
 echo -e "\nDownloading Plot..."
 "${HOME}/.iterm2/it2dl" output-mhd.mp4
 echo -e "Download Complete."
+
+# Get attention
+it2attention fireworks
