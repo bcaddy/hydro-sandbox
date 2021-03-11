@@ -128,40 +128,40 @@ def main():
     # Find mins and maxes for setting the limits of the plot
     # Density
     pad = np.max(np.abs([densityData.min(), densityData.max()])) * 0.05
-    densityLowLim = -2.#densityData.min() - pad
-    densityHighLim =2.# densityData.max() + pad
+    densityLowLim = densityData.min() - pad
+    densityHighLim = densityData.max() + pad
 
     # Velocity`
     pad = np.max(np.abs([velocityDataX.min(), velocityDataX.max()])) * 0.05
-    velocityLowLimX = -2.#velocityDataX.min() - pad
-    velocityHighLimX = 2.#velocityDataX.max() + pad
+    velocityLowLimX = velocityDataX.min() - pad
+    velocityHighLimX = velocityDataX.max() + pad
     pad = np.max(np.abs([velocityDataY.min(), velocityDataY.max()])) * 0.05
-    velocityLowLimY = -2.#velocityDataY.min() - pad
-    velocityHighLimY = 2.#velocityDataY.max() + pad
+    velocityLowLimY = velocityDataY.min() - pad
+    velocityHighLimY = velocityDataY.max() + pad
     pad = np.max(np.abs([velocityDataZ.min(), velocityDataZ.max()])) * 0.05
-    velocityLowLimZ =-2.# velocityDataZ.min() - pad
-    velocityHighLimZ = 2.#velocityDataZ.max() + pad
+    velocityLowLimZ = velocityDataZ.min() - pad
+    velocityHighLimZ = velocityDataZ.max() + pad
 
     # magnetic`
     pad = np.max(np.abs([magneticDataX.min(), magneticDataX.max()])) * 0.05
-    magneticLowLimX = -2.#magneticDataX.min() - pad
-    magneticHighLimX =2.# magneticDataX.max() + pad
+    magneticLowLimX = magneticDataX.min() - pad
+    magneticHighLimX = magneticDataX.max() + pad
     pad = np.max(np.abs([magneticDataY.min(), magneticDataY.max()])) * 0.05
-    magneticLowLimY = -2.#magneticDataY.min() - pad
-    magneticHighLimY =2.# magneticDataY.max() + pad
+    magneticLowLimY = magneticDataY.min() - pad
+    magneticHighLimY = magneticDataY.max() + pad
     pad = np.max(np.abs([magneticDataZ.min(), magneticDataZ.max()])) * 0.05
-    magneticLowLimZ = -2.#magneticDataY.min() - pad
-    magneticHighLimZ =2.# magneticDataY.max() + pad
+    magneticLowLimZ = magneticDataY.min() - pad
+    magneticHighLimZ = magneticDataY.max() + pad
 
     # Pressure
     pad = np.max(np.abs([pressureData.min(), pressureData.max()])) * 0.05
-    pressureLowLim =-2.# pressureData.min() - pad
-    pressureHighLim = 2.#pressureData.max() + pad
+    pressureLowLim = pressureData.min() - pad
+    pressureHighLim = pressureData.max() + pad
 
     # Specific Internal Energy
     pad = np.max(np.abs([ieData.min(), ieData.max()])) * 0.05
-    ieLowLim =0.#ieData.min() - pad
-    ieHighLim = 4.#ieData.max() + pad
+    ieLowLim = ieData.min() - pad
+    ieHighLim = ieData.max() + pad
     # ==========================================================================
     # End Computing Limits
     # Setup Plots
