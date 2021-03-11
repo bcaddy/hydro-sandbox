@@ -150,8 +150,8 @@ def main():
     magneticLowLimY = magneticDataY.min() - pad
     magneticHighLimY = magneticDataY.max() + pad
     pad = np.max(np.abs([magneticDataZ.min(), magneticDataZ.max()])) * 0.05
-    magneticLowLimZ = magneticDataY.min() - pad
-    magneticHighLimZ = magneticDataY.max() + pad
+    magneticLowLimZ = magneticDataZ.min() - pad
+    magneticHighLimZ = magneticDataZ.max() + pad
 
     # Pressure
     pad = np.max(np.abs([pressureData.min(), pressureData.max()])) * 0.05
