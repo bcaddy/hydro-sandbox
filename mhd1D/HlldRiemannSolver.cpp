@@ -337,7 +337,7 @@ void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magneti
     magneticDblStar[0] = magnetic[0];
 
     // There are several terms that are common to many double star state
-    // variables so we'll assign variables to them.
+    // computations so we'll assign variables to them.
     double const sqrtDenStarL  = std::sqrt(_densityStarL);
     double const sqrtDenStarR  = std::sqrt(_densityStarR);
     double const signMagneticX = (magnetic[0] >= 0.)? 1.0: -1.0;
