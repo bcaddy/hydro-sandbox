@@ -362,10 +362,6 @@ def NewFrame(self):
     else:
         initIndex += 1
 
-    completionPercentage = int(index/intSamples.size())
-    if (completionPercentage % 10) == 0:
-        print(f'Plotting is {completionPercentage}% Complete')
-
 
 main()
 
