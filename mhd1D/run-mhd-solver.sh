@@ -57,4 +57,4 @@ echo -e "\nDownloading Plot..."
 echo -e "Download Complete."
 
 # Get attention
-it2attention fireworks
+~/.iterm2/it2attention fireworks
