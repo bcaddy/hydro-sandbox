@@ -57,17 +57,17 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
         _computeStandardFluxes(_densityL, _velocityL, _pressureTotL, _magneticL, _energyL,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
-    else if ( (_sL <= posOverT) and (posOverT <= _sStarL) )
+    else if ( (_sL <= posOverT) and (posOverT < _sStarL) )
     {
         _computeStarFluxes(_densityL, _velocityL, _pressureL, _pressureTotL, _magneticL, _energyL, _sL, _densityStarL,
                            densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
-    else if ( (_sStarL <= posOverT) and (posOverT <= _sM) )
+    else if ( (_sStarL <= posOverT) and (posOverT < _sM) )
     {
         _computeDblStarFluxes(_magneticL, _sStarL, _densityStarL, -1.0,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
-    else if ( (_sM <= posOverT) and (posOverT <= _sStarR) )
+    else if ( (_sM <= posOverT) and (posOverT < _sStarR) )
     {
         _computeDblStarFluxes(_magneticR, _sStarR, _densityStarR, 1.0,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
