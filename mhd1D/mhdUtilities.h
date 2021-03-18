@@ -96,6 +96,10 @@ namespace mhdUtilities
         {
             velocity[i] = momentum[i] / density;
         }
+        if (std::isnan(velocity[0]) or
+            std::isnan(velocity[1]) or
+            std::isnan(velocity[2]))
+            throw std::runtime_error("Complex valued velocity speed detected. Exiting.");
         return velocity;
     }
 // =============================================================================
@@ -110,7 +114,12 @@ namespace mhdUtilities
      */
     inline double computeMomentum(double const &velocity,
                                   double const &density)
-        {return velocity * density;}
+        {
+            double momentum = velocity * density;
+            if (std::isnan(momentum))
+                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+            return momentum;
+        }
 // =============================================================================
 
 // =============================================================================
@@ -129,10 +138,17 @@ namespace mhdUtilities
                                   std::vector<double> const &velocity,
                                   std::vector<double> const &magnetic,
                                   double const &gamma)
-        {return (gamma - 1.)
-              * ( energy
-              - 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
-              - 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]));}
+        {
+            double pressure = (gamma - 1.)
+                            * ( energy
+                            - 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
+                            - 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]));
+
+            if (std::isnan(pressure))
+                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+
+            return pressure;
+        }
 // =============================================================================
 
 // =============================================================================
@@ -145,7 +161,14 @@ namespace mhdUtilities
      */
     inline double computeTotalPressure(double const &pressure,
                                        std::vector<double> const &magnetic)
-        {return pressure + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);}
+        {
+            double pTot =  pressure + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);
+
+            if (std::isnan(pTot))
+                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+
+            return pTot;
+        }
 // =============================================================================
 
 // =============================================================================
@@ -164,8 +187,15 @@ namespace mhdUtilities
                                 std::vector<double> const &velocity,
                                 std::vector<double> const &magnetic,
                                 double const &gamma)
-        {return (pressure/(gamma - 1))
-         + 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
-         + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);}
+        {
+            double energy = (pressure/(gamma - 1))
+                            + 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
+                            + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);
+
+            if (std::isnan(energy))
+                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+
+            return energy;
+        }
 // =============================================================================
 }
