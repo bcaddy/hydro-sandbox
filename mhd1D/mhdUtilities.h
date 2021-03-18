@@ -99,7 +99,7 @@ namespace mhdUtilities
         if (std::isnan(velocity[0]) or
             std::isnan(velocity[1]) or
             std::isnan(velocity[2]))
-            throw std::runtime_error("Complex valued velocity speed detected. Exiting.");
+            throw std::runtime_error("Complex valued velocity detected. Exiting.");
         return velocity;
     }
 // =============================================================================
@@ -117,7 +117,7 @@ namespace mhdUtilities
         {
             double momentum = velocity * density;
             if (std::isnan(momentum))
-                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+                throw std::runtime_error("Complex valued momentum detected. Exiting.");
             return momentum;
         }
 // =============================================================================
@@ -145,7 +145,7 @@ namespace mhdUtilities
                             - 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]));
 
             if (std::isnan(pressure))
-                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+                throw std::runtime_error("Complex valued pressure detected. Exiting.");
 
             return pressure;
         }
@@ -165,7 +165,7 @@ namespace mhdUtilities
             double pTot =  pressure + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);
 
             if (std::isnan(pTot))
-                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+                throw std::runtime_error("Complex valued total pressure detected. Exiting.");
 
             return pTot;
         }
@@ -193,7 +193,7 @@ namespace mhdUtilities
                             + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);
 
             if (std::isnan(energy))
-                throw std::runtime_error("Complex valued Alfven velocity detected. Exiting.");
+                throw std::runtime_error("Complex valued energy detected. Exiting.");
 
             return energy;
         }
