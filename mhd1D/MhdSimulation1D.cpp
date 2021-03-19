@@ -505,7 +505,7 @@ void MhdSimulation1D::solveRiemann()
         // Capture the value of the velocities
         for (int j = 0; j < 3; j++)
         {
-            for (int k = 0; k < 2; k++)
+            for (int k = 0; k < 3; k++)
             {
                 _ctVelocities[i][j][k][0] = _riemannSolver->getVelocityState();
             }
