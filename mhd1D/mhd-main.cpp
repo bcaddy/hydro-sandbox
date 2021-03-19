@@ -102,7 +102,7 @@ int main()
 
         // Compute the CT Fields
         ctFieldsTimer.startTimer();
-        sim.ctElectricFields("Half time");
+        // sim.ctElectricFields("Half time");
         ctFieldsTimer.stopTimer();
 
         // Update the half time step grid
@@ -120,7 +120,7 @@ int main()
 
         // Compute the CT Fields
         ctFieldsTimer.startTimer();
-        sim.ctElectricFields("Full time");
+        // sim.ctElectricFields("Full time");
         ctFieldsTimer.stopTimer();
 
         // Compute conservative update
@@ -151,4 +151,5 @@ int main()
     firstInterfaceTimer.reportStats();
     secondInterfaceTimer.reportStats();
     riemannTimer.reportStats();
+    ctFieldsTimer.reportStats();
 }
