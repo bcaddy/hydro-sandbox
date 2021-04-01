@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <limits>
 
 #include "Grid1D.h"
 #include "mhdUtilities.h"
@@ -263,7 +264,7 @@ Grid1D::Grid1D(size_t const &reals,
     numGhostCells(ghosts),
     numRealCells(reals),
     numTotCells(2*numGhostCells + numRealCells),
-    density(numTotCells),
+    density(numTotCells, std::numeric_limits<double>::min()),
     momentum(numTotCells, std::vector<double> (3, 0)),
     magnetic(numTotCells + 1, std::vector<double> (3, 0)),
     energy(numTotCells),
