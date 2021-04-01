@@ -167,6 +167,109 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         grid.magnetic[grid.numTotCells][1] = bR[1];
         grid.magnetic[grid.numTotCells][2] = bR[2];
     }
+    else if (initialConditionsKind.substr(0,10) == "singleWave")
+    {
+        // Setup the background state
+        double backgroundPres = 3./5., backgroundDen = 1.;
+        std::vector<double> backgroundVel = {0.,0.,0.},
+                            backgroundMag = {1., std::sqrt(2.), 1./std::sqrt(2.)};
+
+        double backgroundEnergy = computeEnergy(backgroundPres, backgroundDen, backgroundVel, backgroundMag, _gamma);
+        std::vector<double> backgroundMom = {computeMomentum(backgroundVel[0], backgroundDen),
+                                             computeMomentum(backgroundVel[1], backgroundDen),
+                                             computeMomentum(backgroundVel[2], backgroundDen)};
+
+        // Set the wave amplitude
+        double amp = 1.E-6;
+
+        // Choose left or right moving wave
+        double lrSign = (initialConditionsKind.substr(11,1) == "R")? 1.: -1.;
+
+        // Choose the correct right eigenvector
+        double rightVecEnergy, rightVecDen;
+        std::vector<double> rightVecMom(3), rightVecMag(3);
+        if (initialConditionsKind.substr(10,1) == "C")
+        {   // The contact/entropy wave
+            rightVecDen    = 1.;
+            rightVecMom    = {1., 0., 0.};
+            rightVecMag    = {0., 0., 0.};
+            rightVecEnergy = 0.5;
+
+            backgroundMom[0] = computeMomentum(lrSign, backgroundDen);
+        }
+        else if (initialConditionsKind.substr(10,1) == "F")
+        {   // The fast magnetosonic wave
+            double coef = 1. / (6. * std::sqrt(5.));
+
+            rightVecDen    = coef * 6.;
+            rightVecMom    = {coef * lrSign * 12.,
+                              coef * (-lrSign) * 4. * std::sqrt(2.),
+                              coef * (-lrSign) * 2.};
+            rightVecMag    = {0.,
+                              coef * 8. * std::sqrt(2.),
+                              coef * 4.};
+            rightVecEnergy = coef * 27.;
+        }
+        else if (initialConditionsKind.substr(10,1) == "S")
+        {   // The slow magnetosonic wave
+            double coef = 1. / (6. * std::sqrt(5.));
+
+            rightVecDen    = coef * 12.;
+            rightVecMom    = {coef * lrSign * 6.,
+                              coef * lrSign * 8. * std::sqrt(2.),
+                              coef * lrSign * 4.};
+            rightVecMag    = {0.,
+                              -coef * 4. * std::sqrt(2.),
+                              -coef * 2.};
+            rightVecEnergy = coef * 9.;
+        }
+        else if (initialConditionsKind.substr(10,1) == "A")
+        {  // The Alfven wave
+            double coef = 1. / (6. * std::sqrt(5.));
+
+            rightVecDen    = 0.;
+            rightVecMom    = {0.,
+                              coef * lrSign,
+                              coef * (-lrSign) * 2. * std::sqrt(2.)};
+            rightVecMag    = {0.,
+                              -1.,
+                              2. * std::sqrt(2.)};
+            rightVecEnergy = 0.;
+        }
+        else
+        {
+            throw std::invalid_argument("Invalid kind of initial conditions in singleWave");
+        }
+
+        // Now we actually compute the initial conditions
+        double const twoPi = 2.* M_PI; // just to save some compute time
+        double lFacePosition = 0.;
+        for (size_t i = grid.numGhostCells;
+            i < (grid.numTotCells - grid.numGhostCells); i++)
+        {
+            // Compute the positions and the sines required
+            lFacePosition  = (i - grid.numGhostCells) * _deltaX;
+            double centerPosition = lFacePosition + _deltaX/2.;
+
+            double faceSine   = std::sin(twoPi * lFacePosition);
+            double centerSine = std::sin(twoPi * centerPosition);
+
+            // Set the state at this grid point
+            grid.density[i]     = backgroundDen    + amp * rightVecDen    * centerSine;
+            grid.momentum[i][0] = backgroundMom[0] + amp * rightVecMom[0] * centerSine;
+            grid.momentum[i][1] = backgroundMom[1] + amp * rightVecMom[1] * centerSine;
+            grid.momentum[i][2] = backgroundMom[2] + amp * rightVecMom[2] * centerSine;
+            grid.magnetic[i][0] = backgroundMag[0] + amp * rightVecMag[0] * faceSine;
+            grid.magnetic[i][1] = backgroundMag[1] + amp * rightVecMag[1] * faceSine;
+            grid.magnetic[i][2] = backgroundMag[2] + amp * rightVecMag[2] * faceSine;
+            grid.energy[i]      = backgroundEnergy + amp * rightVecEnergy * centerSine;
+        }
+        // lastly compute the final magnetic field face
+        double faceSine = std::sin(twoPi * lFacePosition + _deltaX);
+        grid.magnetic[grid.numTotCells - grid.numGhostCells][0] = backgroundMag[0] + amp * rightVecMag[0] * faceSine;
+        grid.magnetic[grid.numTotCells - grid.numGhostCells][1] = backgroundMag[1] + amp * rightVecMag[1] * faceSine;
+        grid.magnetic[grid.numTotCells - grid.numGhostCells][2] = backgroundMag[2] + amp * rightVecMag[2] * faceSine;
+    }
     else
     {
         throw std::invalid_argument("Invalid kind of initial conditions");

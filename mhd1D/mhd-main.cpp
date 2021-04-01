@@ -54,8 +54,8 @@ int main()
     double const cfl                   = 0.4;
     double const maxTime               = 0.1; //0.1 for B&W shock tube, 0.2 for D&W and sod
     size_t const numRealCells          = 200;
-    std::string  initialConditionsKind = "bwShockTube";
-    std::string  boundaryConditions    = "bwShockTube";
+    std::string  initialConditionsKind = "singleWaveSR";
+    std::string  boundaryConditions    = "periodic";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
     std::string  riemannSolverKind     = "HLLD";  // Options: "HLLD"

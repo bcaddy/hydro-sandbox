@@ -95,10 +95,12 @@ private:
      *
      * \param[in] initialConditionsKind The type of initial conditions to use.
      *            Options are:
-     *            | Keyword        | Initial Conditions                                                       |
-     *            |----------------|--------------------------------------------------------------------------|
-     *            | dwShockTube    | MHD Shock tube from Dai & Woodward 1994                                  |
-     *            | bwShockTube    | MHD Shock tube from Brio & Wu 1988                                       |
+     *            | Keyword            | Initial Conditions                                                       |
+     *            |--------------------|--------------------------------------------------------------------------|
+     *            | dwShockTube        | MHD Shock tube from Dai & Woodward 1994                                  |
+     *            | bwShockTube        | MHD Shock tube from Brio & Wu 1988                                       |
+     *            | chollaSodShockTube | Sod shock tube used in Cholla                                            |
+     *            | singleWaveXY       | A single MHD wave. X can be C, F, S, or A for the contact/entropy, fast, slow, and Alfven waves respectively. Y can be L or R to indicate which way the wave is traveling |
      */
     void _setInitialConditions(std::string const &initialConditionsKind);
 
