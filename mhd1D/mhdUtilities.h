@@ -146,7 +146,8 @@ namespace mhdUtilities
 
             if (std::isnan(pressure))
                 throw std::runtime_error("Complex valued pressure detected. Exiting.");
-
+            if (pressure < 0.0)
+                throw std::runtime_error("Negative valued pressure detected. Exiting.");
             return pressure;
         }
 // =============================================================================
