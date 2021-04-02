@@ -180,7 +180,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                                              computeMomentum(backgroundVel[2], backgroundDen)};
 
         // Set the wave amplitude
-        double amp = 1.E-6;
+        double amp = 0.1;//1.E-6;
 
         // Choose left or right moving wave
         double lrSign = (initialConditionsKind.substr(11,1) == "R")? 1.: -1.;
@@ -244,11 +244,12 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         // Now we actually compute the initial conditions
         double const twoPi = 2.* M_PI; // just to save some compute time
         double lFacePosition = 0.;
+        double offset = 0.25;
         for (size_t i = grid.numGhostCells;
             i < (grid.numTotCells - grid.numGhostCells); i++)
         {
             // Compute the positions and the sines required
-            lFacePosition  = (i - grid.numGhostCells) * _deltaX;
+            lFacePosition  = (i - grid.numGhostCells) * _deltaX + offset;
             double centerPosition = lFacePosition + _deltaX/2.;
 
             double faceSine   = std::sin(twoPi * lFacePosition);
@@ -265,10 +266,26 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             grid.energy[i]      = backgroundEnergy + amp * rightVecEnergy * centerSine;
         }
         // lastly compute the final magnetic field face
-        double faceSine = std::sin(twoPi * lFacePosition + _deltaX);
+        double faceSine = std::sin(twoPi * (lFacePosition + _deltaX));
         grid.magnetic[grid.numTotCells - grid.numGhostCells][0] = backgroundMag[0] + amp * rightVecMag[0] * faceSine;
         grid.magnetic[grid.numTotCells - grid.numGhostCells][1] = backgroundMag[1] + amp * rightVecMag[1] * faceSine;
         grid.magnetic[grid.numTotCells - grid.numGhostCells][2] = backgroundMag[2] + amp * rightVecMag[2] * faceSine;
+    }
+    else if (initialConditionsKind == "indexCheck")
+    {
+        for (size_t i = grid.numGhostCells;
+             i < (grid.numTotCells - grid.numGhostCells); i++)
+        {
+            // Set the state at this grid point
+            grid.density[i]     = double(i);
+            grid.momentum[i][0] = computeMomentum(double(i), double(i));
+            grid.momentum[i][1] = computeMomentum(double(i), double(i));
+            grid.momentum[i][2] = computeMomentum(double(i), double(i));
+            grid.magnetic[i][0] = double(i);
+            grid.magnetic[i][1] = double(i);
+            grid.magnetic[i][2] = double(i);
+            grid.energy[i]      = computeEnergy(double(i), double(i), grid.momentum[i], grid.magnetic[i], _gamma);
+        }
     }
     else
     {
