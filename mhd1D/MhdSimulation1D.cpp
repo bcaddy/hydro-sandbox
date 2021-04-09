@@ -241,6 +241,13 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             throw std::invalid_argument("Invalid kind of initial conditions in singleWave");
         }
 
+        // Choose hydro only wave
+        if (initialConditionsKind.substr(12,1) == "H")
+        {
+            backgroundMag = {0., 0., 0.};
+            rightVecMag = {0., 0., 0.};
+        }
+
         // Now we actually compute the initial conditions
         double const twoPi = 2.* M_PI; // just to save some compute time
         double lFacePosition = 0.;

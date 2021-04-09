@@ -100,7 +100,7 @@ private:
      *            | dwShockTube        | MHD Shock tube from Dai & Woodward 1994                                  |
      *            | bwShockTube        | MHD Shock tube from Brio & Wu 1988                                       |
      *            | chollaSodShockTube | Sod shock tube used in Cholla                                            |
-     *            | singleWaveXY       | A single MHD wave. X can be C, F, S, or A for the contact/entropy, fast, slow, and Alfven waves respectively. Y can be L or R to indicate which way the wave is traveling |
+     *            | singleWaveXYZ       | A single MHD wave. X can be C, F, S, or A contact/entropy, fast, slow, and Alfven waves respectively. Y can be L or R to indicate which way the wave is traveling. Z is optional and can only have the value "H", this sets the magnetic field to zero and so each wave should reduce it's hydro counterpart |
      */
     void _setInitialConditions(std::string const &initialConditionsKind);
 
