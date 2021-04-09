@@ -55,9 +55,9 @@ void Grid1D::updateBoundaries(double const &gamma)
         }
 
         // Set the last face in the magnetic field
-        magnetic[numTotCells][0] = magnetic[2*numGhostCells][0];
-        magnetic[numTotCells][1] = magnetic[2*numGhostCells][1];
-        magnetic[numTotCells][2] = magnetic[2*numGhostCells][2];
+        magnetic[numTotCells][0] = magnetic[numGhostCells][0];
+        magnetic[numTotCells][1] = magnetic[numGhostCells][1];
+        magnetic[numTotCells][2] = magnetic[numGhostCells][2];
     }
     else if (boundaryConditionKind == "bwShockTube")
     {
