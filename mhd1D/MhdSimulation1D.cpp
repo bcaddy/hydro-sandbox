@@ -285,9 +285,9 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         {
             // Set the state at this grid point
             grid.density[i]     = double(i);
-            grid.momentum[i][0] = computeMomentum(double(i), double(i));
-            grid.momentum[i][1] = computeMomentum(double(i), double(i));
-            grid.momentum[i][2] = computeMomentum(double(i), double(i));
+            grid.momentum[i][0] = double(i);
+            grid.momentum[i][1] = double(i);
+            grid.momentum[i][2] = double(i);
             grid.magnetic[i][0] = double(i);
             grid.magnetic[i][1] = double(i);
             grid.magnetic[i][2] = double(i);
