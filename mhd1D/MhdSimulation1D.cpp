@@ -191,7 +191,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         if (initialConditionsKind.substr(10,1) == "C")
         {   // The contact/entropy wave
             rightVecDen    = 1.;
-            rightVecMom    = {1., 0., 0.};
+            rightVecMom    = {lrSign, 0., 0.};
             rightVecMag    = {0., 0., 0.};
             rightVecEnergy = 0.5;
 
