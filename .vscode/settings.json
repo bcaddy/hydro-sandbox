@@ -97,5 +97,6 @@
         "thread": "cpp",
         "valarray": "cpp",
         "variant": "cpp"
-    }
+    },
+    "python.pythonPath": "/ihome/crc/install/python/anaconda3.8-2020.11/bin/python"
 }
