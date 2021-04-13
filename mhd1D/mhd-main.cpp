@@ -82,13 +82,13 @@ int main()
     size_t step = 1;
     while (sim.currentTime <= maxTime)
     {
+        // Set boundary conditions
+        sim.updateBoundaries();
+
         // Compute the time step using the CFL condition
         timeStepTimer.startTimer();
         sim.computeTimeStep();
         timeStepTimer.stopTimer();
-
-        // Set boundary conditions
-        sim.updateBoundaries();
 
         // Compute first order interface states
         firstInterfaceTimer.startTimer();
