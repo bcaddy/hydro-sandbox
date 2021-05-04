@@ -398,11 +398,18 @@ void HlldRiemannSolver::_computeWaveSpeeds()
     magSonicL = magnetosonicSpeed(_pressureL, _densityL, _magneticL, _gamma);
     magSonicR = magnetosonicSpeed(_pressureR, _densityR, _magneticR, _gamma);
 
-    // Compute the S_L and S_R wave speeds
+    // Compute the S_L and S_R wave speeds.
     _sL = std::min(_velocityL[0], _velocityR[0]) - std::max(magSonicL, magSonicR);
     _sR = std::max(_velocityL[0], _velocityR[0]) + std::max(magSonicL, magSonicR);
 
-    // Compute the S_M wave speed
+    // Athena's version
+    // _sL = std::min(_velocityL[0] - magSonicL, _velocityR[0] - magSonicR);
+    // _sR = std::max(_velocityL[0] + magSonicL, _velocityR[0] + magSonicR);
+
+
+    // Compute the S_M wave speed, note that the density*velocity terms are just
+    // momentum, might want to pass that in. Also the velocity differences are
+    // used twice in _sM and once in _densityStarK where K=L,R
     _sM = // Numerator
           ( _densityR * _velocityR[0] * (_sR - _velocityR[0])
           - _densityL * _velocityL[0] * (_sL - _velocityL[0])
