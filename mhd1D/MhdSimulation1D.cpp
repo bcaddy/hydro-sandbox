@@ -770,7 +770,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                                                  magFlux[i][j][k][m1][m],
                                                  _ctVelocities[i][j][k][m2][m2])
                                         // The -3/4 slopes
-                                        - _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                                        + _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
                                                    magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
                                                    electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
                                                    magFlux[i][j][k][m1][m],
@@ -784,7 +784,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                                                  magFlux[i][j][k][m2][m],
                                                  _ctVelocities[i][j][k][m1][m1])
                                         // The -3/4 slopes
-                                        - _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                                        + _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
                                                    magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
                                                    electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
                                                    magFlux[i][j][k][m2][m],
