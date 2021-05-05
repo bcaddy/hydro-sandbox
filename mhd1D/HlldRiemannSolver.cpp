@@ -116,6 +116,8 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
                                                double &energyFlux)
 {
     // Compute the regular fluxes for the left or right states
+    // Note that a lot of these terms are momentum and so I shouldn't recompute
+    // them
     densityFlux     = density  * velocity[0];
 
     momentumFlux[0] = density  * velocity[0] * velocity[0] + pressureTot - magnetic[0] * magnetic[0];
@@ -127,7 +129,7 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
     magneticFlux[2] = magnetic[2] * velocity[0] - magnetic[0] * velocity[2];
 
     energyFlux = velocity[0] * (energy + pressureTot) - magnetic[0]
-                 * (std::inner_product(velocity.begin(), velocity.end(), magnetic.begin(), 0.0));
+                 * (velocity[1] * magnetic[1] + velocity[2] * magnetic[2]);
 
     // Set member variables to the current state for retrieval if needed
     _densityState     = density;
