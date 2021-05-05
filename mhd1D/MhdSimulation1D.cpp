@@ -172,7 +172,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         // Setup the background state
         double backgroundPres = 3./5., backgroundDen = 1.;
         std::vector<double> backgroundVel = {0.,0.,0.},
-                            backgroundMag = {1., std::sqrt(2.), 1./std::sqrt(2.)};
+                            backgroundMag = {1., std::sqrt(2.), 0.5};
 
         double backgroundEnergy = computeEnergy(backgroundPres, backgroundDen, backgroundVel, backgroundMag, _gamma);
         std::vector<double> backgroundMom = {computeMomentum(backgroundVel[0], backgroundDen),
@@ -195,7 +195,9 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             rightVecMag    = {0., 0., 0.};
             rightVecEnergy = 0.5;
 
-            backgroundMom[0] = computeMomentum(lrSign, backgroundDen);
+            backgroundVel[0] = lrSign;
+            backgroundMom[0] = computeMomentum(backgroundVel[0], backgroundDen);
+            backgroundEnergy = computeEnergy(backgroundPres, backgroundDen, backgroundVel, backgroundMag, _gamma);
         }
         else if (initialConditionsKind.substr(10,1) == "F")
         {   // The fast magnetosonic wave
@@ -225,15 +227,15 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         }
         else if (initialConditionsKind.substr(10,1) == "A")
         {  // The Alfven wave
-            double coef = 1. / (6. * std::sqrt(5.));
+            double coef = 1. / 3.;
 
             rightVecDen    = 0.;
             rightVecMom    = {0.,
                               coef * lrSign,
                               coef * (-lrSign) * 2. * std::sqrt(2.)};
             rightVecMag    = {0.,
-                              -1.,
-                              2. * std::sqrt(2.)};
+                              coef * (-1.),
+                              coef * 2. * std::sqrt(2.)};
             rightVecEnergy = 0.;
         }
         else
