@@ -52,6 +52,20 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     _computeWaveSpeeds();
 
     // Now we need to figure out which state we're in
+    // According to athena this can be done as
+    //   if (_sL >= 0.0) {
+    //     return Fl if flow is supersonic
+    //   } else if (_sR <= 0.0) {
+    //     return Fr if flow is supersonic
+    //   } else if (_sStarL >= 0.0) {
+    //     return Fl*
+    //   } else if (_sM >= 0.0) {
+    //     return Fl**
+    //   } else if (_sStarR > 0.0) {
+    //     return Fr**
+    //   } else {
+    //     return Fr*
+    //   }
     if (posOverT < _sL)
     {
         _computeStandardFluxes(_densityL, _velocityL, _pressureTotL, _magneticL, _energyL,
