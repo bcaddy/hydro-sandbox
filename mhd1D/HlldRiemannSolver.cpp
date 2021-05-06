@@ -128,14 +128,15 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
     magneticFlux[1] = magnetic[1] * velocity[0] - magnetic[0] * velocity[1];
     magneticFlux[2] = magnetic[2] * velocity[0] - magnetic[0] * velocity[2];
 
+    // Group transverse terms for FP associative symmetry
     energyFlux = velocity[0] * (energy + pressureTot) - magnetic[0]
-                 * (velocity[0] * magnetic[0] + velocity[1] * magnetic[1]  + velocity[2] * magnetic[2]);
+                 * (velocity[0] * magnetic[0] + ((velocity[1] * magnetic[1])  + (velocity[2] * magnetic[2])));
 
     // Set member variables to the current state for retrieval if needed
     _densityState     = density;
     _velocityState    = velocity;
     _magneticState    = magnetic;
-    _pressureState    = pressureTot - 0.5 * std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0);
+    _pressureState    = pressureTot - 0.5 * (magnetic[0] * magnetic[0] + ((magnetic[1] * magnetic[1])  + (magnetic[2] * magnetic[2])));
     _pressureTotState = pressureTot;
     _energyState      = energy;
 }
@@ -253,8 +254,8 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
         ( energy * (sSide - velocity[0])
         - pressureTot * velocity[0]
         + pressureTotStar * _sM
-        + magnetic[0] * (std::inner_product(velocity.begin(), velocity.end(), magnetic.begin(), 0.0)
-                      -  std::inner_product(velocityStar.begin(), velocityStar.end(), magneticStar.begin(), 0.0)))
+        + magnetic[0] * ((velocity[0] * magnetic[0] + ((velocity[1] * magnetic[1])  + (velocity[2] * magnetic[2])))
+                      -  (velocityStar[0] * magneticStar[0] + ((velocityStar[1] * magneticStar[1])  + (velocityStar[2] * magneticStar[2])))))
         / (sSide - _sM);
 
     // Compute the standard flux
@@ -277,7 +278,7 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
     _densityState     = densityStar;
     _velocityState    = velocityStar;
     _magneticState    = magneticStar;
-    _pressureState    = pressureTotStar - 0.5 * std::inner_product(magneticStar.begin(), magneticStar.end(), magneticStar.begin(), 0.0);
+    _pressureState    = pressureTotStar - 0.5 * (magnetic[0] * magnetic[0] + ((magnetic[1] * magnetic[1])  + (magnetic[2] * magnetic[2])));
     _pressureTotState = pressureTotStar;
     _energyState      = energyStar;
 }
@@ -387,8 +388,8 @@ void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magneti
     std::vector<double> *magneticStar = (sideSign > 0.)? &magneticStarR: &magneticStarL;
 
     energyDblStar = _energyState + sideSign * sqrtDenSide * signMagneticX
-        * (std::inner_product((*velocityStarSide).begin(), (*velocityStarSide).end(), (*magneticStar).begin(), 0.0)
-        -  std::inner_product(velocityDblStar.begin(), velocityDblStar.end(), magneticDblStar.begin(), 0.0));
+        * (((*velocityStarSide)[0] * (*magneticStar)[0] + (((*velocityStarSide)[1] * (*magneticStar)[1])  + ((*velocityStarSide)[2] * (*magneticStar)[2])))
+        - (velocityDblStar[0] * magneticDblStar[0] + ((velocityDblStar[1] * magneticDblStar[1])  + (velocityDblStar[2] * magneticDblStar[2]))));
 
     // Compute the double star state HLLD Fluxes
     densityFlux = densityFluxStarSide + sStarSide * (densityDblStar - densityStarSide);
@@ -404,7 +405,7 @@ void HlldRiemannSolver::_computeDblStarFluxes(std::vector<double> const &magneti
     _densityState     = densityDblStar;
     _velocityState    = velocityDblStar;
     _magneticState    = magneticDblStar;
-    _pressureState    = pressureTotDblStar - 0.5 * std::inner_product(magneticDblStar.begin(), magneticDblStar.end(), magneticDblStar.begin(), 0.0);
+    _pressureState    = pressureTotDblStar - 0.5 * (magnetic[0] * magnetic[0] + ((magnetic[1] * magnetic[1])  + (magnetic[2] * magnetic[2])));
     _pressureTotState = pressureTotDblStar;
     _energyState      = energyDblStar;
 }
@@ -434,7 +435,7 @@ void HlldRiemannSolver::_computeWaveSpeeds()
     _sM = // Numerator
           ( _densityR * _velocityR[0] * (_sR - _velocityR[0])
           - _densityL * _velocityL[0] * (_sL - _velocityL[0])
-          + _pressureTotL - _pressureTotR)
+          + (_pressureTotL - _pressureTotR))
           /
           // Denominator
           ( _densityR * (_sR - _velocityR[0])
