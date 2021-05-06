@@ -241,6 +241,11 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
                 * (_velocityR[0] - _velocityL[0]))
             /
             (_densityR * (_sR - _velocityR[0]) - _densityL * (_sL - _velocityL[0]));
+
+        // Athena version of the equation. They claim that eq 41 in MK2005 becomes eq 23
+        double pressureTotStarL = _pressureTotL + _densityL * (_sL - _velocityL[0]) * (_sM - _velocityL[0]);
+        double pressureTotStarR = _pressureTotR + _densityR * (_sR - _velocityR[0]) * (_sM - _velocityR[0]);
+        pressureTotStar  = 0.5 * (pressureTotStarL + pressureTotStarR);
     }
 
     // Now we'll compute the energy in the state
