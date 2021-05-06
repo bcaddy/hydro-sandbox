@@ -232,15 +232,15 @@ void HlldRiemannSolver::_computeStarFluxes(double const &density,
     {
         // This is the standard case where we have no divide-by-zero errors
         densityStar = densityStarSide;  // Density in the star state
-        pressureTotStar =  // Total pressure in the star state
-            ( _densityR * _pressureTotL * (_sR - _velocityR[0])
-            - _densityL * _pressureTotR * (_sL - _velocityL[0])
-            + _densityL * _densityR
-                * (_sR - _velocityR[0])
-                * (_sL - _velocityL[0])
-                * (_velocityR[0] - _velocityL[0]))
-            /
-            (_densityR * (_sR - _velocityR[0]) - _densityL * (_sL - _velocityL[0]));
+        // pressureTotStar =  // Total pressure in the star state
+        //     ( _densityR * _pressureTotL * (_sR - _velocityR[0])
+        //     - _densityL * _pressureTotR * (_sL - _velocityL[0])
+        //     + _densityL * _densityR
+        //         * (_sR - _velocityR[0])
+        //         * (_sL - _velocityL[0])
+        //         * (_velocityR[0] - _velocityL[0]))
+        //     /
+        //     (_densityR * (_sR - _velocityR[0]) - _densityL * (_sL - _velocityL[0]));
 
         // Athena version of the equation. They claim that eq 41 in MK2005 becomes eq 23
         double pressureTotStarL = _pressureTotL + _densityL * (_sL - _velocityL[0]) * (_sM - _velocityL[0]);
