@@ -140,8 +140,11 @@ public:
      */
     MhdRiemannSolver(double const &gamma)
         : _gamma(gamma),
+          _velocityL(3),
           _magneticL(3),
+          _velocityR(3),
           _magneticR(3),
+          _velocityState(3),
           _magneticState(3)
         {};
     virtual ~MhdRiemannSolver() = default;

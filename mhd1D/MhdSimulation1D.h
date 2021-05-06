@@ -226,7 +226,6 @@ public:
     void updateBoundaries()
     {
         grid.updateBoundaries(_gamma);
-        _gridHalfTime.updateBoundaries(_gamma);
     };
 
     /*!

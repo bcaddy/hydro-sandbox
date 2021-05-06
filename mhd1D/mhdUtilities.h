@@ -39,12 +39,12 @@ namespace mhdUtilities
     {
         // Compute the sound speed
         double bSquared, term1, term2, cF;
-        bSquared = std::inner_product(magnetic.begin(), magnetic.end(), magnetic.begin(), 0.0);
+        bSquared = magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[1]*magnetic[1]));
         term1 = gamma * pressure + bSquared;
         // Make term2 negative to compute the slow magnetic sonic speed.
         // Uncomment line below and add suitable arguments to the function to
         // enable computing either the slow or fast MS waves
-        term2 = std::sqrt( term1*term1 - 4. * gamma * pressure * magnetic[0]*magnetic[0]);
+        term2 = std::sqrt( (term1*term1) - 4. * gamma * pressure * (magnetic[0]*magnetic[0]));
         // term2 = (waveType == "fast")? term2: -term2;
 
         cF = std::sqrt( (term1 + term2) / (2.0 * density) );
@@ -141,8 +141,8 @@ namespace mhdUtilities
         {
             double pressure = (gamma - 1.)
                             * ( energy
-                            - 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
-                            - 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]));
+                            - 0.5 * density * std::abs(velocity[0]*velocity[0] + ((velocity[1]*velocity[1]) + (velocity[2]*velocity[2])))
+                            - 0.5 * std::abs(magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[2]*magnetic[2]))));
 
             if (std::isnan(pressure))
                 throw std::runtime_error("Complex valued pressure detected. Exiting.");
@@ -163,7 +163,7 @@ namespace mhdUtilities
     inline double computeTotalPressure(double const &pressure,
                                        std::vector<double> const &magnetic)
         {
-            double pTot =  pressure + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);
+            double pTot =  pressure + 0.5 * std::abs(magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[2]*magnetic[2])));
 
             if (std::isnan(pTot))
                 throw std::runtime_error("Complex valued total pressure detected. Exiting.");
@@ -190,8 +190,8 @@ namespace mhdUtilities
                                 double const &gamma)
         {
             double energy = (pressure/(gamma - 1))
-                            + 0.5 * density * std::abs(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2])
-                            + 0.5 * std::abs(magnetic[0]*magnetic[0] + magnetic[1]*magnetic[1] + magnetic[2]*magnetic[2]);
+                            + 0.5 * density * std::abs(velocity[0]*velocity[0] + ((velocity[1]*velocity[1]) + (velocity[2]*velocity[2])))
+                            + 0.5 * std::abs(magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[2]*magnetic[2])));
 
             if (std::isnan(energy))
                 throw std::runtime_error("Complex valued energy detected. Exiting.");

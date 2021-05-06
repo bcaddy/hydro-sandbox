@@ -52,8 +52,8 @@ int main()
     double const physicalLength        = 1.;
     double const gamma                 = 5./3.;  // 5./3. for most things, chollaSod uses 1.4
     double const cfl                   = 0.4;
-    double const maxTime               = 5.0; //0.1 for B&W shock tube, 0.2 for D&W and sod
-    size_t const numRealCells          = 200;
+    double const maxTime               = 1.0; //0.1 for B&W shock tube, 0.2 for D&W and sod
+    size_t const numRealCells          = 10;
     std::string  initialConditionsKind = "singleWaveCR";
     std::string  boundaryConditions    = "periodic";
     std::string  reconstructionKind    = "PLM";

@@ -178,14 +178,16 @@ void HlldRiemannSolver::_computeVandBStar(double const &density,
 
         // Compute the denominator that is used for both velocity and magnetic
         // field computations
-        double const denom = density * (sSide - velocity[0]) * (sSide - _sM) - magnetic[0] * magnetic[0];
+        double const denom = density * (sSide - velocity[0]) * (sSide - _sM) - (magnetic[0] * magnetic[0]);
 
         // Compute the velocity and magnetic field in the star state
         double coef = magnetic[0]  * (_sM - velocity[0]) / denom;
         velocityStar[1] = velocity[1] - magnetic[1] * coef;
         velocityStar[2] = velocity[2] - magnetic[2] * coef;
 
-        coef = (density * std::pow(sSide - velocity[0], 2) - magnetic[0] * magnetic[0]) / denom;
+        double tmpPower = (sSide - velocity[0]);
+        tmpPower = tmpPower * tmpPower;
+        coef = (density * tmpPower - (magnetic[0] * magnetic[0])) / denom;
         magneticStar[1] = magnetic[1] * coef;
         magneticStar[2] = magnetic[2] * coef;
     }
