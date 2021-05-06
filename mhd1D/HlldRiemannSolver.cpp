@@ -129,7 +129,7 @@ void HlldRiemannSolver::_computeStandardFluxes(double const &density,
     magneticFlux[2] = magnetic[2] * velocity[0] - magnetic[0] * velocity[2];
 
     energyFlux = velocity[0] * (energy + pressureTot) - magnetic[0]
-                 * (velocity[1] * magnetic[1] + velocity[2] * magnetic[2]);
+                 * (velocity[0] * magnetic[0] + velocity[1] * magnetic[1]  + velocity[2] * magnetic[2]);
 
     // Set member variables to the current state for retrieval if needed
     _densityState     = density;
