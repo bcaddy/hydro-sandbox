@@ -10,7 +10,8 @@ cppDebug = g++ \
 		   -fasynchronous-unwind-tables \
 		   -fexceptions \
 		   -D_GLIBCXX_ASSERTIONS \
-		   -g
+		   -g \
+		   -O0
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 

@@ -39,7 +39,7 @@ namespace mhdUtilities
     {
         // Compute the sound speed
         double bSquared, term1, term2, cF;
-        bSquared = magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[1]*magnetic[1]));
+        bSquared = magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[2]*magnetic[2]));
         term1 = gamma * pressure + bSquared;
         // Make term2 negative to compute the slow magnetic sonic speed.
         // Uncomment line below and add suitable arguments to the function to
