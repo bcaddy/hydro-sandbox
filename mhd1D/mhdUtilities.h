@@ -16,6 +16,20 @@
 #include <numeric>
 #include <vector>
 
+
+// =============================================================================
+// Declare the aliases to different vector dimensionality that I'm using
+// =============================================================================
+using stdVector1D = std::vector<double>;
+using stdVector2D = std::vector<std::vector<double>>;
+using stdVector3D = std::vector<std::vector<std::vector<double>>>;
+using stdVector4D = std::vector<std::vector<std::vector<std::vector<double>>>>;
+using stdVector5D = std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
+using stdVector6D = std::vector<std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>>;
+// =============================================================================
+// End aliases
+// =============================================================================
+
 /*!
  * \brief A namespace for common functions used in magnetohydrodynamics
  *

@@ -665,11 +665,10 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     }
 
     // Declare a 4D vector of shape Nx3x3x3 to store the 3D centered field in each cell
-    std::vector<std::vector<std::vector<std::vector<double>>>>
-    electricCentered(grid.numTotCells, std::vector<std::vector<std::vector<double>>>(
-                      3, std::vector<std::vector<double>>(
-                      3, std::vector<double>(
-                      3, 0.0))));
+    stdVector4D electricCentered(grid.numTotCells, stdVector3D(
+                                                3, stdVector2D(
+                                                3, stdVector1D(
+                                                3, 0.0))));
 
     // Loop through the cells to compute all the electric fields then assign
     // them to their correct spots
@@ -709,12 +708,11 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     // [z position]
     // [which face, i-1/2, j-1/2, or z-1/2 in that order]
     // [the flux in each direction, x, y, and z respectively]
-    std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>
-    magFlux(grid.numTotCells, std::vector<std::vector<std::vector<std::vector<double>>>>(
-            3, std::vector<std::vector<std::vector<double>>>(
-            3, std::vector<std::vector<double>>(
-            3, std::vector<double>(
-            3, 0.0)))));
+    stdVector5D magFlux(grid.numTotCells, stdVector4D(
+                                       3, stdVector3D(
+                                       3, stdVector2D(
+                                       3, stdVector1D(
+                                       3, 0.0)))));
 
     for (size_t i = 0; i < grid.numTotCells; i++)
     {
@@ -885,20 +883,20 @@ MhdSimulation1D::MhdSimulation1D(double const &physicalLength,
       _deltaY(_deltaX),
       _deltaZ(_deltaX),
       _gamma(gamma),
-      _magCentered(2 * _numGhosts + reals, std::vector<double> (3, 0)),
+      _magCentered(2 * _numGhosts + reals, stdVector1D (3, 0)),
       _interfaceL(reals, _numGhosts),
       _interfaceR(reals, _numGhosts),
       _flux(reals, _numGhosts),
       _gridHalfTime(reals, _numGhosts, boundaryConditions),
-      _edgeFields(2 * _numGhosts + reals, std::vector<std::vector<std::vector<double>>>(
-                  3, std::vector<std::vector<double>>(
-                  3, std::vector<double>(
-                  3, 0.0)))),
-      _ctVelocities(2 * _numGhosts + reals, std::vector<std::vector<std::vector<std::vector<double>>>>(
-                    3, std::vector<std::vector<std::vector<double>>>(
-                    3, std::vector<std::vector<double>>(
-                    3, std::vector<double>(
-                    3, 0.0))))),
+      _edgeFields(2 * _numGhosts + reals, stdVector3D(
+                                       3, stdVector2D(
+                                       3, stdVector1D(
+                                       3, 0.0)))),
+      _ctVelocities(2 * _numGhosts + reals, stdVector4D(
+                                         3, stdVector3D(
+                                         3, stdVector2D(
+                                         3, stdVector1D(
+                                         3, 0.0))))),
       grid(reals, _numGhosts, boundaryConditions, saveDir),
       currentTime(0.0),
       reconstructionKind(reconstructionKind),

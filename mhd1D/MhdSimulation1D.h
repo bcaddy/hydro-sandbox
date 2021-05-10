@@ -47,7 +47,7 @@ private:
     size_t _numGhosts = 3;
 
     /// The cell centered magnetic fields
-    std::vector<std::vector<double>> _magCentered;
+    stdVector2D _magCentered;
 
     /// The vector to store the primitive variables at the left side of the
     /// interface. _interfaceL.member[i] is the state on the left side
@@ -74,7 +74,7 @@ private:
     /// [y position]
     /// [z position]
     /// [electric field in the x, y, or z in that order. Always at the -1/2, -1/2 edge]
-    std::vector<std::vector<std::vector<std::vector<double>>>> _edgeFields;
+    stdVector4D _edgeFields;
 
     /// The 5D vector used to hold the velocities from the Riemann solve.
     /// Indices are as follows
@@ -83,7 +83,7 @@ private:
     /// [z position]
     /// [which face, i-1/2, j-1/2, or z-1/2 in that order]
     /// [the velocity in each direction, x, y, and z respectively]
-    std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>> _ctVelocities;
+    stdVector5D _ctVelocities;
 
     /// The object used to solve the Riemann Problem. Uses the RiemannSolver
     /// virtual base class and chooses between different Riemann Solver

@@ -14,6 +14,8 @@
 #include <string>
 #include <fstream>
 
+#include "mhdUtilities.h"
+
 /*!
  * \brief The Grid1D struct stores the grid and provides member functions to
  * manipulate the grid
@@ -56,11 +58,11 @@ public:
     size_t numTotCells;
 
     /// The density in a cell. Measure in kilograms/cubic meter
-    std::vector<double> density;
+    stdVector1D density;
     /// The momentum in a specific cell. Measured in kilogram meters per second
-    std::vector<std::vector<double>> momentum;
+    stdVector2D momentum;
     /// The magnetic field on the i-1/2 face of a specific cell.
-    std::vector<std::vector<double>> magnetic;
+    stdVector2D magnetic;
     /// The energy in a cell. Measured in Joules
     std::vector<double> energy;
 

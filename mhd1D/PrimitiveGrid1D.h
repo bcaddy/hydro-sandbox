@@ -25,13 +25,13 @@ public:
     size_t numTotCells;
 
     /// The density in a cell. Measure in kilograms/cubic meter
-    std::vector<double> density;
+    stdVector1D density;
     /// The velocity in a specific cell. Measured in meters per second
-    std::vector<std::vector<double>> velocity;
+    stdVector2D velocity;
     /// The magnetic on the i-1/2 face of a specific cell.
-    std::vector<std::vector<double>> magnetic;
+    stdVector2D magnetic;
     /// The pressure in a cell. Measured in Pascals
-    std::vector<double> pressure;
+    stdVector1D pressure;
 
     /*!
      * \brief Construct a new Primitive Grid 1 D object
