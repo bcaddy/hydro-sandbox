@@ -756,7 +756,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][0] = 0.25 * (
                     // Sum the magnetic fluxes
-                          magFlux[i][j]  [k]  [1][0]
+                        + magFlux[i][j]  [k]  [1][0]
                         + magFlux[i][j]  [k]  [2][0]
                         + magFlux[i][j]  [k-1][1][0]
                         + magFlux[i][j-1][k]  [2][0]
@@ -792,10 +792,10 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][1] = 0.25 * (
                         // Sum the magnetic fluxes
-                          magFlux[i][j][k][2][1]
-                        + magFlux[i][j][k][0][1]
-                        + magFlux[i-1][j][k][2][1]
-                        + magFlux[i][j][k-1][0][1]
+                        + magFlux[i]  [j][k]  [2][1]
+                        + magFlux[i]  [j][k]  [0][1]
+                        + magFlux[i-1][j][k]  [2][1]
+                        + magFlux[i]  [j][k-1][0][1]
                     // The slopes in the y direction
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i-1][j][k][1],
@@ -828,10 +828,10 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][2] = 0.25 * (
                         // Sum the magnetic fluxes
-                          magFlux[i][j][k][0][2]
-                        + magFlux[i][j][k][0][2]
-                        + magFlux[i][j-1][k][0][2]
-                        + magFlux[i-1][j][k][0][2]
+                        + magFlux[i]  [j]  [k][0][2]
+                        + magFlux[i]  [j]  [k][1][2]
+                        + magFlux[i]  [j-1][k][0][2]
+                        + magFlux[i-1][j]  [k][1][2]
                     // The slopes in the y direction
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i][j-1][k][2],
@@ -865,6 +865,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                 // to maintain and confusing so I basically unrolled the loop.
                 // I'm keeping it because I want to test it later and see if it
                 // might be a better way of doing the CT calculations
+                // todo try this again later
                 // =============================================================
                 // for (size_t m = 0; m < 3; m++)  // Loop over vector elements
                 // {
@@ -995,6 +996,7 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
 
             // =================================================================
             // Old version of updating magnetic fields using mod function
+            // todo try this again later
             // =================================================================
             // // Update magnetic field
             // // Compute the modulos
