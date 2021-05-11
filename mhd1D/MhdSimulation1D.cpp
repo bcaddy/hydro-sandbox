@@ -632,6 +632,7 @@ void MhdSimulation1D::solveRiemann()
                                     _flux.energy[i]);
 
         // Capture the value of the velocities
+        // todo replace this with momentum in Cholla. Since only the sign is used then momentum will work too
         for (int j = 0; j < 3; j++)
         {
             for (int k = 0; k < 3; k++)
@@ -763,15 +764,15 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // The slopes in the y direction
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i][j][k-1][0],
-                                    magFlux[i][j][k-1][1][0],
+                                   -magFlux[i][j][k-1][1][0],
                                     electricCentered[i][j][k][0],
-                                    magFlux[i][j][k][1][0],
+                                   -magFlux[i][j][k][1][0],
                                     _ctVelocities[i][j][k][2][2])
                         // The -3/4 slopes
                         + _ctSlope(electricCentered[i][j-1][k-1][0],
-                                    magFlux[i][j][k-1][1][0],
+                                   -magFlux[i][j][k-1][1][0],
                                     electricCentered[i][j-1][k][0],
-                                    magFlux[i][j][k][1][0],
+                                   -magFlux[i][j][k][1][0],
                                     _ctVelocities[i][j-1][k][2][2])
                     // The slopes in the z directions
                         // The -1/4 slopes
@@ -796,20 +797,20 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                         + magFlux[i]  [j][k]  [0][1]
                         - magFlux[i-1][j][k]  [2][1]
                         + magFlux[i]  [j][k-1][0][1]
-                    // The slopes in the y direction
+                    // The slopes in the z direction
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i-1][j][k][1],
-                                    magFlux[i-1][j][k][2][1],
+                                   -magFlux[i-1][j][k][2][1],
                                     electricCentered[i][j][k][1],
-                                    magFlux[i][j][k][2][1],
+                                   -magFlux[i][j][k][2][1],
                                     _ctVelocities[i][j][k][0][0])
                         // The -3/4 slopes
                         + _ctSlope(electricCentered[i-1][j][k-1][1],
-                                    magFlux[i-1][j][k][2][1],
+                                   -magFlux[i-1][j][k][2][1],
                                     electricCentered[i][j][k-1][1],
-                                    magFlux[i][j][k][2][1],
+                                   -magFlux[i][j][k][2][1],
                                     _ctVelocities[i][j][k-1][0][0])
-                    // The slopes in the z directions
+                    // The slopes in the x directions
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i][j][k-1][1],
                                     magFlux[i][j][k-1][0][1],
@@ -832,20 +833,20 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                         + magFlux[i]  [j]  [k][1][2]
                         - magFlux[i]  [j-1][k][0][2]
                         + magFlux[i-1][j]  [k][1][2]
-                    // The slopes in the y direction
+                    // The slopes in the x direction
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i][j-1][k][2],
-                                    magFlux[i][j-1][k][0][2],
+                                   -magFlux[i][j-1][k][0][2],
                                     electricCentered[i][j][k][2],
-                                    magFlux[i][j][k][0][2],
+                                   -magFlux[i][j][k][0][2],
                                     _ctVelocities[i][j][k][1][1])
                         // The -3/4 slopes
                         + _ctSlope(electricCentered[i-1][j-1][k][2],
-                                    magFlux[i][j-1][k][0][2],
+                                   -magFlux[i][j-1][k][0][2],
                                     electricCentered[i-1][j][k][2],
-                                    magFlux[i][j][k][0][2],
+                                   -magFlux[i][j][k][0][2],
                                     _ctVelocities[i-1][j][k][1][1])
-                    // The slopes in the z directions
+                    // The slopes in the y directions
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i-1][j][k][2],
                                     magFlux[i-1][j][k][1][2],
