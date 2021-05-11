@@ -407,17 +407,17 @@ double MhdSimulation1D::_ctSlope(double const &centerNeg,
     if (velocity > 0.0)
     {
         // Return the slope on the left side
-        return (centerNeg - faceNeg);
+        return (faceNeg - centerNeg);
     }
     else if (velocity < 0.0)
     {
         // Return the slope on the right side
-        return (centerPos - facePos);
+        return (facePos - centerPos);
     }
     else
     {
         // Return the average of the left and right side slopes
-        return 0.5 * ((centerNeg - faceNeg) + (centerPos - facePos));
+        return 0.5 * ((faceNeg - centerNeg) + (facePos - centerPos));
     }
 }
 // =============================================================================
@@ -756,9 +756,9 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][0] = 0.25 * (
                     // Sum the magnetic fluxes
-                        + magFlux[i][j]  [k]  [1][0]
+                        - magFlux[i][j]  [k]  [1][0]
                         + magFlux[i][j]  [k]  [2][0]
-                        + magFlux[i][j]  [k-1][1][0]
+                        - magFlux[i][j]  [k-1][1][0]
                         + magFlux[i][j-1][k]  [2][0]
                     // The slopes in the y direction
                         // The -1/4 slopes
@@ -792,9 +792,9 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][1] = 0.25 * (
                         // Sum the magnetic fluxes
-                        + magFlux[i]  [j][k]  [2][1]
+                        - magFlux[i]  [j][k]  [2][1]
                         + magFlux[i]  [j][k]  [0][1]
-                        + magFlux[i-1][j][k]  [2][1]
+                        - magFlux[i-1][j][k]  [2][1]
                         + magFlux[i]  [j][k-1][0][1]
                     // The slopes in the y direction
                         // The -1/4 slopes
@@ -828,9 +828,9 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][2] = 0.25 * (
                         // Sum the magnetic fluxes
-                        + magFlux[i]  [j]  [k][0][2]
+                        - magFlux[i]  [j]  [k][0][2]
                         + magFlux[i]  [j]  [k][1][2]
-                        + magFlux[i]  [j-1][k][0][2]
+                        - magFlux[i]  [j-1][k][0][2]
                         + magFlux[i-1][j]  [k][1][2]
                     // The slopes in the y direction
                         // The -1/4 slopes
