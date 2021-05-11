@@ -647,6 +647,7 @@ void MhdSimulation1D::solveRiemann()
 // =============================================================================
 void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 {
+    // =========================================================================
     // We need to compute the cell centered electric fields
     // =========================================================================
     // First we choose the working grid
@@ -663,8 +664,20 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     {
         throw std::invalid_argument("Invalid option for MhdSimulation1D::ctElectricFields");
     }
+    // =========================================================================
+    // Finish choosing grid
+    // =========================================================================
 
-    // Declare a 4D vector of shape Nx3x3x3 to store the 3D centered field in each cell
+    // =========================================================================
+    // Declare a 4D vector of shape Nx3x3x3 to store the 3D centered field in
+    // each cell
+    // =========================================================================
+    // declare the 4D vector used to hold the centered electric field. Indices
+    // are as follows
+    // [x position]
+    // [y position]
+    // [z position]
+    // [the magnetic field in each direction, x, y, and z respectively]
     stdVector4D electricCentered(grid.numTotCells, stdVector3D(
                                                 3, stdVector2D(
                                                 3, stdVector1D(
@@ -675,8 +688,10 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     for (size_t i = 0; i < grid.numTotCells; i++)
     {
         // Compute the electric field using a cross product
-        std::vector<double> eRef(3, 0.0), velocity(3, 0.0);
+        stdVector1D eRef(3, 0.0), velocity(3, 0.0);
+
         velocity = computeVelocity(workingGrid->momentum[i], workingGrid->density[i]);
+
         eRef[0]  = velocity[2] * workingGrid->magnetic[i][1] - velocity[1] * workingGrid->magnetic[i][2];
         eRef[1]  = velocity[0] * workingGrid->magnetic[i][2] - velocity[2] * workingGrid->magnetic[i][0];
         eRef[2]  = velocity[1] * workingGrid->magnetic[i][0] - velocity[0] * workingGrid->magnetic[i][1];
@@ -687,22 +702,20 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
         {
             for (size_t k = 0; k < 3; k++)
             {
-                for (size_t m = 0; m < 3; m++)
-                {
-                    electricCentered[i][j][k][m] = eRef[m];
-                }
+                electricCentered[i][j][k] = eRef;
             }
         }
     }
     // We can release the workingGrid pointer now
     workingGrid.release();
-
+    // =========================================================================
     // Finished computing the centered electric fields
     // =========================================================================
 
+    // =========================================================================
     // Create a virtual grid for the face averaged magnetic fluxes
     // =========================================================================
-    // declare the 5d vector used to hold the magnetic fluxes. Indices are as follows
+    // declare the 5D vector used to hold the magnetic fluxes. Indices are as follows
     // [x position]
     // [y position]
     // [z position]
@@ -720,16 +733,15 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
         {
             for (size_t k = 0; k < 3; k++)
             {
-                for (size_t m = 0; m < 3; m++)
-                {
-                    magFlux[i][j][k][0][m] = _flux.magnetic[i][m];
-                }
+                magFlux[i][j][k][0] = _flux.magnetic[i];
             }
         }
     }
     // =========================================================================
+    // Finished virtual magnetic flux grid
+    // =========================================================================
 
-
+    // =========================================================================
     // Then iterate over that grid as to compute all the CT electrid fields as
     // expected in a full 3D simulation
     // =========================================================================
@@ -796,6 +808,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
             }
         }
     }
+    // =========================================================================
     // Done computing the CT electric fields
     // =========================================================================
 }
