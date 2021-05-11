@@ -751,60 +751,178 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
         {
             for (size_t k = 1; k < 3; k++)  // Loop in z-direction
             {
-                for (size_t m = 0; m < 3; m++)  // Loop over vector elements
-                {
-                    // Compute the other two indices that will be needed
-                    int m1 = _mod3(m+1), m2 = _mod3(m+2);
+                    // =========================================================
+                    // X-field: Compute the field at the (0,-1/2,-1/2) edge.
+                    // =========================================================
+                    _edgeFields[i][j][k][0] = 0.25 * (
+                    // Sum the magnetic fluxes
+                          magFlux[i][j]  [k]  [1][0]
+                        + magFlux[i][j]  [k]  [2][0]
+                        + magFlux[i][j]  [k-1][1][0]
+                        + magFlux[i][j-1][k]  [2][0]
+                    // The slopes in the y direction
+                        // The -1/4 slopes
+                        + _ctSlope(electricCentered[i][j][k-1][0],
+                                    magFlux[i][j][k-1][1][0],
+                                    electricCentered[i][j][k][0],
+                                    magFlux[i][j][k][1][0],
+                                    _ctVelocities[i][j][k][2][2])
+                        // The -3/4 slopes
+                        + _ctSlope(electricCentered[i][j-1][k-1][0],
+                                    magFlux[i][j][k-1][1][0],
+                                    electricCentered[i][j-1][k][0],
+                                    magFlux[i][j][k][1][0],
+                                    _ctVelocities[i][j-1][k][2][2])
+                    // The slopes in the z directions
+                        // The -1/4 slopes
+                        + _ctSlope(electricCentered[i][j-1][k][0],
+                                    magFlux[i][j-1][k][2][0],
+                                    electricCentered[i][j][k][0],
+                                    magFlux[i][j][k][2][0],
+                                    _ctVelocities[i][j][k][1][1])
+                        // The -3/4 slopes
+                        + _ctSlope(electricCentered[i][j-1][k-1][0],
+                                    magFlux[i][j-1][k][2][0],
+                                    electricCentered[i][j][k-1][0],
+                                    magFlux[i][j][k][2][0],
+                                    _ctVelocities[i][j][k-1][1][1]));
 
-                    // All our offset arrays
-                    std::vector<int> m2Offset(3, 0), m1Offset(3, 0);
+                    // =========================================================
+                    // Y-field: Compute the field at the (-1/2,0,-1/2) edge.
+                    // =========================================================
+                    _edgeFields[i][j][k][1] = 0.25 * (
+                        // Sum the magnetic fluxes
+                          magFlux[i][j][k][2][1]
+                        + magFlux[i][j][k][0][1]
+                        + magFlux[i-1][j][k][2][1]
+                        + magFlux[i][j][k-1][0][1]
+                    // The slopes in the y direction
+                        // The -1/4 slopes
+                        + _ctSlope(electricCentered[i-1][j][k][1],
+                                    magFlux[i-1][j][k][2][1],
+                                    electricCentered[i][j][k][1],
+                                    magFlux[i][j][k][2][1],
+                                    _ctVelocities[i][j][k][0][0])
+                        // The -3/4 slopes
+                        + _ctSlope(electricCentered[i-1][j][k-1][1],
+                                    magFlux[i-1][j][k][2][1],
+                                    electricCentered[i][j][k-1][1],
+                                    magFlux[i][j][k][2][1],
+                                    _ctVelocities[i][j][k-1][0][0])
+                    // The slopes in the z directions
+                        // The -1/4 slopes
+                        + _ctSlope(electricCentered[i][j][k-1][1],
+                                    magFlux[i][j][k-1][0][1],
+                                    electricCentered[i][j][k][1],
+                                    magFlux[i][j][k][0][1],
+                                    _ctVelocities[i][j][k][2][2])
+                        // The -3/4 slopes
+                        + _ctSlope(electricCentered[i-1][j][k-1][1],
+                                    magFlux[i][j][k-1][0][1],
+                                    electricCentered[i-1][j][k][1],
+                                    magFlux[i][j][k][0][1],
+                                    _ctVelocities[i-1][j][k][2][2]));
 
-                    /// Compute the offsets
-                    /// \todo: consider replacing with vectors that just are the
-                    /// the indices. That way I don't have to compute it over
-                    /// and over again in indices. This level of optimization is
-                    /// worth considering but is probably at the level of
-                    /// considering cache per ALU
-                    m1Offset[m1] = -1;
-                    m2Offset[m2] = -1;
+                    // =========================================================
+                    // Z-field: Compute the field at the (-1/2,-1/2,0) edge.
+                    // =========================================================
+                    _edgeFields[i][j][k][2] = 0.25 * (
+                        // Sum the magnetic fluxes
+                          magFlux[i][j][k][0][2]
+                        + magFlux[i][j][k][0][2]
+                        + magFlux[i][j-1][k][0][2]
+                        + magFlux[i-1][j][k][0][2]
+                    // The slopes in the y direction
+                        // The -1/4 slopes
+                        + _ctSlope(electricCentered[i][j-1][k][2],
+                                    magFlux[i][j-1][k][0][2],
+                                    electricCentered[i][j][k][2],
+                                    magFlux[i][j][k][0][2],
+                                    _ctVelocities[i][j][k][1][1])
+                        // The -3/4 slopes
+                        + _ctSlope(electricCentered[i-1][j-1][k][2],
+                                    magFlux[i][j-1][k][0][2],
+                                    electricCentered[i-1][j][k][2],
+                                    magFlux[i][j][k][0][2],
+                                    _ctVelocities[i-1][j][k][1][1])
+                    // The slopes in the z directions
+                        // The -1/4 slopes
+                        + _ctSlope(electricCentered[i-1][j][k][2],
+                                    magFlux[i-1][j][k][1][2],
+                                    electricCentered[i][j][k][2],
+                                    magFlux[i][j][k][1][2],
+                                    _ctVelocities[i][j][k][0][0])
+                        // The -3/4 slopes
+                        + _ctSlope(electricCentered[i-1][j-1][k][2],
+                                    magFlux[i-1][j][k][1][2],
+                                    electricCentered[i][j-1][k][2],
+                                    magFlux[i][j][k][1][2],
+                                    _ctVelocities[i][j-1][k][0][0]));
 
-                    // Compute the first term, the sum of surrounding faces
-                    double firstTerm = ( magFlux[i][j][k][m1][m]
-                                       + magFlux[i][j][k][m2][m]
-                                       + magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m]
-                                       + magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m]);
+                // =============================================================
+                // This is the old version that used the modulus function to
+                // calculate indices and offsets. It should work but it's hard
+                // to maintain and confusing so I basically unrolled the loop.
+                // I'm keeping it because I want to test it later and see if it
+                // might be a better way of doing the CT calculations
+                // =============================================================
+                // for (size_t m = 0; m < 3; m++)  // Loop over vector elements
+                // {
+                //     // Compute the other two indices that will be needed
+                //     int m1 = _mod3(m+1), m2 = _mod3(m+2);
 
-                    // The slopes in the m1 direction
-                    double secondTerm = // The -1/4 slopes
-                                        _ctSlope(electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
-                                                 magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
-                                                 electricCentered[i][j][k][m],
-                                                 magFlux[i][j][k][m1][m],
-                                                 _ctVelocities[i][j][k][m2][m2])
-                                        // The -3/4 slopes
-                                        + _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
-                                                   magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
-                                                   electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
-                                                   magFlux[i][j][k][m1][m],
-                                                   _ctVelocities[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m2]);
+                //     // All our offset arrays
+                //     std::vector<int> m2Offset(3, 0), m1Offset(3, 0);
 
-                    // The slopes in the m2 directions
-                    double thirdTerm =  // The -1/4 slopes
-                                        _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
-                                                 magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
-                                                 electricCentered[i][j][k][m],
-                                                 magFlux[i][j][k][m2][m],
-                                                 _ctVelocities[i][j][k][m1][m1])
-                                        // The -3/4 slopes
-                                        + _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
-                                                   magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
-                                                   electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
-                                                   magFlux[i][j][k][m2][m],
-                                                   _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m1]);
+                //     /// Compute the offsets
+                //     /// \todo: consider replacing with vectors that just are the
+                //     /// the indices. That way I don't have to compute it over
+                //     /// and over again in indices. This level of optimization is
+                //     /// worth considering but is probably at the level of
+                //     /// considering cache per ALU
+                //     m1Offset[m1] = -1;
+                //     m2Offset[m2] = -1;
 
-                    // Now we fill in the array of edge values
-                    _edgeFields[i][j][k][m] = 0.25 * (firstTerm + secondTerm + thirdTerm);
-                }
+                //     // Compute the first term, the sum of surrounding faces
+                //     double firstTerm = ( magFlux[i][j][k][m1][m]
+                //                        + magFlux[i][j][k][m2][m]
+                //                        + magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m]
+                //                        + magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m]);
+
+                //     // The slopes in the m1 direction
+                //     double secondTerm = // The -1/4 slopes
+                //                         _ctSlope(electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
+                //                                  magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
+                //                                  electricCentered[i][j][k][m],
+                //                                  magFlux[i][j][k][m1][m],
+                //                                  _ctVelocities[i][j][k][m2][m2])
+                //                         // The -3/4 slopes
+                //                         + _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                //                                    magFlux[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m],
+                //                                    electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
+                //                                    magFlux[i][j][k][m1][m],
+                //                                    _ctVelocities[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m2]);
+
+                //     // The slopes in the m2 directions
+                //     double thirdTerm =  // The -1/4 slopes
+                //                         _ctSlope(electricCentered[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m],
+                //                                  magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
+                //                                  electricCentered[i][j][k][m],
+                //                                  magFlux[i][j][k][m2][m],
+                //                                  _ctVelocities[i][j][k][m1][m1])
+                //                         // The -3/4 slopes
+                //                         + _ctSlope(electricCentered[i + m1Offset[0] + m2Offset[0]][j + m1Offset[1] + m2Offset[1]][k + m1Offset[2] + m2Offset[2]][m],
+                //                                    magFlux[i + m1Offset[0]][j + m1Offset[1]][k + m1Offset[2]][m2][m],
+                //                                    electricCentered[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m],
+                //                                    magFlux[i][j][k][m2][m],
+                //                                    _ctVelocities[i + m2Offset[0]][j + m2Offset[1]][k + m2Offset[2]][m1][m1]);
+
+                //     // Now we fill in the array of edge values
+                //     _edgeFields[i][j][k][m] = 0.25 * (firstTerm + secondTerm + thirdTerm);
+                // =============================================================
+                // End old CT calculations
+                // =============================================================
+                // }
             }
         }
     }
@@ -848,8 +966,26 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
                                       + (localTimeStep / _deltaX)
                                       * (_flux.energy[i] - _flux.energy[i+1]);
 
-        // Update momentum and magnetic field
         std::vector<double> deltas = {_deltaX, _deltaY, _deltaZ};
+        destinationGrid->magnetic[i][0] = grid.magnetic[i][0]
+                                        + (localTimeStep / deltas[2])
+                                        * (_edgeFields[i][1][2][1] - _edgeFields[i][1][1][1])
+                                        - (localTimeStep / deltas[1])
+                                        * (_edgeFields[i][2][1][2] - _edgeFields[i][1][1][2]);
+
+        destinationGrid->magnetic[i][1] = grid.magnetic[i][1]
+                                        + (localTimeStep / deltas[0])
+                                        * (_edgeFields[i+1][1][1][2] - _edgeFields[i][1][1][2])
+                                        - (localTimeStep / deltas[2])
+                                        * (_edgeFields[i][1][2][0] - _edgeFields[i][1][1][0]);
+
+        destinationGrid->magnetic[i][2] = grid.magnetic[i][2]
+                                        + (localTimeStep / deltas[1])
+                                        * (_edgeFields[i][2][1][0] - _edgeFields[i][1][1][0])
+                                        - (localTimeStep / deltas[0])
+                                        * (_edgeFields[i+1][1][1][1] - _edgeFields[i][1][1][1]);
+
+        // Update momentum
         for (size_t j = 0; j < 3; j++)
         {
             // Update momentum
@@ -857,18 +993,24 @@ void MhdSimulation1D::conservativeUpdate(std::string const &timeChoice)
                                                 + (localTimeStep / _deltaX)
                                                 * (_flux.momentum[i][j] - _flux.momentum[i+1][j]);
 
-            // Update magnetic field
-            // Compute the modulos
-            int j1 = _mod3(j+1), j2 = _mod3(j+2);
-            std::vector<size_t> j2Offset(3, 0), j1Offset(3, 0);
-            j1Offset[j1] = 1;
-            j2Offset[j2] = 1;
+            // =================================================================
+            // Old version of updating magnetic fields using mod function
+            // =================================================================
+            // // Update magnetic field
+            // // Compute the modulos
+            // int j1 = _mod3(j+1), j2 = _mod3(j+2);
+            // std::vector<size_t> j2Offset(3, 0), j1Offset(3, 0);
+            // j1Offset[j1] = 1;
+            // j2Offset[j2] = 1;
 
-            destinationGrid->magnetic[i][j] = grid.magnetic[i][j]
-                                                + (localTimeStep / deltas[j2])
-                                                * (_edgeFields[i+j2Offset[0]][1+j2Offset[1]][1+j2Offset[2]][j1] - _edgeFields[i][1][1][j1])
-                                                - (localTimeStep / deltas[j1])
-                                                * (_edgeFields[i+j1Offset[0]][1+j1Offset[1]][1+j1Offset[2]][j2] - _edgeFields[i][1][1][j2]);
+            // destinationGrid->magnetic[i][j] = grid.magnetic[i][j]
+            //                                     + (localTimeStep / deltas[j2])
+            //                                     * (_edgeFields[i+j2Offset[0]][1+j2Offset[1]][1+j2Offset[2]][j1] - _edgeFields[i][1][1][j1])
+            //                                     - (localTimeStep / deltas[j1])
+            //                                     * (_edgeFields[i+j1Offset[0]][1+j1Offset[1]][1+j1Offset[2]][j2] - _edgeFields[i][1][1][j2]);
+            // =================================================================
+            // end old version of magnetic update
+            // =================================================================
         }
     }
     // Release pointer
