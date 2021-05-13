@@ -5,7 +5,7 @@ temp.py
 test.h
 *.csv
 doxygen-*
-integrate_3d_vl.c
+Athena-Code/*
 
 # Image & Video files #
 #######################
