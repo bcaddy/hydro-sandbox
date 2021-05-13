@@ -12,6 +12,7 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 
 #include "HlldRiemannSolver.h"
 #include "mhdUtilities.h"
@@ -171,6 +172,7 @@ void HlldRiemannSolver::_computeVandBStar(double const &density,
         velocityStar = velocity;
         magneticStar[1] = 0.;
         magneticStar[2] = 0.;
+        std::cout << "Degenerate case" << std::endl;
     }
     else
     {
