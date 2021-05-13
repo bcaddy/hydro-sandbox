@@ -166,6 +166,12 @@ void HlldRiemannSolver::_computeVandBStar(double const &density,
                 and (magnetic[0] * magnetic[0] >= _gamma * pressure)
                 and (magnetic[1] == 0.)
                 and (magnetic[2] == 0.);
+
+    // Athena version
+    // double smallNumber = 1.E-8;
+    // // todo replace 0.6 with Pressure total Star
+    // _divZero = std::abs(density * (sSide - velocity[0]) * (sSide - _sM) - (magnetic[0]*magnetic[0])) < smallNumber * 0.6;
+
     if ( _divZero)
     {
         // This is the divide-by-zero case
