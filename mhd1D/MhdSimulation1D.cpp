@@ -261,8 +261,8 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             lFacePosition  = (i - grid.numGhostCells) * _deltaX + offset;
             double centerPosition = lFacePosition + _deltaX/2.;
 
-            double faceSine   = std::sin(twoPi * lFacePosition);
-            double centerSine = std::sin(twoPi * centerPosition);
+            double faceSine   = (std::sin(twoPi * lFacePosition)  > 0.0)? 1.: 0.;
+            double centerSine = (std::sin(twoPi * centerPosition) > 0.0)? 1.: 0.;
 
             // Set the state at this grid point
             grid.density[i]     = backgroundDen    + amp * rightVecDen    * centerSine;
@@ -694,9 +694,9 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
 
         velocity = computeVelocity(workingGrid->momentum[i], workingGrid->density[i]);
 
-        eRef[0]  = velocity[2] * workingGrid->magnetic[i][1] - velocity[1] * workingGrid->magnetic[i][2];
-        eRef[1]  = velocity[0] * workingGrid->magnetic[i][2] - velocity[2] * workingGrid->magnetic[i][0];
-        eRef[2]  = velocity[1] * workingGrid->magnetic[i][0] - velocity[0] * workingGrid->magnetic[i][1];
+        eRef[0]  = velocity[2] * _magCentered[i][1] - velocity[1] * _magCentered[i][2];
+        eRef[1]  = velocity[0] * _magCentered[i][2] - velocity[2] * _magCentered[i][0];
+        eRef[2]  = velocity[1] * _magCentered[i][0] - velocity[0] * _magCentered[i][1];
 
 
         // Now assign the values to the correct parts of the 4D vector
