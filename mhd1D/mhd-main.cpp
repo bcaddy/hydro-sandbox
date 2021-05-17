@@ -139,6 +139,31 @@ int main()
 
         // Increment the step number
         step++;
+
+
+        // Check conservation, order density, momentum, energy, magnetic
+        // std::vector<double> conserved(8,0);
+        // for (size_t i = 3  ; i < numRealCells + 3; i++)
+        // {
+        //     conserved[0] += sim.grid.density[i];
+        //     conserved[1] += sim.grid.momentum[i][0];
+        //     conserved[2] += sim.grid.momentum[i][1];
+        //     conserved[3] += sim.grid.momentum[i][2];
+        //     conserved[4] += sim.grid.energy[i];
+        //     conserved[5] += sim.grid.magnetic[i][0];
+        //     conserved[6] += sim.grid.magnetic[i][1];
+        //     conserved[7] += sim.grid.magnetic[i][2];
+        // }
+        // std::cout <<
+        // "total density    " << conserved[0] << std::endl <<
+        // "total momentum x " << conserved[1] << std::endl <<
+        // "total momentum y " << conserved[2] << std::endl <<
+        // "total momentum z " << conserved[3] << std::endl <<
+        // "total energy     " << conserved[4] << std::endl <<
+        // "total magnetic x " << conserved[5] << std::endl <<
+        // "total magnetic y " << conserved[6] << std::endl <<
+        // "total magnetic z " << conserved[7] << std::endl;
+
     };
     // ===== End of evolution loop =============================================
 
