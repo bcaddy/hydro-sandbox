@@ -309,7 +309,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                                              computeMomentum(backgroundVel[2], backgroundDen)};
 
         // Set the wave amplitude
-        double amp = 0.1;//1.E-6;
+        double amp = 1.;//1.E-6;
 
         // Choose left or right moving wave
         double lrSign = (initialConditionsKind.substr(10,1) == "R")? 1.: -1.;
@@ -495,7 +495,7 @@ void MhdSimulation1D::_piecewiseLinearReconstruction(Grid1D const &workingGrid)
         pressure[i] = computePressure(workingGrid.energy[i],
                                       workingGrid.density[i],
                                       tempVec,
-                                      workingGrid.magnetic[i],
+                                      _magCentered[i],
                                       _gamma);
 
         // Assign velocity and magnetic field vectors. Yes I know this is hacky
