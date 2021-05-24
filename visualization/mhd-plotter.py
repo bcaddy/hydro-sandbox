@@ -162,26 +162,6 @@ def main():
     pad = np.max(np.abs([ieData.min(), ieData.max()])) * 0.05
     ieLowLim = ieData.min() - pad
     ieHighLim = ieData.max() + pad
-
-    # Set pre-determined limits
-    # densityLowLim    = -2.
-    # densityHighLim   = 2.
-    # velocityLowLimX  = -2.
-    # velocityHighLimX = 2.
-    # velocityLowLimY  = -2.
-    # velocityHighLimY = 2.
-    # velocityLowLimZ  = -2.
-    # velocityHighLimZ = 2.
-    # magneticLowLimX  = -2.
-    # magneticHighLimX = 2.
-    # magneticLowLimY  = -2.
-    # magneticHighLimY = 2.
-    # magneticLowLimZ  = -2.
-    # magneticHighLimZ = 2.
-    # pressureLowLim   = -2.
-    # pressureHighLim  =2.
-    # ieLowLim         = -2.
-    # ieHighLim        = 2.
     # ==========================================================================
     # End Computing Limits
     # Setup Plots
