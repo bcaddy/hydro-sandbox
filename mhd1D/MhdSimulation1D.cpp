@@ -261,8 +261,8 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             lFacePosition  = (i - grid.numGhostCells) * _deltaX + offset;
             double centerPosition = lFacePosition + _deltaX/2.;
 
-            double faceSine   = (std::sin(twoPi * lFacePosition)  > 0.0)? 1.: 0.;
-            double centerSine = (std::sin(twoPi * centerPosition) > 0.0)? 1.: 0.;
+            double faceSine   = std::sin(twoPi * lFacePosition);
+            double centerSine = std::sin(twoPi * centerPosition);
 
             // Set the state at this grid point
             grid.density[i]     = backgroundDen    + amp * rightVecDen    * centerSine;
@@ -295,6 +295,10 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             grid.magnetic[i][2] = double(i);
             grid.energy[i]      = computeEnergy(double(i), double(i), grid.momentum[i], grid.magnetic[i], _gamma);
         }
+    }
+    else if (initialConditionsKind == "squareWave")
+    {
+
     }
     else
     {
@@ -761,10 +765,10 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
                     // =========================================================
                     _edgeFields[i][j][k][0] = 0.25 * (
                     // Sum the magnetic fluxes
-                        - magFlux[i][j]  [k]  [1][0]
-                        + magFlux[i][j]  [k]  [2][0]
-                        - magFlux[i][j]  [k-1][1][0]
-                        + magFlux[i][j-1][k]  [2][0]
+                        - magFlux[i][j  ][k  ][1][0]
+                        + magFlux[i][j  ][k  ][2][0]
+                        - magFlux[i][j  ][k-1][1][0]
+                        + magFlux[i][j-1][k  ][2][0]
                     // The slopes in the y direction
                         // The -1/4 slopes
                         + _ctSlope(electricCentered[i][j][k-1][0],

@@ -69,31 +69,37 @@ void HlldRiemannSolver::riemannMain(double const &densityL,
     //   }
     if (posOverT < _sL)
     {
+        // L state
         _computeStandardFluxes(_densityL, _velocityL, _pressureTotL, _magneticL, _energyL,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sL <= posOverT) and (posOverT < _sStarL) )
     {
+        // L* state
         _computeStarFluxes(_densityL, _velocityL, _pressureL, _pressureTotL, _magneticL, _energyL, _sL, _densityStarL,
                            densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sStarL <= posOverT) and (posOverT < _sM) )
     {
+        // L** state
         _computeDblStarFluxes(_magneticL, _sStarL, _densityStarL, -1.0,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sM <= posOverT) and (posOverT < _sStarR) )
     {
+        // R** state
         _computeDblStarFluxes(_magneticR, _sStarR, _densityStarR, 1.0,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if ( (_sStarR <= posOverT) and (posOverT <= _sR) )
     {
+        // R* state
         _computeStarFluxes(_densityR, _velocityR, _pressureR, _pressureTotR, _magneticR, _energyR, _sR, _densityStarR,
                            densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
     else if (_sR < posOverT)
     {
+        // R state
         _computeStandardFluxes(_densityR, _velocityR, _pressureTotR, _magneticR, _energyR,
                                densityFlux, momentumFlux, magneticFlux, energyFlux);
     }
