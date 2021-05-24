@@ -312,7 +312,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
         double amp = 0.1;//1.E-6;
 
         // Choose left or right moving wave
-        double lrSign = (initialConditionsKind.substr(11,1) == "R")? 1.: -1.;
+        double lrSign = (initialConditionsKind.substr(10,1) == "R")? 1.: -1.;
 
         // Choose the correct right eigenvector
         double rightVecEnergy, rightVecDen;
