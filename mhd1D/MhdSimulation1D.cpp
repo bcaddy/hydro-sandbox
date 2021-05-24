@@ -296,9 +296,58 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
             grid.energy[i]      = computeEnergy(double(i), double(i), grid.momentum[i], grid.magnetic[i], _gamma);
         }
     }
-    else if (initialConditionsKind == "squareWave")
+    else if (initialConditionsKind.substr(0,10) == "squareWave")
     {
+        // Setup the background state
+        double backgroundPres = 3./5., backgroundDen = 1.;
+        std::vector<double> backgroundVel = {0.,0.,0.},
+                            backgroundMag = {1., std::sqrt(2.), 0.5};
 
+        double backgroundEnergy = computeEnergy(backgroundPres, backgroundDen, backgroundVel, backgroundMag, _gamma);
+        std::vector<double> backgroundMom = {computeMomentum(backgroundVel[0], backgroundDen),
+                                             computeMomentum(backgroundVel[1], backgroundDen),
+                                             computeMomentum(backgroundVel[2], backgroundDen)};
+
+        // Set the wave amplitude
+        double amp = 0.1;//1.E-6;
+
+        // Choose left or right moving wave
+        double lrSign = (initialConditionsKind.substr(11,1) == "R")? 1.: -1.;
+
+        // Choose the correct right eigenvector
+        double rightVecEnergy, rightVecDen;
+        std::vector<double> rightVecMom(3);
+
+        // Set eigenvector
+        rightVecDen    = 1.;
+        rightVecMom    = {lrSign, 0., 0.};
+        rightVecEnergy = 0.5;
+
+        backgroundVel[0] = lrSign;
+        backgroundMom[0] = computeMomentum(backgroundVel[0], backgroundDen);
+        backgroundEnergy = computeEnergy(backgroundPres, backgroundDen, backgroundVel, backgroundMag, _gamma);
+
+        for (size_t i = grid.numGhostCells;
+            i < (grid.numTotCells - grid.numGhostCells); i++)
+        {
+            // Set step
+            double step=0;
+            if ( (grid.numTotCells/3 < i) and (i < 2*grid.numTotCells/3) )
+            {
+                step = 1.;
+            }
+
+            // Set the state at this grid point
+            grid.density[i]     = backgroundDen    + amp * rightVecDen    * step;
+            grid.momentum[i][0] = backgroundMom[0] + amp * rightVecMom[0] * step;
+            grid.momentum[i][1] = backgroundMom[1];
+            grid.momentum[i][2] = backgroundMom[2];
+            grid.magnetic[i][0] = backgroundMag[0];
+            grid.magnetic[i][1] = backgroundMag[1];
+            grid.magnetic[i][2] = backgroundMag[2];
+            grid.energy[i]      = backgroundEnergy + amp * rightVecEnergy * step;
+        }
+        //
     }
     else
     {

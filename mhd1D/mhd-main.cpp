@@ -54,7 +54,7 @@ int main()
     double const cfl                   = 0.4;
     double const maxTime               = 0.1; //0.1 for B&W shock tube, 0.2 for D&W and sod
     size_t const numRealCells          = 10;
-    std::string  initialConditionsKind = "singleWaveCR";
+    std::string  initialConditionsKind = "squareWaveR";
     std::string  boundaryConditions    = "periodic";
     std::string  reconstructionKind    = "PLM";
     std::string  limiterKind           = "MC";  // Options: zeroSlope, centerDiff, minMod, or MC
