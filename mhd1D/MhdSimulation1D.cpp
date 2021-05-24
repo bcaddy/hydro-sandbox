@@ -638,7 +638,10 @@ void MhdSimulation1D::solveRiemann()
         {
             for (int k = 0; k < 3; k++)
             {
-                _ctVelocities[i][j][k][0] = _riemannSolver->getVelocityState();
+                for (int ii = 0; ii < 3; ii++)
+                {
+                    _ctVelocities[i][j][k][ii] = _riemannSolver->getVelocityState();
+                }
             }
         }
     }
