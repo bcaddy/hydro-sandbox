@@ -309,7 +309,7 @@ void MhdSimulation1D::_setInitialConditions(std::string const &initialConditions
                                              computeMomentum(backgroundVel[2], backgroundDen)};
 
         // Set the wave amplitude
-        double amp = 1.;//1.E-6;
+        double amp = 0.1;//1.E-6;
 
         // Choose left or right moving wave
         double lrSign = (initialConditionsKind.substr(10,1) == "R")? 1.: -1.;
@@ -735,7 +735,7 @@ void MhdSimulation1D::ctElectricFields(std::string const &timeChoice)
     // [x position]
     // [y position]
     // [z position]
-    // [the magnetic field in each direction, x, y, and z respectively]
+    // [the centered electric field in each direction, x, y, and z respectively]
     stdVector4D electricCentered(grid.numTotCells, stdVector3D(
                                                 3, stdVector2D(
                                                 3, stdVector1D(

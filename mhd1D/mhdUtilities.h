@@ -203,7 +203,7 @@ namespace mhdUtilities
                                 std::vector<double> const &magnetic,
                                 double const &gamma)
         {
-            double energy = (pressure/(gamma - 1))
+            double energy = (pressure/(gamma - 1.))
                             + 0.5 * density * std::abs(velocity[0]*velocity[0] + ((velocity[1]*velocity[1]) + (velocity[2]*velocity[2])))
                             + 0.5 * std::abs(magnetic[0]*magnetic[0] + ((magnetic[1]*magnetic[1]) + (magnetic[2]*magnetic[2])));
 
