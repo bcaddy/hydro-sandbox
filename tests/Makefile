@@ -14,24 +14,36 @@ cppDebug = g++ \
 cppPerf = g++ -std=c++17 -O3
 cppCompiler = ${cppDebug} #the version used
 
-# list of binaries to clean as well
-binaries = euler-solver.exe test-Riemann.exe
+# Linking in google test. Linking `gtest_main` implicitly includes GTests
+# default main function. On some builds/distributions `gtest_main` includes the
+# contents of `gtest` as well but that isn't something you can count on so you
+# should include/link both
+GTEST_ROOT = /usr/local/Cellar/googletest/1.11.0
+INCLUDES = -L$(GTEST_ROOT)/lib \
+           -lgtest \
+		   -lgmock \
+		   -lgtest_main \
+		   -I$(GTEST_ROOT)/include/gtest \
+		   -I$(GTEST_ROOT)/include/gmock
 
-Helper_SRC = Grid1D.cpp Simulation1D.cpp ExactRiemannSolver.cpp HllcRiemannSolver.cpp
-Helper_OBJ = $(Helper_SRC:%.cpp=%.o)
+# list of other files to clean as well
+CLEAN_LIST =
+
+SRC = $(wildcard *.cpp)
+OBJ = $(SRC:%.cpp=%.o)
 
 # To switch between compiling the whole program every time and only compiling
-# what has changed simply replace NAME.cpp with NAME.o and $(Helper_SRC) with
-# $(Helper_OBJ). This will generate a lot of object files though
-euler-solver: euler-main.cpp $(Helper_SRC)
-	$(cppCompiler) $? -o $@.exe
+# what has changed simply replace NAME.cpp with NAME.o and $(SRC) with
+# $(OBJ). This will generate a lot of object files though
+HydroUtilities-tests.exe: HydroUtilities-tests.o $(OBJ)
+	$(cppCompiler) $? -o $@ $(INCLUDES)
 
 %.o: %.cpp
 	$(cppCompiler) -c $<
 
 clean:
 	@echo "Cleaning up..."
-	@rm -f $(binaries)
+	@rm -f $(CLEAN_LIST)
 	@rm -f *.mod
 	@rm -f *.o
 	@rm -rf *.gch
