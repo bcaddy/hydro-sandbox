@@ -39,4 +39,19 @@ TEST(SoundSpeedTest, HandlesNegativeValues)
     // This test just tests that the proper type of exception is thrown, not
     // that the message is also correct.
     EXPECT_THROW(soundSpeed(-1,1,1), std::runtime_error);
+
+    // If you want to check the message as well you can do this
+    // this tests _that_ the expected exception is thrown
+    EXPECT_THROW({
+        try
+        {
+            soundSpeed(-1,1,1);
+        }
+        catch( const std::runtime_error& errMessage )
+        {
+            // and this tests that it has the correct message
+            EXPECT_STREQ( "Complex valued sound speed detected. Exiting.", errMessage.what() );
+            throw;
+        }
+    }, std::runtime_error );
 }

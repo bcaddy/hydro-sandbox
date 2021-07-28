@@ -4,6 +4,7 @@
         "Advect",
         "Eigens",
         "Miyoshi",
+        "STREQ",
         "Vhat",
         "arange",
         "diaph",
