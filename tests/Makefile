@@ -9,6 +9,8 @@ cppDebug = g++ \
 		   -Wpedantic \
 		   -fasynchronous-unwind-tables \
 		   -fexceptions \
+		   -fprofile-arcs \
+		   -ftest-coverage \
 		   -D_GLIBCXX_ASSERTIONS \
 		   -g
 cppPerf = g++ -std=c++17 -O3
@@ -49,6 +51,11 @@ clean:
 	@rm -rf *.gch
 	@rm -f *.exe
 	@rm -rf *.dSYM
+	@rm -f *.gcda
+	@rm -f *.gcno
+	@rm -rf CODE_COVERAGE
+	@rm -f *.info
+	@rm -f *.gcov
 	@rm -f a.out
 	@rm -rf doxygen-html
 	@echo "Done"

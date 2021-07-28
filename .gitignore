@@ -28,6 +28,9 @@ doxygen-*
 a.out
 *.dSYM
 *.gch
+*.gcda
+*.gcno
+*.gcov
 
 # Packages #
 ############
