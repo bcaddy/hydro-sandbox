@@ -35,7 +35,7 @@ OBJ = $(SRC:%.cpp=%.o)
 # To switch between compiling the whole program every time and only compiling
 # what has changed simply replace NAME.cpp with NAME.o and $(SRC) with
 # $(OBJ). This will generate a lot of object files though
-HydroUtilities-tests.exe: HydroUtilities-tests.o $(OBJ)
+Tests.exe: $(OBJ)
 	$(cppCompiler) $? -o $@ $(INCLUDES)
 
 %.o: %.cpp
