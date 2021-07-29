@@ -28,9 +28,13 @@ TEST(AlfvenSpeedTest, HandlesProperInput)
     EXPECT_DOUBLE_EQ(alfvenSpeed(1.1, 2.1), 0.75907211527658969);
 
     // EXPECT_NEAR(val1, val2, absolute error) returns a pass if the two values
-    // are within the absolute error margin. That margin can be zero
+    // are within the absolute error margin. That margin can be zero.
     EXPECT_NEAR(alfvenSpeed(1.1, 2.1), 0.75907211527658969,
                                        0.0);
+
+    // EXPECT_EQ does a bitwise comparison. For FP numbers this should be
+    // equivalent to EXPECT_NEAR with the margin set to zero
+    EXPECT_EQ(alfvenSpeed(1.1, 2.1), 0.75907211527658969);
 }
 
 TEST(AlfvenSpeedTest, HandlesNegativeValues)
