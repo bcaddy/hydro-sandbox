@@ -14,27 +14,14 @@
 #include <stdlib.h>
 #include <future>
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <stdexcept>
+#include <algorithm>
 
 // Include GoogleTest and related libraries/headers
 #include <gtest/gtest.h>
 
-
-std::string file2String(const char *filename)
-{
-  std::ifstream in(filename, std::ios::in | std::ios::binary);
-  if (in)
-  {
-    std::ostringstream contents;
-    contents << in.rdbuf();
-    in.close();
-    return(contents.str());
-  }
-  throw std::invalid_argument("File not found");
-}
+// Local includes
+#include "testUtilities.h"
+using namespace testUtilities;
 
 // Lets start testing
 TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
@@ -50,7 +37,27 @@ TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
     std::string fidDensity  = file2String("System-Test-Data/sod-VL-HLLC/Density.csv");
     std::string fidEnergy   = file2String("System-Test-Data/sod-VL-HLLC/Energy.csv");
     std::string fidMomentum = file2String("System-Test-Data/sod-VL-HLLC/Momentum.csv");
+    size_t numFidTimesteps  = std::count(fidDensity.begin(), fidDensity.end(), '\n') - 1;
 
-    sodProcess.get();  // Wait for sodProcess to finish
-    EXPECT_EQ(1,1);
+    // Wait for sodProcess to finish
+    sodProcess.get();
+
+    // Load the data and compute the time steps from the test data
+    std::string testDensity  = file2String("../data/Density.csv");
+    std::string testEnergy   = file2String("../data/Energy.csv");
+    std::string testMomentum = file2String("../data/Momentum.csv");
+    size_t numTestTimesteps  = std::count(testDensity.begin(), testDensity.end(), '\n') - 1;
+
+    // Now let's do the actual testings
+    // This could be broken up into two tests. One for time steps and one for
+    // content equality but I think it would be better to keep them as is and
+    // stop the string equality tests from running if the time step equality fails
+    // =========================================================================
+    // First assert that the number of time steps is equal. If not there's no
+    // point in running the string comparison
+    ASSERT_EQ(numTestTimesteps, numFidTimesteps) << "Time step equality failed";
+
+    EXPECT_EQ(testDensity,  fidDensity);
+    EXPECT_EQ(testEnergy,   fidEnergy);
+    EXPECT_EQ(testMomentum, fidMomentum);
 }
