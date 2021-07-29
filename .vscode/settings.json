@@ -17,6 +17,8 @@
     ],
     "files.associations": {
         "nanorc": "bat",
+        "*.summit": "shellscript",
+        "*.crc": "shellscript",
         "iostream": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -97,7 +99,8 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "semaphore": "cpp"
     },
     "python.pythonPath": "/ihome/crc/install/python/anaconda3.8-2020.11/bin/python"
 }
