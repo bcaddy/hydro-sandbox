@@ -43,4 +43,21 @@ std::string file2String(const char *filename)
   throw std::invalid_argument("File not found");
 }
 // =============================================================================
+
+// =============================================================================
+// Functions for testing ifdef statements in Cholla
+#ifdef  FUNC_1
+int ifdefTester()
+{
+  return 1;
+}
+#endif  //FUNC_1
+
+#ifdef  FUNC_2
+int ifdefTester()
+{
+  return 2;
+}
+#endif  //FUNC_2
+// =============================================================================
 }

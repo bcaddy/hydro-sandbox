@@ -28,6 +28,10 @@ INCLUDES = -L$(GTEST_ROOT)/lib \
 		   -I$(GTEST_ROOT)/include/gtest \
 		   -I$(GTEST_ROOT)/include/gmock
 
+# Defines
+DEFINES = -DFUNC_1
+# DEFINES = -DFUNC_2
+
 # list of other files to clean as well
 CLEAN_LIST =
 
@@ -38,10 +42,10 @@ OBJ = $(SRC:%.cpp=%.o)
 # what has changed simply replace NAME.cpp with NAME.o and $(SRC) with
 # $(OBJ). This will generate a lot of object files though
 Tests.exe: $(OBJ)
-	$(cppCompiler) $? -o $@ $(INCLUDES)
+	$(cppCompiler) $? -o $@ $(INCLUDES) $(DEFINES)
 
 %.o: %.cpp
-	$(cppCompiler) -c $<
+	$(cppCompiler) -c $< $(DEFINES)
 
 clean:
 	@echo "Cleaning up..."
