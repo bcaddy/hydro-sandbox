@@ -1,7 +1,7 @@
 /*!
 * \file mhdUtilities-tests.cpp
 * \author Robert 'Bob' Caddy (rvc@pitt.edu)
-* \brief Test the functions within mhd1D/mhdoUtilities.h
+* \brief Test the functions within mhd1D/mhdUtilities.h
 * \version 0.1
 * \date 2021-07-27
 *
