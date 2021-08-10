@@ -10,6 +10,22 @@
             "macFrameworkPath": [],
             "compilerPath": "/usr/local/bin/gcc-11",
             "intelliSenseMode": "macos-gcc-x64"
+        },
+        {
+            "name": "H2P",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/ihome/crc/install/googletest/1.11.0/include/"
+            ],
+            "defines": [],
+            "compilerPath": "/ihome/crc/install/gcc/8.2.0/bin/g++",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "/ihome/crc/install/googletest/1.11.0/include/"
+                ]
+            }
         }
     ],
     "version": 4
