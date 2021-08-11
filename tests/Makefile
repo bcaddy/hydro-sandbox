@@ -1,35 +1,44 @@
 #.DEFAULT_GOAL := generate #choose the default goal instead of it being the first one
 .PHONY: clean #tells make that these goals are not files but some other thing
 
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Darwin)
+	cppCompiler = /usr/local/bin/g++-11
+else
+	cppCompiler = g++
+endif
+
 # compiler options, debug and performance
-cppDebug = g++ \
-           -std=c++17 \
+cppDebug = -std=c++17 \
 		   -Wall \
 		   -Wextra \
 		   -Wpedantic \
 		   -fasynchronous-unwind-tables \
 		   -fexceptions \
-		   -fprofile-arcs \
-		   -ftest-coverage \
 		   -D_GLIBCXX_ASSERTIONS \
 		   -g
+# Add these back later when it's code coverage time
+#    -fprofile-arcs \
+#    -ftest-coverage \
 cppPerf = g++ -std=c++17 -O3
-cppCompiler = ${cppDebug} #the version used
+cppFlags = ${cppDebug} #the version used
 
 # Linking in google test. Linking `gtest_main` implicitly includes GTests
 # default main function. On some builds/distributions `gtest_main` includes the
 # contents of `gtest` as well but that isn't something you can count on so you
 # should include/link both
-GTEST_ROOT = /usr/local/Cellar/googletest/1.11.0
-INCLUDES = -L$(GTEST_ROOT)/lib \
-           -lgtest \
-		   -lgmock \
+# GTEST_ROOT = /usr/local/Cellar/googletest/1.11.0
+GTEST_ROOT = ${GOOGLETEST_ROOT}
+# GTEST_ROOT = /ihome/crc/install/googletest/1.11.0
+# GTEST_ROOT = OLCF_GOOGLETEST_ROOT
+INCLUDES = -lpthread \
+		   -L$(GTEST_ROOT)/lib64 \
+		   -lgtest \
 		   -lgtest_main \
-		   -I$(GTEST_ROOT)/include/gtest \
-		   -I$(GTEST_ROOT)/include/gmock
+		   -I$(GTEST_ROOT)/include
 
 # Defines
-DEFINES = -DFUNC_1
+# DEFINES = -DFUNC_1
 # DEFINES = -DFUNC_2
 
 # list of other files to clean as well
@@ -42,10 +51,11 @@ OBJ = $(SRC:%.cpp=%.o)
 # what has changed simply replace NAME.cpp with NAME.o and $(SRC) with
 # $(OBJ). This will generate a lot of object files though
 Tests.exe: $(OBJ)
-	$(cppCompiler) $? -o $@ $(INCLUDES) $(DEFINES)
+	$(cppCompiler) $(cppFlags) $? -o $@ $(INCLUDES) $(DEFINES)
+
 
 %.o: %.cpp
-	$(cppCompiler) -c $< $(DEFINES)
+	$(cppCompiler) $(cppFlags)    -c $< $(INCLUDES) $(DEFINES)
 
 clean:
 	@echo "Cleaning up..."

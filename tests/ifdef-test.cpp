@@ -13,22 +13,22 @@
 #include <gtest/gtest.h>
 
 // Local includes
-#include "testUtilities.h"
-using namespace testUtilities;
+#include "testingUtilities.h"
+using namespace testingUtilities;
 
 // Lets start testing
-TEST(ifdef, testsFuncOne)
-{
+// TEST(ifdef, testsFuncOne)
+// {
 
-    // EXPECT_EQ does a bitwise comparison. For FP numbers this should be
-    // equivalent to EXPECT_NEAR with the margin set to zero
-    EXPECT_EQ(ifdefTester(), 1);
-}
+//     // EXPECT_EQ does a bitwise comparison. For FP numbers this should be
+//     // equivalent to EXPECT_NEAR with the margin set to zero
+//     EXPECT_EQ(ifdefTester(), 1);
+// }
 
-TEST(ifdef, testsFuncTwo)
-{
+// TEST(ifdef, testsFuncTwo)
+// {
 
-    // EXPECT_EQ does a bitwise comparison. For FP numbers this should be
-    // equivalent to EXPECT_NEAR with the margin set to zero
-    EXPECT_EQ(ifdefTester(), 2);
-}
+//     // EXPECT_EQ does a bitwise comparison. For FP numbers this should be
+//     // equivalent to EXPECT_NEAR with the margin set to zero
+//     EXPECT_EQ(ifdefTester(), 2);
+// }

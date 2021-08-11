@@ -20,8 +20,8 @@
 #include <gtest/gtest.h>
 
 // Local includes
-#include "testUtilities.h"
-using namespace testUtilities;
+#include "testingUtilities.h"
+using namespace testingUtilities;
 
 // Lets start testing
 TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
