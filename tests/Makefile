@@ -1,13 +1,13 @@
 #.DEFAULT_GOAL := generate #choose the default goal instead of it being the first one
 .PHONY: clean #tells make that these goals are not files but some other thing
 
-UNAME := $(shell uname -s)
-ifeq ($(UNAME),Darwin)
-	cppCompiler = /usr/local/bin/g++-11
-else
-	cppCompiler = g++
-endif
-
+# UNAME := $(shell uname -s)
+# ifeq ($(UNAME),Darwin)
+# 	cppCompiler = /usr/local/bin/g++-11
+# else
+# 	cppCompiler = g++
+# endif
+cppCompiler = g++
 # compiler options, debug and performance
 cppDebug = -std=c++17 \
 		   -Wall \
