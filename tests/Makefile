@@ -27,15 +27,30 @@ cppFlags = ${cppDebug} #the version used
 # default main function. On some builds/distributions `gtest_main` includes the
 # contents of `gtest` as well but that isn't something you can count on so you
 # should include/link both
-# GTEST_ROOT = /usr/local/Cellar/googletest/1.11.0
-GTEST_ROOT = ${GOOGLETEST_ROOT}
-# GTEST_ROOT = /ihome/crc/install/googletest/1.11.0
-# GTEST_ROOT = OLCF_GOOGLETEST_ROOT
+HOST=$(shell hostname -f))
+ifneq (,$(findstring crc,$(HOST)))
+    # We're on CRC
+	GTEST_ROOT = ${GOOGLETEST_ROOT}
+	LIBNAME = lib64
+else ifneq (,$(findstring Capt-Janeway,$(HOST)))
+    # We're on Janeway
+	GTEST_ROOT = /usr/local/Cellar/googletest/1.11.0
+	LIBNAME = lib
+else ifneq (,$(findstring summit.olcf.ornl.gov,$(HOST)))
+    # We're on Summit
+	GTEST_ROOT = OLCF_GOOGLETEST_ROOT
+	LIBNAME = lib64
+else
+    # Not found
+	@echo "Host not found. Can't link to Googleetest"
+endif
+
+
 INCLUDES = -lpthread \
-		   -L$(GTEST_ROOT)/lib64 \
 		   -lgtest \
 		   -lgtest_main \
-		   -I$(GTEST_ROOT)/include
+		   -I$(GTEST_ROOT)/include \
+		   -L$(GTEST_ROOT)/$(LIBNAME)
 
 # Defines
 # DEFINES = -DFUNC_1
