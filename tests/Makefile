@@ -40,9 +40,13 @@ else ifneq (,$(findstring summit.olcf.ornl.gov,$(HOST)))
     # We're on Summit
 	GTEST_ROOT = OLCF_GOOGLETEST_ROOT
 	LIBNAME = lib64
+else ifneq (,$(findstring summit.olcf.ornl.gov,$(HOST)))
+    # We're on Gihub
+	GTEST_ROOT = /usr/
+	LIBNAME = lib
 else
     # Not found
-	@echo "Host not found. Can't link to Googleetest"
+@echo "Host not found. Can't link to Googleetest"
 endif
 
 
