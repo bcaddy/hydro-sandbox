@@ -4,14 +4,14 @@
 # Run all the operation to find code coverag and generate an html report
 
 #set -x #echo all commands
-
+make clean
 make
 
 ./Tests.exe
 
-gcov *.cpp
+gcov --relative-only *.cpp
 
-lcov --capture --no-external --directory . --base-directory /Users/Bob/Desktop/PhD-Research/hydro-sandbox --output-file gtest_coverage.info
+lcov --capture --directory . --output-file gtest_coverage.info
 
 genhtml gtest_coverage.info --output-directory CODE_COVERAGE
 

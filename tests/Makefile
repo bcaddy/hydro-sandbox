@@ -16,10 +16,10 @@ cppDebug = -std=c++17 \
 		   -fasynchronous-unwind-tables \
 		   -fexceptions \
 		   -D_GLIBCXX_ASSERTIONS \
-		   -g
-# Add these back later when it's code coverage time
+		   -g \
+		   --coverage
 #    -fprofile-arcs \
-#    -ftest-coverage \
+#    -ftest-coverage
 cppPerf = g++ -std=c++17 -O3
 cppFlags = ${cppDebug} #the version used
 
