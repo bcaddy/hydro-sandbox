@@ -19,9 +19,7 @@ jobs:
     - name: Install gtest
       uses: MarkusJx/googletest-installer@v1.1
     - uses: actions/checkout@v1
-    - name: print locations
-      run: ls /usr/lib; echo ''; ls /usr/local; echo ''; hostname -f
-#    - name: make
-#      run: make
+    - name: make
+      run: make
 #    - name: run test
 #      run: ./Tests.exe
