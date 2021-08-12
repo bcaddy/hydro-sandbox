@@ -13,7 +13,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./app
+        working-directory: ./tests
 
     steps:
     - uses: actions/checkout@v2
