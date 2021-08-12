@@ -11,10 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./app
+
     steps:
     - uses: actions/checkout@v2
-    - name: cd-test
-      run: cd tests
     - name: make
       run: make
     - name: run-tests
