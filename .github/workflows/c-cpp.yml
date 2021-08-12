@@ -16,8 +16,8 @@ jobs:
         working-directory: ./tests
 
     steps:
-    - name: Install gtest manually
-      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+    - name: Install gtest
+      uses: MarkusJx/googletest-installer@v1.1
     - uses: actions/checkout@v1
     - name: print locations
       run: ls /usr/lib; echo ''; ls /usr/local; echo ''; hostname -f
