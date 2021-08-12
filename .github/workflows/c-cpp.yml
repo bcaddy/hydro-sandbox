@@ -13,11 +13,15 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./euler1D-VL
+        working-directory: ./tests
 
     steps:
-    - uses: actions/checkout@v2
-    - name: make
-      run: make
-    - name: run euler solver
-      run: ./euler-solver.exe
+    - name: Install gtest manually
+      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+    - uses: actions/checkout@v1
+    - name: print locations
+      run: ls /usr/lib; echo ''; ls /usr/local; echo ''; hostname -f
+#    - name: make
+#      run: make
+#    - name: run test
+#      run: ./Tests.exe
