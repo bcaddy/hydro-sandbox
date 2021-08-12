@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/local/Cellar/googletest/1.11.0/include/"
             ],
-            "defines": [],
+            "defines": ["FUNC_1",
+                        "FUNC_2"],
             "macFrameworkPath": [],
             "compilerPath": "/usr/local/bin/gcc-11",
             "intelliSenseMode": "macos-gcc-x64"
