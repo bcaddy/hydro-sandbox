@@ -13,11 +13,11 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./tests
+        working-directory: ./euler1D-VL
 
     steps:
     - uses: actions/checkout@v2
     - name: make
       run: make
-    - name: run-tests
-      run: ./Tests.exe
+    - name: run euler solver
+      run: ./euler-solver.exe
