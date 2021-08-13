@@ -56,7 +56,7 @@ TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
     // point in running the string comparison
     ASSERT_EQ(numTestTimesteps, numFidTimesteps) << "Time step equality failed";
 
-    EXPECT_EQ(testDensity,  fidDensity);
-    EXPECT_EQ(testEnergy,   fidEnergy);
-    EXPECT_EQ(testMomentum, fidMomentum);
+    EXPECT_TRUE(testDensity  == fidDensity)  << "Test density is not equal to fiducial values.";
+    EXPECT_TRUE(testEnergy   == fidEnergy)   << "Test energy is not equal to fiducial values.";
+    EXPECT_TRUE(testMomentum == fidMomentum) << "Test momentum is not equal to fiducial values.";
 }
