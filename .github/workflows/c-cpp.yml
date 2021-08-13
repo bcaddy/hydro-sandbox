@@ -7,8 +7,20 @@ on:
     branches: [ testing-prototype ]
 
 jobs:
-  build:
+  build_euler1D-VL:
+    runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./euler1D-VL
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: make
+      run: make
+
+  build_tests:
+    needs: build_euler1D-VL
     runs-on: ubuntu-latest
 
     defaults:
