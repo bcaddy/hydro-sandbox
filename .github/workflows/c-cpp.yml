@@ -44,6 +44,8 @@ jobs:
         working-directory: ./tests
         
     steps:
+    - name: show files
+      run: pwd;ls
     - name: run test
       run: ./Tests.exe
 ################################################################################
