@@ -50,12 +50,11 @@ else
 endif
 
 
-INCLUDES = -lpthread \
-		   -lgtest \
+INCLUDES = -lgtest \
 		   -lgtest_main \
 		   -I$(GTEST_ROOT)/include \
-		   -L$(GTEST_ROOT)/$(LIBNAME)
-
+		   -L$(GTEST_ROOT)/$(LIBNAME) \
+		   -lpthread
 # Defines
 DEFINES = $(IFDEF_DEFINES)
 
