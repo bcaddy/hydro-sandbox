@@ -39,10 +39,11 @@ TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
     std::string fidMomentum = file2String("System-Test-Data/sod-VL-HLLC/Momentum.csv");
     size_t numFidTimesteps  = std::count(fidDensity.begin(), fidDensity.end(), '\n') - 1;
     std::cout << "Finished fiducial import" << std::endl;
-    
+
     // Wait for sodProcess to finish
     sodProcess.get();
-
+    system("pwd");
+    system("ls ../data/");
     // Load the data and compute the time steps from the test data
     std::string testDensity  = file2String("../data/Density.csv");
     std::string testEnergy   = file2String("../data/Energy.csv");
