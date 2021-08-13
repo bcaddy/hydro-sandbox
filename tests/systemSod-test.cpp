@@ -28,10 +28,10 @@ TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
 {
     // First let's start our cholla analogue running asynchronously. Note that
     // this dumps all console I/O to /dev/nul
-    auto sodProcess = std::async(std::launch::async, // Launch operation asynchronously
-                                 system,             // Choose the function to launch
-                                 "../euler1D-VL/euler-solver.exe >/dev/null 2>&1"); // Args to send to "system" call
-
+    // auto sodProcess = std::async(std::launch::async, // Launch operation asynchronously
+    //                              system,             // Choose the function to launch
+    //                              "../euler1D-VL/euler-solver.exe >/dev/null 2>&1"); // Args to send to "system" call
+    system("../euler1D-VL/euler-solver.exe >/dev/null 2>&1");
     // While that's running we're going to load the fiducial data and find the
     // number of fiducial time steps
     std::string fidDensity  = file2String("System-Test-Data/sod-VL-HLLC/Density.csv");
@@ -41,7 +41,7 @@ TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
     std::cout << "Finished fiducial import" << std::endl;
 
     // Wait for sodProcess to finish
-    sodProcess.get();
+    // sodProcess.get();
     system("pwd");
     system("ls ../data/");
     system("ls ../");
