@@ -30,7 +30,7 @@ TEST(SystemTest_VanLeer, sod_HLLC_1k_cells)
     // this dumps all console I/O to /dev/nul
     auto sodProcess = std::async(std::launch::async, // Launch operation asynchronously
                                  system,             // Choose the function to launch
-                                 "../euler1D-VL/euler-solver.exe");// >/dev/null 2>&1"); // Args to send to "system" call
+                                 "../euler1D-VL/euler-solver.exe >/dev/null 2>&1"); // Args to send to "system" call
 
     // While that's running we're going to load the fiducial data and find the
     // number of fiducial time steps
