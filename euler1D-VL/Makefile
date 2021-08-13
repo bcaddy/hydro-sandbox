@@ -12,7 +12,7 @@ cppDebug = g++ \
 		   -D_GLIBCXX_ASSERTIONS \
 		   -g
 cppPerf = g++ -std=c++17 -O3
-cppCompiler = ${cppDebug} #the version used
+cppCompiler = ${cppPerf} #the version used
 
 # list of binaries to clean as well
 binaries = euler-solver.exe test-Riemann.exe
