@@ -45,7 +45,7 @@ jobs:
         
     steps:
     - name: show files
-      run: bash pwd
+      run: echo "what up?"
     - name: run test
       run: ./Tests.exe
 ################################################################################
