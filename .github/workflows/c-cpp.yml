@@ -45,7 +45,7 @@ jobs:
         
     steps:
     - name: show files
-      run: pwd;ls
+      run: bash pwd
     - name: run test
       run: ./Tests.exe
 ################################################################################
