@@ -1,4 +1,4 @@
-![Build](https://github.com/bcaddy/hydro-sandbox/actions/workflows/c-cpp.yml/badge.svg)
+![Build](https://github.com/bcaddy/hydro-sandbox/actions/workflows/build-and-test.yml/badge.svg)
 
 # Hydro-Sandbox
 This is a place for me to practice and experiment with Riemann
