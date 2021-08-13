@@ -7,6 +7,7 @@ on:
     branches: [ testing-prototype ]
 
 jobs:
+################################################################################
   build_euler1D-VL:
     runs-on: ubuntu-latest
 
@@ -18,7 +19,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: make
       run: make
-
+################################################################################
   build_tests:
     needs: build_euler1D-VL
     runs-on: ubuntu-latest
@@ -33,5 +34,16 @@ jobs:
     - uses: actions/checkout@v1
     - name: make
       run: make
+################################################################################
+  run_tests:
+    needs: [build_euler1D-VL, build_tests]
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./tests
+        
+    steps:
     - name: run test
       run: ./Tests.exe
+################################################################################
