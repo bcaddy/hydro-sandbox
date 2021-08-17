@@ -20,7 +20,7 @@ jobs:
     - name: Install gtest
       uses: MarkusJx/googletest-installer@v1.1
     - name: check for lcov
-      run: which lcov
+      run: which gcov
 #     - name: build euler1D-VL
 #       working-directory: ./euler1D-VL/
 #       run: make
