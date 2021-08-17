@@ -21,6 +21,9 @@ exclude_patterns=('/usr/*'      # Remove everything from /usr/
 lcov --remove coverage.info "${exclude_patterns[@]}" --output-file coverage.info  # Remove traces of the tests themselves
 
 lcov --list coverage.info
-echo -e "\n\n===== Generate HTML ====================================================="
-genhtml coverage.info --output-directory Code-coverage-html
-open Code-coverage-html/index.html
+
+if [[ $1 == "html" ]]; then
+    echo -e "\n\n===== Generate HTML ====================================================="
+    genhtml coverage.info --output-directory Code-coverage-html
+    open Code-coverage-html/index.html
+fi
