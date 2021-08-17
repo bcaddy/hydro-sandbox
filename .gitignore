@@ -6,6 +6,8 @@ experiment.h
 *.csv
 doxygen-*
 #Athena-Code/*
+*.info
+Code-coverage-html
 
 # Image & Video files #
 #######################
