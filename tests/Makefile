@@ -84,7 +84,7 @@ clean:
 	@rm -rf *.dSYM
 	@rm -f *.gcda
 	@rm -f *.gcno
-	@rm -rf CODE_COVERAGE
+	@rm -rf Code-coverage-html
 	@rm -f *.info
 	@rm -f *.gcov
 	@rm -f a.out
