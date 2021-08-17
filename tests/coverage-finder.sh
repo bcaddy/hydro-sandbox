@@ -63,7 +63,8 @@ lcov --add-tracefile coverage_base.info --add-tracefile coverage_test.info --out
 exclude_patterns=('/usr/*'      # Remove everything from /usr/
                   '/Library/*'  # Remove everything from /Library/
                   '*-tests.cpp' # Remove traces of the tests themselves
-                  '*-test.cpp') # Remove traces of the tests themselves
+                  '*-test.cpp' # Remove traces of the tests themselves
+                  '/ihome/crc/*')
 # --remove TRACEFILE PATTERN = remove all things associated with PATTERN in TRACEFILE
 lcov --remove coverage_all.info "${exclude_patterns[@]}" --output-file coverage_all.info  # Remove traces of the tests themselves
 
