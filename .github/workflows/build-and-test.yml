@@ -23,11 +23,19 @@ jobs:
       run: sudo apt-get install lcov
     - name: execute which lcov
       run: which lcov
-#     - name: build euler1D-VL
-#       working-directory: ./euler1D-VL/
-#       run: make
-#     - name: Build tests
-#       run: make
-#     - name: Run tests
-#       run: ./Tests.exe
+    - name: build euler1D-VL
+      working-directory: ./euler1D-VL/
+      run: make
+    - name: Build euler1D-VL object files for coverage
+      working-directory: ./euler1D-VL/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build mhd1D object files for coverage
+      working-directory: ./mhd1D/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build tests
+      run: make
+    - name: Run tests
+      run: ./Tests.exe
+    - name: generate coverage report
+      run: ./coverage-finder.sh
 ################################################################################
