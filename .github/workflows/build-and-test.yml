@@ -19,11 +19,13 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install gtest
       uses: MarkusJx/googletest-installer@v1.1
-    - name: build euler1D-VL
-      working-directory: ./euler1D-VL/
-      run: make
-    - name: Build tests
-      run: make
-    - name: Run tests
-      run: ./Tests.exe
+    - name: check for lcov
+      run: which lcov
+#     - name: build euler1D-VL
+#       working-directory: ./euler1D-VL/
+#       run: make
+#     - name: Build tests
+#       run: make
+#     - name: Run tests
+#       run: ./Tests.exe
 ################################################################################
