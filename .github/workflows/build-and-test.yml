@@ -53,9 +53,11 @@ jobs:
 #         parallel: true
 
     # Upload Coverage Report to Codecov
+    - name: list
+      run: ls
     - uses: codecov/codecov-action@v2
       with:
-        files: ./coverage_all.info
+        files: ./tests/coverage_all.info
         flags: sandbox-tests # optional
         name: codecov-upload # optional
         fail_ci_if_error: true # optional (default = false)
