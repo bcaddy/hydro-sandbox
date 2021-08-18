@@ -60,13 +60,9 @@ lcov --capture ${capture_directories[@]} --output-file coverage_test.info
 # Combine base and test results
 lcov --add-tracefile coverage_base.info --add-tracefile coverage_test.info --output-file coverage_all.info
 
-exclude_patterns=('/usr/*'      # Remove everything from /usr/
-                  '/Library/*'  # Remove everything from /Library/
-                  '*-tests.cpp' # Remove traces of the tests themselves
-                  '*-test.cpp' # Remove traces of the tests themselves
-                  '/ihome/crc/*')
-# --remove TRACEFILE PATTERN = remove all things associated with PATTERN in TRACEFILE
-lcov --remove coverage_all.info "${exclude_patterns[@]}" --output-file coverage_all.info  # Remove traces of the tests themselves
+# Extract data from only the files within Repo_root. This should exclude any
+# system or external libraries
+lcov --extract coverage_all.info "${repo_root}/*" --output-file coverage_all.info
 
 lcov --list coverage_all.info
 
