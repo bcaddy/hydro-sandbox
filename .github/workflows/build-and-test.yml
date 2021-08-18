@@ -41,10 +41,14 @@ jobs:
       run: ./coverage-finder.sh
     - name: ls
       run: ls
-    - name: Upload Report to Codecov
-      uses: codecov/codecov-action@v1.3.2
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v2
       with:
-          files: coverage_all.info
-          fail_ci_if_error: true
-          functionalities: fix
+        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        directory: ./tests/
+        files: coverage_all.info # optional
+        flags: sandbox-tests # optional
+        name: codecov-upload # optional
+        fail_ci_if_error: true # optional (default = false)
+        verbose: true # optional (default = false)
 ################################################################################
