@@ -54,8 +54,8 @@ jobs:
 
     # Upload Coverage Report to Codecov
     - name: Codecov Upload
-    - uses: actions/checkout@master
-    - uses: codecov/codecov-action@v2
+      uses: actions/checkout@master
+      uses: codecov/codecov-action@v2
       with:
         directory: ./
         flags: sandbox-tests # optional
