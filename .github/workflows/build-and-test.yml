@@ -62,6 +62,8 @@ jobs:
         name: codecov-upload # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
+        fixes:
+        - "/home/runner/work/hydro-sandbox/hydro-sandbox/tests/::./"
 
 ################################################################################
   Build-and-test-FUNC_1:
