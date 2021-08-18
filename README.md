@@ -1,5 +1,5 @@
 ![Build](https://github.com/bcaddy/hydro-sandbox/actions/workflows/build-and-test.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/bcaddy/hydro-sandbox/badge.svg)](https://coveralls.io/github/bcaddy/hydro-sandbox)
+[![Coverage Status](https://coveralls.io/repos/github/bcaddy/hydro-sandbox/badge.svg?branch=testing-prototype)](https://coveralls.io/github/bcaddy/hydro-sandbox?branch=testing-prototype)
 
 # Hydro-Sandbox
 This is a place for me to practice and experiment with Riemann
