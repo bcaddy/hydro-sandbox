@@ -58,46 +58,46 @@ jobs:
     - uses: codecov/codecov-action@v2
       with:
         files: ./tests/coverage_all.info
-        flags: sandbox-tests # optional
+        flags: No-ifdefs # optional
         name: codecov-upload # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
 
-# ################################################################################
-#   Build-and-test-FUNC_1:
-#     runs-on: ubuntu-latest
+################################################################################
+  Build-and-test-FUNC_1:
+    runs-on: ubuntu-latest
 
-#     defaults:
-#       run:
-#         working-directory: ./tests
+    defaults:
+      run:
+        working-directory: ./tests
 
-#     steps:
-#     # Setup and Installing things
-#     - uses: actions/checkout@v1
-#     - name: Install gtest
-#       uses: MarkusJx/googletest-installer@v1.1
-#     - name: Install lcov
-#       run: sudo apt-get install lcov
+    steps:
+    # Setup and Installing things
+    - uses: actions/checkout@v1
+    - name: Install gtest
+      uses: MarkusJx/googletest-installer@v1.1
+    - name: Install lcov
+      run: sudo apt-get install lcov
 
-#     # Build Everything
-#     - name: build euler1D-VL
-#       working-directory: ./euler1D-VL/
-#       run: make
-#     - name: Build euler1D-VL object files for coverage
-#       working-directory: ./euler1D-VL/
-#       run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
-#     - name: Build mhd1D object files for coverage
-#       working-directory: ./mhd1D/
-#       run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
-#     - name: Build tests
-#       run: export IFDEF_DEFINES="-DFUNC_1" && 
-#            make
+    # Build Everything
+    - name: build euler1D-VL
+      working-directory: ./euler1D-VL/
+      run: make
+    - name: Build euler1D-VL object files for coverage
+      working-directory: ./euler1D-VL/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build mhd1D object files for coverage
+      working-directory: ./mhd1D/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build tests
+      run: export IFDEF_DEFINES="-DFUNC_1" && 
+           make
 
-#     # Run Tests and Generate Coverage Report
-#     - name: Run tests
-#       run: ./Tests.exe
-#     - name: generate coverage report
-#       run: ./coverage-finder.sh
+    # Run Tests and Generate Coverage Report
+    - name: Run tests
+      run: ./Tests.exe
+    - name: generate coverage report
+      run: ./coverage-finder.sh
 
 #     # Upload Coverage Report to Coveralls
 #     - name: Coveralls Upload
@@ -108,41 +108,52 @@ jobs:
 #         flag-name: FUNC_1
 #         parallel: true
 
-# ################################################################################
-#   Build-and-test-FUNC_2:
-#     runs-on: ubuntu-latest
+    # Upload Coverage Report to Codecov
+    - name: list
+      run: ls
+    - uses: codecov/codecov-action@v2
+      with:
+        files: ./tests/coverage_all.info
+        flags: ifdef-FUNC_1 # optional
+        name: codecov-upload # optional
+        fail_ci_if_error: true # optional (default = false)
+        verbose: true # optional (default = false)
 
-#     defaults:
-#       run:
-#         working-directory: ./tests
+################################################################################
+  Build-and-test-FUNC_2:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     # Setup and Installing things
-#     - uses: actions/checkout@v1
-#     - name: Install gtest
-#       uses: MarkusJx/googletest-installer@v1.1
-#     - name: Install lcov
-#       run: sudo apt-get install lcov
+    defaults:
+      run:
+        working-directory: ./tests
 
-#     # Build Everything
-#     - name: build euler1D-VL
-#       working-directory: ./euler1D-VL/
-#       run: make
-#     - name: Build euler1D-VL object files for coverage
-#       working-directory: ./euler1D-VL/
-#       run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
-#     - name: Build mhd1D object files for coverage
-#       working-directory: ./mhd1D/
-#       run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
-#     - name: Build tests
-#       run: export IFDEF_DEFINES="-DFUNC_2" && 
-#            make
+    steps:
+    # Setup and Installing things
+    - uses: actions/checkout@v1
+    - name: Install gtest
+      uses: MarkusJx/googletest-installer@v1.1
+    - name: Install lcov
+      run: sudo apt-get install lcov
 
-#     # Run Tests and Generate Coverage Report
-#     - name: Run tests
-#       run: ./Tests.exe
-#     - name: generate coverage report
-#       run: ./coverage-finder.sh
+    # Build Everything
+    - name: build euler1D-VL
+      working-directory: ./euler1D-VL/
+      run: make
+    - name: Build euler1D-VL object files for coverage
+      working-directory: ./euler1D-VL/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build mhd1D object files for coverage
+      working-directory: ./mhd1D/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build tests
+      run: export IFDEF_DEFINES="-DFUNC_2" && 
+           make
+
+    # Run Tests and Generate Coverage Report
+    - name: Run tests
+      run: ./Tests.exe
+    - name: generate coverage report
+      run: ./coverage-finder.sh
 
 #     # Upload Coverage Report to Coveralls
 #     - name: Coveralls Upload
@@ -152,7 +163,20 @@ jobs:
 #         path-to-lcov: ./tests/coverage_all.info
 #         flag-name: FUNC_2
 #         parallel: true
-# ################################################################################
+
+
+    # Upload Coverage Report to Codecov
+    - name: list
+      run: ls
+    - uses: codecov/codecov-action@v2
+      with:
+        files: ./tests/coverage_all.info
+        flags: ifdef-FUNC_2 # optional
+        name: codecov-upload # optional
+        fail_ci_if_error: true # optional (default = false)
+        verbose: true # optional (default = false)
+
+################################################################################
 #   finish:
 #     needs: [Build-and-test-No-Ifdefs, Build-and-test-FUNC_1, Build-and-test-FUNC_2]
 #     runs-on: ubuntu-latest
@@ -162,4 +186,4 @@ jobs:
 #       with:
 #         github-token: ${{ secrets.github_token }}
 #         parallel-finished: true
-# ################################################################################
+################################################################################
