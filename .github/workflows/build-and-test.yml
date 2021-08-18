@@ -38,4 +38,10 @@ jobs:
       run: ./Tests.exe
     - name: generate coverage report
       run: ./coverage-finder.sh
+    - name: Upload Report to Codecov
+      uses: codecov/codecov-action@v1.3.2
+      with:
+          files: coverage_all.info
+          fail_ci_if_error: true
+          functionalities: fix
 ################################################################################
