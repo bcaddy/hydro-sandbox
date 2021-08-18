@@ -5,6 +5,7 @@ on:
     branches: [ testing-prototype ]
   pull_request:
     branches: [ testing-prototype ]
+  workflow_dispatch:
 
 jobs:
 ################################################################################
