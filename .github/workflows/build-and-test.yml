@@ -45,7 +45,7 @@ jobs:
     - uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-        directory: ./tests
+        directory: ./
         files: coverage_all.info # optional
         flags: sandbox-tests # optional
         name: codecov-upload # optional
