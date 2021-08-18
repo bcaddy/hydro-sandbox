@@ -41,14 +41,21 @@ jobs:
       run: ./coverage-finder.sh
     - name: ls
       run: ls
-    - uses: actions/checkout@master
-    - uses: codecov/codecov-action@v2
+    - name: Coveralls Upload
+      uses: coverallsapp/github-action@master
       with:
-#         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-        directory: ./
-        files: coverage_all.info # optional
-        flags: sandbox-tests # optional
-        name: codecov-upload # optional
-        fail_ci_if_error: true # optional (default = false)
-        verbose: true # optional (default = false)
-################################################################################
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./tests/coverage_all.info
+        flag-name: sandbox-tests
+  
+#       Codecov stuff. This might be uncommented later but right now I'm working on trying out coveralls
+#     - uses: actions/checkout@master
+#     - uses: codecov/codecov-action@v2
+#       with:
+# #         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+#         directory: ./
+#         files: coverage_all.info # optional
+#         flags: sandbox-tests # optional
+#         name: codecov-upload # optional
+#         fail_ci_if_error: true # optional (default = false)
+#         verbose: true # optional (default = false)
