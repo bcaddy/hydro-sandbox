@@ -23,14 +23,15 @@ while getopts "hb" opt; do
     esac
 done
 
+# Define the root of the repo
+repo_root=$(git rev-parse --show-toplevel)
+
 if [[ $BUILD == true ]]; then
     #set -x #echo all commands
     make clean
     make
 
     # make euler1D-VL and mhd1D files
-    repo_root=$(git rev-parse --show-toplevel)
-    echo $repo_root
     cd ${repo_root}/euler1D-VL
     rm -rf *.o *.gcno
     g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
