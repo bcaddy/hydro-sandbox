@@ -56,6 +56,7 @@ INCLUDES = -lgtest \
 		   -L$(GTEST_ROOT)/$(LIBNAME) \
 		   -lpthread
 # Defines
+#IFDEF_DEFINES should be some combination of: -DFUNC_1, -DFUNC_2, and empty
 DEFINES = $(IFDEF_DEFINES)
 
 # list of other files to clean as well
