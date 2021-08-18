@@ -9,7 +9,7 @@ on:
 
 jobs:
 ################################################################################
-  Build-and-test:
+  Build-and-test-No-Ifdefs:
     runs-on: ubuntu-latest
 
     defaults:
@@ -17,13 +17,14 @@ jobs:
         working-directory: ./tests
 
     steps:
+    # Setup and Installing things
     - uses: actions/checkout@v1
     - name: Install gtest
       uses: MarkusJx/googletest-installer@v1.1
     - name: Install lcov
       run: sudo apt-get install lcov
-    - name: execute which lcov
-      run: which lcov
+
+    # Build Everything
     - name: build euler1D-VL
       working-directory: ./euler1D-VL/
       run: make
@@ -35,27 +36,117 @@ jobs:
       run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
     - name: Build tests
       run: make
+
+    # Run Tests and Generate Coverage Report
     - name: Run tests
       run: ./Tests.exe
     - name: generate coverage report
       run: ./coverage-finder.sh
-    - name: ls
-      run: ls
+
+    # Upload Coverage Report to Coveralls
     - name: Coveralls Upload
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./tests/coverage_all.info
-        flag-name: sandbox-tests
-  
-#       Codecov stuff. This might be uncommented later but right now I'm working on trying out coveralls
-#     - uses: actions/checkout@master
-#     - uses: codecov/codecov-action@v2
-#       with:
-# #         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-#         directory: ./
-#         files: coverage_all.info # optional
-#         flags: sandbox-tests # optional
-#         name: codecov-upload # optional
-#         fail_ci_if_error: true # optional (default = false)
-#         verbose: true # optional (default = false)
+        flag-name: No Ifdefs
+        parallel: true        
+################################################################################
+  Build-and-test-FUNC_1:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./tests
+
+    steps:
+    # Setup and Installing things
+    - uses: actions/checkout@v1
+    - name: Install gtest
+      uses: MarkusJx/googletest-installer@v1.1
+    - name: Install lcov
+      run: sudo apt-get install lcov
+
+    # Build Everything
+    - name: build euler1D-VL
+      working-directory: ./euler1D-VL/
+      run: make
+    - name: Build euler1D-VL object files for coverage
+      working-directory: ./euler1D-VL/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build mhd1D object files for coverage
+      working-directory: ./mhd1D/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build tests
+      run: export IFDEF_DEFINES="-DFUNC_1" && 
+           make
+
+    # Run Tests and Generate Coverage Report
+    - name: Run tests
+      run: ./Tests.exe
+    - name: generate coverage report
+      run: ./coverage-finder.sh
+
+    # Upload Coverage Report to Coveralls
+    - name: Coveralls Upload
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./tests/coverage_all.info
+        flag-name: FUNC_1
+        parallel: true
+################################################################################
+  Build-and-test-FUNC_2:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./tests
+
+    steps:
+    # Setup and Installing things
+    - uses: actions/checkout@v1
+    - name: Install gtest
+      uses: MarkusJx/googletest-installer@v1.1
+    - name: Install lcov
+      run: sudo apt-get install lcov
+
+    # Build Everything
+    - name: build euler1D-VL
+      working-directory: ./euler1D-VL/
+      run: make
+    - name: Build euler1D-VL object files for coverage
+      working-directory: ./euler1D-VL/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build mhd1D object files for coverage
+      working-directory: ./mhd1D/
+      run: g++ -std=c++17 -Wall -Wextra -Wpedantic -fasynchronous-unwind-tables -fexceptions -D_GLIBCXX_ASSERTIONS -g --coverage -lgtest -lgtest_main -I/usr/local/Cellar/googletest/1.11.0/include -L/usr/local/Cellar/googletest/1.11.0/lib -lpthread -c *.cpp
+    - name: Build tests
+      run: export IFDEF_DEFINES="-DFUNC_2" && 
+           make
+
+    # Run Tests and Generate Coverage Report
+    - name: Run tests
+      run: ./Tests.exe
+    - name: generate coverage report
+      run: ./coverage-finder.sh
+
+    # Upload Coverage Report to Coveralls
+    - name: Coveralls Upload
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./tests/coverage_all.info
+        flag-name: FUNC_2
+        parallel: true
+################################################################################
+  finish:
+    needs: [Build-and-test-No-Ifdefs, Build-and-test-FUNC_1, Build-and-test-FUNC_2]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
+################################################################################
