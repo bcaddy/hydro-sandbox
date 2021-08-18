@@ -53,6 +53,8 @@ jobs:
 #         parallel: true
 
     # Upload Coverage Report to Codecov
+    - name: cat file
+      run: cat coverage_all.info
     - uses: codecov/codecov-action@v2
       with:
         files: ./tests/coverage_all.info
