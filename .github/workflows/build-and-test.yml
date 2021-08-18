@@ -43,18 +43,7 @@ jobs:
     - name: generate coverage report
       run: ./coverage-finder.sh
 
-#     # Upload Coverage Report to Coveralls
-#     - name: Coveralls Upload
-#       uses: coverallsapp/github-action@master
-#       with:
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
-#         path-to-lcov: ./tests/coverage_all.info
-#         flag-name: No Ifdefs
-#         parallel: true
-
     # Upload Coverage Report to Codecov
-    - name: cat file
-      run: cat coverage_all.info
     - uses: codecov/codecov-action@v2
       with:
         files: ./tests/coverage_all.info
@@ -62,10 +51,9 @@ jobs:
         name: codecov-upload # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
-        fixes:
-        - "/home/runner/work/hydro-sandbox/hydro-sandbox/tests/::./"
 
 ################################################################################
+
   Build-and-test-FUNC_1:
     runs-on: ubuntu-latest
 
@@ -101,15 +89,6 @@ jobs:
     - name: generate coverage report
       run: ./coverage-finder.sh
 
-#     # Upload Coverage Report to Coveralls
-#     - name: Coveralls Upload
-#       uses: coverallsapp/github-action@master
-#       with:
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
-#         path-to-lcov: ./tests/coverage_all.info
-#         flag-name: FUNC_1
-#         parallel: true
-
     # Upload Coverage Report to Codecov
     - uses: codecov/codecov-action@v2
       with:
@@ -120,6 +99,7 @@ jobs:
         verbose: true # optional (default = false)
 
 ################################################################################
+
   Build-and-test-FUNC_2:
     runs-on: ubuntu-latest
 
@@ -155,16 +135,6 @@ jobs:
     - name: generate coverage report
       run: ./coverage-finder.sh
 
-#     # Upload Coverage Report to Coveralls
-#     - name: Coveralls Upload
-#       uses: coverallsapp/github-action@master
-#       with:
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
-#         path-to-lcov: ./tests/coverage_all.info
-#         flag-name: FUNC_2
-#         parallel: true
-
-
     # Upload Coverage Report to Codecov
     - uses: codecov/codecov-action@v2
       with:
@@ -173,15 +143,4 @@ jobs:
         name: codecov-upload # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
-
-################################################################################
-#   finish:
-#     needs: [Build-and-test-No-Ifdefs, Build-and-test-FUNC_1, Build-and-test-FUNC_2]
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Coveralls Finished
-#       uses: coverallsapp/github-action@master
-#       with:
-#         github-token: ${{ secrets.github_token }}
-#         parallel-finished: true
 ################################################################################
