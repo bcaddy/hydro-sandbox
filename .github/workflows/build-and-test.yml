@@ -56,7 +56,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: codecov/codecov-action@v2
       with:
-        directory: ./
+        files: ./tests/coverage_all.info
         flags: sandbox-tests # optional
         name: codecov-upload # optional
         fail_ci_if_error: true # optional (default = false)
