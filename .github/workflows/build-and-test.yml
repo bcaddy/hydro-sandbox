@@ -53,8 +53,6 @@ jobs:
 #         parallel: true
 
     # Upload Coverage Report to Codecov
-    - name: list
-      run: ls
     - uses: codecov/codecov-action@v2
       with:
         files: ./tests/coverage_all.info
@@ -109,8 +107,6 @@ jobs:
 #         parallel: true
 
     # Upload Coverage Report to Codecov
-    - name: list
-      run: ls
     - uses: codecov/codecov-action@v2
       with:
         files: ./tests/coverage_all.info
@@ -166,8 +162,6 @@ jobs:
 
 
     # Upload Coverage Report to Codecov
-    - name: list
-      run: ls
     - uses: codecov/codecov-action@v2
       with:
         files: ./tests/coverage_all.info
