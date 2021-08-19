@@ -40,6 +40,7 @@ clean:
 	@rm -f $(binaries)
 	@rm -f *.mod
 	@rm -f *.o
+	@rm -f *.gcno
 	@rm -rf *.gch
 	@rm -f *.exe
 	@rm -rf *.dSYM
