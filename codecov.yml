@@ -1,5 +1,4 @@
 codecov:
   branch: testing-prototype
-
-# fixes:
-#   - "/home/runner/work/hydro-sandbox/hydro-sandbox/tests/::"
+  fixes:
+    - "/home/runner/work/hydro-sandbox/hydro-sandbox/tests/::"

@@ -8,6 +8,7 @@
         "STREQ",
         "Vhat",
         "arange",
+        "codecov",
         "diaph",
         "dynload",
         "loadtxt",
