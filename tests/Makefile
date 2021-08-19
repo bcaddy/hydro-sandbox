@@ -38,7 +38,7 @@ else ifneq (,$(findstring Capt-Janeway,$(HOST)))
 	LIBNAME = lib
 else ifneq (,$(findstring summit.olcf.ornl.gov,$(HOST)))
     # We're on Summit
-	GTEST_ROOT = OLCF_GOOGLETEST_ROOT
+	GTEST_ROOT = ${OLCF_GOOGLETEST_ROOT}
 	LIBNAME = lib64
 else ifneq (,$(findstring internal.cloudapp.net,$(HOST)))
     # We're on Gihub
