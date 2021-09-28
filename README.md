@@ -12,4 +12,3 @@ solvers, MHD, and other miscellaneous hydro related things. Use at your own risk
   * numpy
   * matplotlib
   * timeit
-* Likely CUDA/HIP and MPI in the future
