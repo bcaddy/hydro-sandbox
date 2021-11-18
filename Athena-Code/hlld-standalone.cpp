@@ -568,6 +568,42 @@ int main()
     leftPrim.push_back(Prim1DS( 1., 1., 0., 0., 0., Bx.back(), 1., 0.));
     rightPrim.push_back(Prim1DS(0.125, 0.1, 0., 0., 0., Bx.back(), -1., 0.));
     gamma.push_back(bwGamma);
+
+    names.push_back("Brio & Wu, Fast Rarefaction Left");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 1., 1., 0., 0., 0., Bx.back(), 1., 0.));
+    rightPrim.push_back(Prim1DS(0.65, 0., 0., 0., 0., Bx.back(), 0., 0.));
+    gamma.push_back(bwGamma);
+
+    names.push_back("Brio & Wu, Compound Wave Left");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    gamma.push_back(bwGamma);
+
+    names.push_back("Brio & Wu, Compound Wave Right");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    gamma.push_back(bwGamma);
+
+    names.push_back("Brio & Wu, Contact Discontinuity");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    gamma.push_back(bwGamma);
+
+    names.push_back("Brio & Wu, Slow Shock");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    gamma.push_back(bwGamma);
+
+    names.push_back("Brio & Wu, Fast Rarefaction Right");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
+    gamma.push_back(bwGamma);
     // =========================================================================
     // End Brio & Wu
     // =========================================================================
