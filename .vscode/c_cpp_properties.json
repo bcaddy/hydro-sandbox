@@ -3,8 +3,7 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/local/Cellar/googletest/1.11.0/include/"
+                "${workspaceFolder}/**"
             ],
             "defines": ["FUNC_1",
                         "FUNC_2"],
