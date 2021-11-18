@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <string>
 
 // #include "../defs.h"
 // #include "../athena.h"
@@ -13,11 +14,13 @@
 // #include "prototypes.h"
 // #include "../prototypes.h"
 
+// =============================================================================
 #define SMALL_NUMBER 1e-8
 #define TINY_NUMBER 1e-20
-
 double SQR(double const &A){return A*A;};
+// =============================================================================
 
+// =============================================================================
 struct Cons1DS
 {
   double d;
@@ -40,7 +43,9 @@ struct Cons1DS
     Bz(std::numeric_limits<double>::quiet_NaN())
   {};
 };
+// =============================================================================
 
+// =============================================================================
 struct Prim1DS
 {
   double d;
@@ -63,7 +68,9 @@ struct Prim1DS
     Bz(std::numeric_limits<double>::quiet_NaN())
   {};
 };
+// =============================================================================
 
+// =============================================================================
 Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
                          const double &pBx,
                          double const &Gamma)
@@ -87,19 +94,42 @@ Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
 
   return Prim1D;
 }
+// =============================================================================
 
+// =============================================================================
+void printState(std::string const &state)
+{
+  std::cout << std::endl << "State = " << state << std::endl;
+}
+// =============================================================================
 
-/*----------------------------------------------------------------------------*/
-/*! \fn void fluxes(const Cons1DS Ul, const Cons1DS Ur,
- *           const Prim1DS Wl, const Prim1DS Wr, const double Bxi, Cons1DS *pFlux)
- *  \brief Compute 1D fluxes
- * Input Arguments:
- * - Bxi = B in direction of slice at cell interface
- * - Ul,Ur = L/R-states of CONSERVED variables at cell interface
- *
- * Output Arguments:
- * - Flux = fluxes of CONSERVED variables at cell interface
- */
+// =============================================================================
+void printResults(Cons1DS const &conservedLeft,
+                  Cons1DS const &conservedRight,
+                  Cons1DS const &fluxes)
+{
+  int maxWidth = std::numeric_limits<double>::max_digits10;
+  std::cout.precision(maxWidth);
+  auto spacer = std::setw(maxWidth+4);
+
+  std::cout
+    << " ------------------------------------------------------------------------------------" << std::endl
+    << " | " << std::setw(8) << "Field"    << " | " << spacer << "Conserved Left" << " | " << spacer << "Conserved Right" << " | " << spacer << "Fluxes"   << " | " << std::endl
+    << " |----------|-----------------------|-----------------------|-----------------------|" << std::endl
+    << " | " << std::setw(8) << "Density"  << " | " << spacer << conservedLeft.d  << " | " << spacer << conservedRight.d  << " | "  << spacer << fluxes.d  << " | " << std::endl
+    << " | " << std::setw(8) << "Energy"   << " | " << spacer << conservedLeft.E  << " | " << spacer << conservedRight.E  << " | "  << spacer << fluxes.E  << " | " << std::endl
+    << " | " << std::setw(8) << "Momentum" << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | "  << spacer << fluxes.Mx << " | " << std::endl
+    << " | " << std::setw(8) << "Momentum" << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | "  << spacer << fluxes.My << " | " << std::endl
+    << " | " << std::setw(8) << "Momentum" << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | "  << spacer << fluxes.Mz << " | " << std::endl
+    << " | " << std::setw(8) << "Magnetic" << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
+    << " | " << std::setw(8) << "Magnetic" << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
+    << " | " << std::setw(8) << "Magnetic" << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
+    << " ------------------------------------------------------------------------------------" << std::endl
+  ;
+}
+// =============================================================================
+
+// =============================================================================
 void fluxes(const Cons1DS Ul,    // Left conserved state
             const Cons1DS Ur,    // Right conserved state
             const Prim1DS Wl,    // Left primitive state
@@ -203,11 +233,13 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 
   if(spd[0] >= 0.0){
     pFlux = Fl;
+    printState("L");
     return;
   }
 
   if(spd[4] <= 0.0){
     pFlux = Fr;
+    printState("R");
     return;
   }
 
@@ -386,6 +418,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 
   if(spd[1] >= 0.0) {
 /* return Fl* */
+    printState("L*");
     pFlux.d  = Fl.d  + spd[0]*(Ulst.d  - Ul.d);
     pFlux.Mx = Fl.Mx + spd[0]*(Ulst.Mx - Ul.Mx);
     pFlux.My = Fl.My + spd[0]*(Ulst.My - Ul.My);
@@ -396,6 +429,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
   }
   else if(spd[2] >= 0.0) {
 /* return Fl** */
+    printState("L**");
     tmp = spd[1] - spd[0];
     pFlux.d  = Fl.d  - spd[0]*Ul.d  - tmp*Ulst.d  + spd[1]*Uldst.d;
     pFlux.Mx = Fl.Mx - spd[0]*Ul.Mx - tmp*Ulst.Mx + spd[1]*Uldst.Mx;
@@ -407,6 +441,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
   }
   else if(spd[3] > 0.0) {
 /* return Fr** */
+    printState("R**");
     tmp = spd[3] - spd[4];
     pFlux.d  = Fr.d  - spd[4]*Ur.d  - tmp*Urst.d  + spd[3]*Urdst.d;
     pFlux.Mx = Fr.Mx - spd[4]*Ur.Mx - tmp*Urst.Mx + spd[3]*Urdst.Mx;
@@ -418,6 +453,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
   }
   else {
 /* return Fr* */
+    printState("R*");
     pFlux.d  = Fr.d  + spd[4]*(Urst.d  - Ur.d);
     pFlux.Mx = Fr.Mx + spd[4]*(Urst.Mx - Ur.Mx);
     pFlux.My = Fr.My + spd[4]*(Urst.My - Ur.My);
@@ -437,24 +473,9 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 #endif
   return;
 }
+// =============================================================================
 
-
-void printFluxes(Cons1DS const &fluxes)
-{
-  std::cout.precision(std::numeric_limits<double>::max_digits10);
-  std::cout
-    << "The Fluxes are:" << std::endl
-    << "Density Flux     = " << fluxes.d  << std::endl
-    << "Energy Flux      = " << fluxes.E  << std::endl
-    << "Momentum X Flux  = " << fluxes.Mx << std::endl
-    << "Momentum Y Flux  = " << fluxes.My << std::endl
-    << "Momentum Z Flux  = " << fluxes.Mz << std::endl
-    << "Magnetic X Flux  = " << fluxes.Bx << std::endl
-    << "Magnetic Y Flux  = " << fluxes.By << std::endl
-    << "Magnetic Z Flux  = " << fluxes.Bz << std::endl
-  ;
-}
-
+// =============================================================================
 int main()
 {
   // constants
@@ -493,7 +514,8 @@ int main()
   fluxes(conservedLeft, conservedRight, primitiveLeft, primitiveRight, Bx, outFlux, gamma);
 
   // Return Values
-  printFluxes(outFlux);
+  printResults(conservedLeft, conservedRight, outFlux);
 
   return 0;
 }
+// =============================================================================
