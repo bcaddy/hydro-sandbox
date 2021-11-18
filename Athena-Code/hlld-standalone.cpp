@@ -177,7 +177,7 @@ void printResults(Cons1DS const &conservedLeft,
     std::cout
         << "Test Name: " << name << std::endl
         << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
-        << " | " << std::setw(15) << "Field"             << " | " << spacer << "Conserved Left" << " | " << spacer << "Conserved Right" << " | " << spacer << "Primitive Left" << " | " << spacer << "Primitive Right" << " | " << spacer << "Fluxes"   << " | " << std::endl
+        << " | " << std::setw(15) << "Field"             << " | " << spacer << "Conserved Left" << " | " << spacer << "Conserved Right" << " | " << spacer << "Primitive Left" << " | " << spacer << "Primitive Right" << " | " << spacer << "Conserved Fluxes"   << " | " << std::endl
         << " |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|" << std::endl
         << " | " << std::setw(15) << "Density"           << " | " << spacer << conservedLeft.d  << " | " << spacer << conservedRight.d  << " | " << spacer << primLeft.d  << " | " << spacer << primRight.d  << " | "  << spacer << fluxes.d  << " | " << std::endl
         << " | " << std::setw(15) << "Energy/Pressure"   << " | " << spacer << conservedLeft.E  << " | " << spacer << conservedRight.E  << " | " << spacer << primLeft.P  << " | " << spacer << primRight.P  << " | "  << spacer << fluxes.E  << " | " << std::endl
@@ -561,13 +561,13 @@ int main()
     // | MagY     | 1.0  | -1.0   |
     // | MagZ     | 0.0  |  0.0   |
     // =========================================================================
-    // All ones
+    double bwGamma = 2.;
+
     names.push_back("Brio & Wu, Left vs. Right");
     Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 1., 1., 1., 1., 1., Bx.back(), 1., 1.));
-    rightPrim.push_back(Prim1DS(1., 1., 1., 1., 1., Bx.back(), 1., 1.));
-    gamma.push_back(1.4);
-
+    leftPrim.push_back(Prim1DS( 1., 1., 0., 0., 0., Bx.back(), 1., 0.));
+    rightPrim.push_back(Prim1DS(0.125, 0.1, 0., 0., 0., Bx.back(), -1., 0.));
+    gamma.push_back(bwGamma);
     // =========================================================================
     // End Brio & Wu
     // =========================================================================
