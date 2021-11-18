@@ -44,13 +44,13 @@ struct Cons1DS
         Bz(std::numeric_limits<double>::quiet_NaN())
     {};
     Cons1DS(double const &dInput,
-                    double const &EInput,
-                    double const &MxInput,
-                    double const &MyInput,
-                    double const &MzInput,
-                    double const &BxInput,
-                    double const &ByInput,
-                    double const &BzInput)
+            double const &EInput,
+            double const &MxInput,
+            double const &MyInput,
+            double const &MzInput,
+            double const &BxInput,
+            double const &ByInput,
+            double const &BzInput)
         :
         d (dInput),
         E (EInput),
@@ -86,13 +86,31 @@ struct Prim1DS
         By(std::numeric_limits<double>::quiet_NaN()),
         Bz(std::numeric_limits<double>::quiet_NaN())
     {};
+    Prim1DS(double const &dInput,
+            double const &PInput,
+            double const &VxInput,
+            double const &VyInput,
+            double const &VzInput,
+            double const &BxInput,
+            double const &ByInput,
+            double const &BzInput)
+        :
+        d (dInput),
+        P (PInput),
+        Vx(VxInput),
+        Vy(VyInput),
+        Vz(VzInput),
+        Bx(BxInput),
+        By(ByInput),
+        Bz(BzInput)
+    {};
 };
 // =============================================================================
 
 // =============================================================================
 Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
-                                                 const double &pBx,
-                                                 double const &Gamma)
+                         const double &pBx,
+                         double const &Gamma)
 {
     Prim1DS Prim1D;
 
@@ -112,6 +130,28 @@ Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
     Prim1D.Bz = pU.Bz;
 
     return Prim1D;
+}
+// =============================================================================
+
+// =============================================================================
+Cons1DS Prim1D_to_Cons1D(const Prim1DS pW,
+                         const double  pBx,
+                         double const &Gamma)
+{
+  Cons1DS Cons1D;
+
+  Cons1D.d  = pW.d;
+  Cons1D.Mx = pW.d*pW.Vx;
+  Cons1D.My = pW.d*pW.Vy;
+  Cons1D.Mz = pW.d*pW.Vz;
+
+  Cons1D.E = pW.P/Gamma + 0.5 * pW.d * (SQR(pW.Vx) + SQR(pW.Vy) + SQR(pW.Vz));
+  Cons1D.E += 0.5*(SQR(pBx) + SQR(pW.By) + SQR(pW.Bz));
+
+  Cons1D.By = pW.By;
+  Cons1D.Bz = pW.Bz;
+
+  return Cons1D;
 }
 // =============================================================================
 
@@ -505,6 +545,19 @@ int main()
     std::vector<double> gamma;
     std::vector<double> Bx;
 
+    // =========================================================================
+    // Brio & Wu
+    // Initial Conditions
+    // | Field    | Left | Right  |
+    // | Density  | 1.0  |  0.125 |
+    // | Pressure | 1.0  |  0.1   |
+    // | VelX     | 0.0  |  0.0   |
+    // | VelY     | 0.0  |  0.0   |
+    // | VelZ     | 0.0  |  0.0   |
+    // | MagX     | 0.75 |  0.75  |
+    // | MagY     | 1.0  | -1.0   |
+    // | MagZ     | 0.0  |  0.0   |
+    // =========================================================================
     // All ones
     names.push_back("all ones");
     Bx.push_back(1);
@@ -512,6 +565,9 @@ int main()
     rightConserved.push_back(Cons1DS(1., 1., 1., 1., 1., Bx.back(), 1., 1.));
     gamma.push_back(1.4);
 
+    // =========================================================================
+    // End Brio & Wu
+    // =========================================================================
 
     // Check that everything is the same length
     if ( not ((names.size() == leftConserved.size())
