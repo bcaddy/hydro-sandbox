@@ -1,50 +1,97 @@
-#include "../copyright.h"
-/*============================================================================*/
-/*! \file hlld.c
- *  \brief Computes 1D fluxes using the HLLD Riemann solver.
- *
- * PURPOSE: Computes 1D fluxes using the HLLD Riemann solver, an extension of
- *   the HLLE solver to MHD.  Only works for MHD problems.  SEPARATE code
- *   blocks for adiabatic and isothermal equations of state.
- *
- * REFERENCES:
- * - T. Miyoshi & K. Kusano, "A multi-state HLL approximate Riemann solver
- *   for ideal MHD", JCP, 208, 315 (2005)
- * - A. Mignone, "A simple and accurate Riemann solver for isothermal MHD",
- *   JPC, 225, 1427 (2007)
- *
- * HISTORY: Adiabatic version written by Brian Biskeborn, May 8, 2006,
- *             COS sophmore project.
- *          Isothermal version written by Nicole Lemaster, May 1, 2008.
- *
- * CONTAINS PUBLIC FUNCTIONS:
- * - fluxes() - all Riemann solvers in Athena must have this function name and
- *              use the same argument list as defined in rsolvers/prototypes.h*/
-/*============================================================================*/
+#include <cmath>
+// #include <stdio.h>
+// #include <stdlib.h>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <iomanip>
+#include <limits>
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "../defs.h"
-#include "../athena.h"
-#include "../globals.h"
-#include "prototypes.h"
-#include "../prototypes.h"
-#define HLLD_FLUX
-#ifdef HLLD_FLUX
-#ifndef SPECIAL_RELATIVITY
+// #include "../defs.h"
+// #include "../athena.h"
+// #include "../globals.h"
+// #include "prototypes.h"
+// #include "../prototypes.h"
 
 #define SMALL_NUMBER 1e-8
+#define TINY_NUMBER 1e-20
 
-#ifndef MHD
-#error : The HLLD flux only works for mhd.
-#endif /* MHD */
+double SQR(double const &A){return A*A;};
 
-#ifndef ISOTHERMAL
+struct Cons1DS
+{
+  double d;
+  double E;
+  double Mx;
+  double My;
+  double Mz;
+  double Bx;
+  double By;
+  double Bz;
+  Cons1DS()
+    :
+    d (std::numeric_limits<double>::quiet_NaN()),
+    E (std::numeric_limits<double>::quiet_NaN()),
+    Mx(std::numeric_limits<double>::quiet_NaN()),
+    My(std::numeric_limits<double>::quiet_NaN()),
+    Mz(std::numeric_limits<double>::quiet_NaN()),
+    Bx(std::numeric_limits<double>::quiet_NaN()),
+    By(std::numeric_limits<double>::quiet_NaN()),
+    Bz(std::numeric_limits<double>::quiet_NaN())
+  {};
+};
+
+struct Prim1DS
+{
+  double d;
+  double P;
+  double Vx;
+  double Vy;
+  double Vz;
+  double Bx;
+  double By;
+  double Bz;
+  Prim1DS()
+    :
+    d (std::numeric_limits<double>::quiet_NaN()),
+    P (std::numeric_limits<double>::quiet_NaN()),
+    Vx(std::numeric_limits<double>::quiet_NaN()),
+    Vy(std::numeric_limits<double>::quiet_NaN()),
+    Vz(std::numeric_limits<double>::quiet_NaN()),
+    Bx(std::numeric_limits<double>::quiet_NaN()),
+    By(std::numeric_limits<double>::quiet_NaN()),
+    Bz(std::numeric_limits<double>::quiet_NaN())
+  {};
+};
+
+Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
+                         const double &pBx,
+                         double const &Gamma)
+{
+  Prim1DS Prim1D;
+
+  double di = 1.0/pU.d;
+
+  Prim1D.d  = pU.d;
+  Prim1D.Vx = pU.Mx*di;
+  Prim1D.Vy = pU.My*di;
+  Prim1D.Vz = pU.Mz*di;
+
+  Prim1D.P = pU.E - 0.5*(SQR(pU.Mx)+SQR(pU.My)+SQR(pU.Mz))*di;
+  Prim1D.P -= 0.5*(SQR(pBx) + SQR(pU.By) + SQR(pU.Bz));
+  Prim1D.P *= Gamma;
+  Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
+
+  Prim1D.By = pU.By;
+  Prim1D.Bz = pU.Bz;
+
+  return Prim1D;
+}
+
 
 /*----------------------------------------------------------------------------*/
 /*! \fn void fluxes(const Cons1DS Ul, const Cons1DS Ur,
- *           const Prim1DS Wl, const Prim1DS Wr, const Real Bxi, Cons1DS *pFlux)
+ *           const Prim1DS Wl, const Prim1DS Wr, const double Bxi, Cons1DS *pFlux)
  *  \brief Compute 1D fluxes
  * Input Arguments:
  * - Bxi = B in direction of slice at cell interface
@@ -53,26 +100,30 @@
  * Output Arguments:
  * - Flux = fluxes of CONSERVED variables at cell interface
  */
-
-void fluxes(const Cons1DS Ul, const Cons1DS Ur,
-            const Prim1DS Wl, const Prim1DS Wr, const Real Bxi, Cons1DS *pFlux)
+void fluxes(const Cons1DS Ul,    // Left conserved state
+            const Cons1DS Ur,    // Right conserved state
+            const Prim1DS Wl,    // Left primitive state
+            const Prim1DS Wr,    // Right primitive state
+            const double Bxi,    // Mag field normal to interface
+            Cons1DS &pFlux,      // Output flux
+            double const &Gamma) // Gamma
 {
   Cons1DS Ulst,Uldst,Urdst,Urst;       /* Conserved variable for all states */
   Prim1DS Wlst,Wrst;                   /* Primitive variables for all states */
   Cons1DS Fl,Fr;                       /* Fluxes for left & right states */
-  Real spd[5];                        /* signal speeds, left to right */
-/*  Real maxspd; */
-  Real sdl,sdr,sdml,sdmr;             /* S_i-u_i, S_i-S_M (i=L or R) */
-  Real pbl,pbr;                       /* Magnetic pressures */
-  Real cfl,cfr,cfmax;                 /* Cf (left & right), max(cfl,cfr) */
-  Real gpl,gpr,gpbl,gpbr;             /* gamma*P, gamma*P + B */
-  Real sqrtdl,sqrtdr;                 /* sqrt of the L* & R* densities */
-  Real invsumd;                       /* 1/(sqrtdl + sqrtdr) */
-  Real ptl,ptr,ptst;                  /* total pressures */
-  Real vbstl,vbstr;                   /* v_i* dot B_i* for i=L or R */
-  Real Bxsig;                         /* sign(Bx) = 1 for Bx>0, -1 for Bx<0 */
-  Real Bxsq;                          /* Bx^2 */
-  Real tmp;                      /* Temp variable for repeated calculations */
+  double spd[5];                        /* signal speeds, left to right */
+/*  double maxspd; */
+  double sdl,sdr,sdml,sdmr;             /* S_i-u_i, S_i-S_M (i=L or R) */
+  double pbl,pbr;                       /* Magnetic pressures */
+  double cfl,cfr,cfmax;                 /* Cf (left & right), max(cfl,cfr) */
+  double gpl,gpr,gpbl,gpbr;             /* gamma*P, gamma*P + B */
+  double sqrtdl,sqrtdr;                 /* sqrt of the L* & R* densities */
+  double invsumd;                       /* 1/(sqrtdl + sqrtdr) */
+  double ptl,ptr,ptst;                  /* total pressures */
+  double vbstl,vbstr;                   /* v_i* dot B_i* for i=L or R */
+  double Bxsig;                         /* sign(Bx) = 1 for Bx>0, -1 for Bx<0 */
+  double Bxsq;                          /* Bx^2 */
+  double tmp;                      /* Temp variable for repeated calculations */
 #if (NSCALARS > 0)
   int n;
 #endif
@@ -102,7 +153,7 @@ void fluxes(const Cons1DS Ul, const Cons1DS Ur,
 
   cfl = sqrt((gpbl + sqrt(SQR(gpbl)-4.0*gpl*Bxsq))/(2.0*Wl.d));
   cfr = sqrt((gpbr + sqrt(SQR(gpbr)-4.0*gpr*Bxsq))/(2.0*Wr.d));
-  cfmax = MAX(cfl,cfr);
+  cfmax = std::max(cfl,cfr);
 
   if(Wl.Vx <= Wr.Vx) {
     spd[0] = Wl.Vx - cfmax;
@@ -151,18 +202,12 @@ void fluxes(const Cons1DS Ul, const Cons1DS Ur,
  */
 
   if(spd[0] >= 0.0){
-    *pFlux = Fl;
-#if defined(CYLINDRICAL) && !defined(BAROTROPIC)
-    pFlux->Pflux = ptl;
-#endif
+    pFlux = Fl;
     return;
   }
 
   if(spd[4] <= 0.0){
-    *pFlux = Fr;
-#if defined(CYLINDRICAL) && !defined(BAROTROPIC)
-    pFlux->Pflux = ptr;
-#endif
+    pFlux = Fr;
     return;
   }
 
@@ -240,7 +285,7 @@ void fluxes(const Cons1DS Ul, const Cons1DS Ur,
   /* eqn (48) of M&K */
   Ulst.E = (sdl*Ul.E - ptl*Wl.Vx + ptst*spd[2] +
             Bxi*(Wl.Vx*Bxi+Wl.Vy*Ul.By+Wl.Vz*Ul.Bz - vbstl))/sdml;
-  Wlst = Cons1D_to_Prim1D(&Ulst,&Bxi);
+  Wlst = Cons1D_to_Prim1D(Ulst,Bxi,Gamma);
 
 
 /* Ur* */
@@ -289,7 +334,7 @@ void fluxes(const Cons1DS Ul, const Cons1DS Ur,
   /* eqn (48) of M&K */
   Urst.E = (sdr*Ur.E - ptr*Wr.Vx + ptst*spd[2] +
             Bxi*(Wr.Vx*Bxi+Wr.Vy*Ur.By+Wr.Vz*Ur.Bz - vbstr))/sdmr;
-  Wrst = Cons1D_to_Prim1D(&Urst,&Bxi);
+  Wrst = Cons1D_to_Prim1D(Urst,Bxi,Gamma);
 
 
 /* Ul** and Ur** - if Bx is zero, same as *-states */
@@ -341,344 +386,114 @@ void fluxes(const Cons1DS Ul, const Cons1DS Ur,
 
   if(spd[1] >= 0.0) {
 /* return Fl* */
-    pFlux->d  = Fl.d  + spd[0]*(Ulst.d  - Ul.d);
-    pFlux->Mx = Fl.Mx + spd[0]*(Ulst.Mx - Ul.Mx);
-    pFlux->My = Fl.My + spd[0]*(Ulst.My - Ul.My);
-    pFlux->Mz = Fl.Mz + spd[0]*(Ulst.Mz - Ul.Mz);
-    pFlux->E  = Fl.E  + spd[0]*(Ulst.E  - Ul.E);
-    pFlux->By = Fl.By + spd[0]*(Ulst.By - Ul.By);
-    pFlux->Bz = Fl.Bz + spd[0]*(Ulst.Bz - Ul.Bz);
+    pFlux.d  = Fl.d  + spd[0]*(Ulst.d  - Ul.d);
+    pFlux.Mx = Fl.Mx + spd[0]*(Ulst.Mx - Ul.Mx);
+    pFlux.My = Fl.My + spd[0]*(Ulst.My - Ul.My);
+    pFlux.Mz = Fl.Mz + spd[0]*(Ulst.Mz - Ul.Mz);
+    pFlux.E  = Fl.E  + spd[0]*(Ulst.E  - Ul.E);
+    pFlux.By = Fl.By + spd[0]*(Ulst.By - Ul.By);
+    pFlux.Bz = Fl.Bz + spd[0]*(Ulst.Bz - Ul.Bz);
   }
   else if(spd[2] >= 0.0) {
 /* return Fl** */
     tmp = spd[1] - spd[0];
-    pFlux->d  = Fl.d  - spd[0]*Ul.d  - tmp*Ulst.d  + spd[1]*Uldst.d;
-    pFlux->Mx = Fl.Mx - spd[0]*Ul.Mx - tmp*Ulst.Mx + spd[1]*Uldst.Mx;
-    pFlux->My = Fl.My - spd[0]*Ul.My - tmp*Ulst.My + spd[1]*Uldst.My;
-    pFlux->Mz = Fl.Mz - spd[0]*Ul.Mz - tmp*Ulst.Mz + spd[1]*Uldst.Mz;
-    pFlux->E  = Fl.E  - spd[0]*Ul.E  - tmp*Ulst.E  + spd[1]*Uldst.E;
-    pFlux->By = Fl.By - spd[0]*Ul.By - tmp*Ulst.By + spd[1]*Uldst.By;
-    pFlux->Bz = Fl.Bz - spd[0]*Ul.Bz - tmp*Ulst.Bz + spd[1]*Uldst.Bz;
+    pFlux.d  = Fl.d  - spd[0]*Ul.d  - tmp*Ulst.d  + spd[1]*Uldst.d;
+    pFlux.Mx = Fl.Mx - spd[0]*Ul.Mx - tmp*Ulst.Mx + spd[1]*Uldst.Mx;
+    pFlux.My = Fl.My - spd[0]*Ul.My - tmp*Ulst.My + spd[1]*Uldst.My;
+    pFlux.Mz = Fl.Mz - spd[0]*Ul.Mz - tmp*Ulst.Mz + spd[1]*Uldst.Mz;
+    pFlux.E  = Fl.E  - spd[0]*Ul.E  - tmp*Ulst.E  + spd[1]*Uldst.E;
+    pFlux.By = Fl.By - spd[0]*Ul.By - tmp*Ulst.By + spd[1]*Uldst.By;
+    pFlux.Bz = Fl.Bz - spd[0]*Ul.Bz - tmp*Ulst.Bz + spd[1]*Uldst.Bz;
   }
   else if(spd[3] > 0.0) {
 /* return Fr** */
     tmp = spd[3] - spd[4];
-    pFlux->d  = Fr.d  - spd[4]*Ur.d  - tmp*Urst.d  + spd[3]*Urdst.d;
-    pFlux->Mx = Fr.Mx - spd[4]*Ur.Mx - tmp*Urst.Mx + spd[3]*Urdst.Mx;
-    pFlux->My = Fr.My - spd[4]*Ur.My - tmp*Urst.My + spd[3]*Urdst.My;
-    pFlux->Mz = Fr.Mz - spd[4]*Ur.Mz - tmp*Urst.Mz + spd[3]*Urdst.Mz;
-    pFlux->E  = Fr.E  - spd[4]*Ur.E  - tmp*Urst.E  + spd[3]*Urdst.E;
-    pFlux->By = Fr.By - spd[4]*Ur.By - tmp*Urst.By + spd[3]*Urdst.By;
-    pFlux->Bz = Fr.Bz - spd[4]*Ur.Bz - tmp*Urst.Bz + spd[3]*Urdst.Bz;
+    pFlux.d  = Fr.d  - spd[4]*Ur.d  - tmp*Urst.d  + spd[3]*Urdst.d;
+    pFlux.Mx = Fr.Mx - spd[4]*Ur.Mx - tmp*Urst.Mx + spd[3]*Urdst.Mx;
+    pFlux.My = Fr.My - spd[4]*Ur.My - tmp*Urst.My + spd[3]*Urdst.My;
+    pFlux.Mz = Fr.Mz - spd[4]*Ur.Mz - tmp*Urst.Mz + spd[3]*Urdst.Mz;
+    pFlux.E  = Fr.E  - spd[4]*Ur.E  - tmp*Urst.E  + spd[3]*Urdst.E;
+    pFlux.By = Fr.By - spd[4]*Ur.By - tmp*Urst.By + spd[3]*Urdst.By;
+    pFlux.Bz = Fr.Bz - spd[4]*Ur.Bz - tmp*Urst.Bz + spd[3]*Urdst.Bz;
   }
   else {
 /* return Fr* */
-    pFlux->d  = Fr.d  + spd[4]*(Urst.d  - Ur.d);
-    pFlux->Mx = Fr.Mx + spd[4]*(Urst.Mx - Ur.Mx);
-    pFlux->My = Fr.My + spd[4]*(Urst.My - Ur.My);
-    pFlux->Mz = Fr.Mz + spd[4]*(Urst.Mz - Ur.Mz);
-    pFlux->E  = Fr.E  + spd[4]*(Urst.E  - Ur.E);
-    pFlux->By = Fr.By + spd[4]*(Urst.By - Ur.By);
-    pFlux->Bz = Fr.Bz + spd[4]*(Urst.Bz - Ur.Bz);
+    pFlux.d  = Fr.d  + spd[4]*(Urst.d  - Ur.d);
+    pFlux.Mx = Fr.Mx + spd[4]*(Urst.Mx - Ur.Mx);
+    pFlux.My = Fr.My + spd[4]*(Urst.My - Ur.My);
+    pFlux.Mz = Fr.Mz + spd[4]*(Urst.Mz - Ur.Mz);
+    pFlux.E  = Fr.E  + spd[4]*(Urst.E  - Ur.E);
+    pFlux.By = Fr.By + spd[4]*(Urst.By - Ur.By);
+    pFlux.Bz = Fr.Bz + spd[4]*(Urst.Bz - Ur.Bz);
   }
 
 /* Fluxes of passively advected scalars, computed from density flux */
 #if (NSCALARS > 0)
-  if (pFlux->d >= 0.0) {
-    for (n=0; n<NSCALARS; n++) pFlux->s[n] = pFlux->d*Wl.r[n];
+  if (pFlux.d >= 0.0) {
+    for (n=0; n<NSCALARS; n++) pFlux.s[n] = pFlux.d*Wl.r[n];
   } else {
-    for (n=0; n<NSCALARS; n++) pFlux->s[n] = pFlux->d*Wr.r[n];
+    for (n=0; n<NSCALARS; n++) pFlux.s[n] = pFlux.d*Wr.r[n];
   }
-#endif
-
-#if defined(CYLINDRICAL) && !defined(BAROTROPIC)
-  pFlux->Pflux = ptst;
 #endif
   return;
 }
 
-#else /* ISOTHERMAL */
 
-/*----------------------------------------------------------------------------*/
-/*! \fn void fluxes(const Cons1DS Ul, const Cons1DS Ur,
- *          const Prim1DS Wl, const Prim1DS Wr, const Real Bxi, Cons1DS *pFlux)
- *  \brief Compute 1D fluxes
- * Input Arguments:
- * - Bxi = B in direction of slice at cell interface
- * - Ul,Ur = L/R-states of CONSERVED variables at cell interface
- *
- * Output Arguments:
- * - Flux = fluxes of CONSERVED variables at cell interface
- */
-
-void fluxes(const Cons1DS Ul, const Cons1DS Ur,
-            const Prim1DS Wl, const Prim1DS Wr, const Real Bxi, Cons1DS *pFlux)
+void printFluxes(Cons1DS const &fluxes)
 {
-  Cons1DS Ulst,Ucst,Urst;              /* Conserved variable for all states */
-  Cons1DS Fl,Fr;                       /* Fluxes for left & right states */
-  Real spd[5],idspd;                  /* signal speeds, left to right */
-  Real pbl,pbr;                       /* Magnetic pressures */
-  Real cfl,cfr;                       /* Cf (left & right) */
-  Real gpl,gpr,gpbl,gpbr;             /* gamma*P, gamma*P + B */
-  Real mxhll,ustar,dhll,sqrtdhll;     /* Mx, vel, and density in star states */
-  Real fdhll,fmxhll;                  /* HLL fluxes (for star states) */
-  Real ptl,ptr;                       /* total pressures */
-  Real Bxsq;                          /* Bx^2 */
-  Real tmp,mfact,bfact,X;             /* temporary variables */
-  int n;
-
-//   /* FROM ROE */
-//   Real sqrtdl,sqrtdr,isdlpdr,idroe,v1roe,b2roe,b3roe,x,y;
-//   Real bt_starsq,vaxsq,twid_csq,ct2,tsum,tdif,cf2_cs2,cfsq,cf;
-
-/*--- Step 1. ------------------------------------------------------------------
- * Convert left- and right- states in conserved to primitive variables.
- */
-
-/*
-  pbl = Cons1D_to_Prim1D(&Ul,&Wl,&Bxi);
-  pbr = Cons1D_to_Prim1D(&Ur,&Wr,&Bxi);
-*/
-
-/*--- Step 2. ------------------------------------------------------------------
- * Compute left & right wave speeds according to Mignone, eqns. (39), (8a),
- * and (9)
- */
-
-  Bxsq = Bxi*Bxi;
-  pbl = 0.5*(Bxsq + SQR(Wl.By) + SQR(Wl.Bz));
-  pbr = 0.5*(Bxsq + SQR(Wr.By) + SQR(Wr.Bz));
-  gpl  = Wl.d*Iso_csound2;
-  gpr  = Wr.d*Iso_csound2;
-  gpbl = gpl + 2.0*pbl;
-  gpbr = gpr + 2.0*pbr;
-
-  cfl = sqrt((gpbl + sqrt(SQR(gpbl)-4.0*gpl*Bxsq))/(2.0*Wl.d));
-  cfr = sqrt((gpbr + sqrt(SQR(gpbr)-4.0*gpr*Bxsq))/(2.0*Wr.d));
-
-  spd[0] = MIN(Wl.Vx-cfl,Wr.Vx-cfr);
-  spd[4] = MAX(Wl.Vx+cfl,Wr.Vx+cfr);
-
-//   /* COMPUTE ROE AVERAGES */
-//   sqrtdl = sqrt((double)Wl.d);
-//   sqrtdr = sqrt((double)Wr.d);
-//   isdlpdr = 1.0/(sqrtdl + sqrtdr);
-//   idroe  = 1.0/(sqrtdl*sqrtdr);
-//   v1roe = (sqrtdl*Wl.Vx + sqrtdr*Wr.Vx)*isdlpdr;
-//   b2roe = (sqrtdr*Wl.By + sqrtdl*Wr.By)*isdlpdr;
-//   b3roe = (sqrtdr*Wl.Bz + sqrtdl*Wr.Bz)*isdlpdr;
-//   x = 0.5*(SQR(Wl.By - Wr.By) + SQR(Wl.Bz - Wr.Bz))*SQR(isdlpdr);
-//   y = 0.5*(Wl.d + Wr.d)*idroe;
-//
-//   /* COMPUTE FAST MAGNETOSONIC SPEED */
-//   bt_starsq = (SQR(b2roe) + SQR(b3roe))*y;
-//   vaxsq = Bxsq*idroe;
-//   twid_csq = Iso_csound2 + x;
-//   ct2 = bt_starsq*idroe;
-//   tsum = vaxsq + ct2 + twid_csq;
-//   cfsq = 0.5*(tsum + sqrt((double)(SQR(tsum) - 4.0*twid_csq*vaxsq)));
-//   cf = sqrt((double)cfsq);
-//
-//   spd[0] = MIN(Wl.Vx-cfl,v1roe-cf);
-//   spd[4] = MAX(v1roe+cf,Wr.Vx+cfr);
-
-/*--- Step 3. ------------------------------------------------------------------
- * Compute L/R fluxes
- */
-
-  /* total pressure */
-  ptl = gpl + pbl;
-  ptr = gpr + pbr;
-
-  Fl.d  = Ul.Mx;
-  Fl.Mx = Ul.Mx*Wl.Vx + ptl - Bxsq;
-  Fl.My = Ul.d*Wl.Vx*Wl.Vy - Bxi*Ul.By;
-  Fl.Mz = Ul.d*Wl.Vx*Wl.Vz - Bxi*Ul.Bz;
-  Fl.By = Ul.By*Wl.Vx - Bxi*Wl.Vy;
-  Fl.Bz = Ul.Bz*Wl.Vx - Bxi*Wl.Vz;
-
-  Fr.d  = Ur.Mx;
-  Fr.Mx = Ur.Mx*Wr.Vx + ptr - Bxsq;
-  Fr.My = Ur.d*Wr.Vx*Wr.Vy - Bxi*Ur.By;
-  Fr.Mz = Ur.d*Wr.Vx*Wr.Vz - Bxi*Ur.Bz;
-  Fr.By = Ur.By*Wr.Vx - Bxi*Wr.Vy;
-  Fr.Bz = Ur.Bz*Wr.Vx - Bxi*Wr.Vz;
-
-#if (NSCALARS > 0)
-  for (n=0; n<NSCALARS; n++) {
-    Fl.s[n] = Fl.d*Wl.r[n];
-    Fr.s[n] = Fr.d*Wr.r[n];
-  }
-#endif
-
-/*--- Step 4. ------------------------------------------------------------------
- * Return upwind flux if flow is supersonic
- */
-
-  /* eqn. (38a) of Mignone */
-  if(spd[0] >= 0.0){
-    *pFlux = Fl;
-    return;
-  }
-
-  /* eqn. (38e) of Mignone */
-  if(spd[4] <= 0.0){
-    *pFlux = Fr;
-    return;
-  }
-
-/*--- Step 5. ------------------------------------------------------------------
- * Compute hll averages and Alfven wave speed
- */
-
-  /* inverse of difference between right and left signal speeds */
-  idspd = 1.0/(spd[4]-spd[0]);
-
-  /* rho component of U^{hll} from Mignone eqn. (15);
-   * uses F_L and F_R from eqn. (6) */
-  dhll = (spd[4]*Ur.d-spd[0]*Ul.d-Fr.d+Fl.d)*idspd;
-  if (dhll < d_MIN){
-    dhll = d_MIN;
-  }
-  sqrtdhll = sqrt(dhll);
-
-  /* rho and mx components of F^{hll} from Mignone eqn. (17) */
-  fdhll = (spd[4]*Fl.d-spd[0]*Fr.d+spd[4]*spd[0]*(Ur.d-Ul.d))*idspd;
-  fmxhll = (spd[4]*Fl.Mx-spd[0]*Fr.Mx+spd[4]*spd[0]*(Ur.Mx-Ul.Mx))*idspd;
-
-  /* ustar from paragraph between eqns. (23) and (24) */
-  ustar = fdhll/dhll;
-
-  /* mx component of U^{hll} from Mignone eqn. (15); paragraph referenced
-   * above states that mxhll should NOT be used to compute ustar */
-  mxhll = (spd[4]*Ur.Mx-spd[0]*Ul.Mx-Fr.Mx+Fl.Mx)*idspd;
-
-  /* S*_L and S*_R from Mignone eqn. (29) */
-  spd[1] = ustar - fabs(Bxi)/sqrtdhll;
-  spd[3] = ustar + fabs(Bxi)/sqrtdhll;
-
-/*--- Step 6. ------------------------------------------------------------------
- * Compute intermediate states
- */
-
-/* Ul* */
-  /* eqn. (20) of Mignone */
-  Ulst.d = dhll;
-  /* eqn. (24) of Mignone */
-  Ulst.Mx = mxhll;
-
-  tmp = (spd[0]-spd[1])*(spd[0]-spd[3]);
-//   if (tmp == 0) {
-  if ((fabs(spd[0]/spd[1]-1.0) < SMALL_NUMBER)
-        || (fabs(spd[0]/spd[3]-1.0) < SMALL_NUMBER)) {
-    /* degenerate case described below eqn. (39) */
-    Ulst.My = Ul.My;
-    Ulst.Mz = Ul.Mz;
-    Ulst.By = Ul.By;
-    Ulst.Bz = Ul.Bz;
-  } else {
-    mfact = Bxi*(ustar-Wl.Vx)/tmp;
-    bfact = (Ul.d*SQR(spd[0]-Wl.Vx)-Bxsq)/(dhll*tmp);
-
-    /* eqn. (30) of Mignone */
-    Ulst.My = dhll*Wl.Vy-Ul.By*mfact;
-    /* eqn. (31) of Mignone */
-    Ulst.Mz = dhll*Wl.Vz-Ul.Bz*mfact;
-    /* eqn. (32) of Mignone */
-    Ulst.By = Ul.By*bfact;
-    /* eqn. (33) of Mignone */
-    Ulst.Bz = Ul.Bz*bfact;
-  }
-
-/* Ur* */
-  /* eqn. (20) of Mignone */
-  Urst.d = dhll;
-  /* eqn. (24) of Mignone */
-  Urst.Mx = mxhll;
-
-  tmp = (spd[4]-spd[1])*(spd[4]-spd[3]);
-//   if (tmp == 0) {
-  if ((fabs(spd[4]/spd[1]-1.0) < SMALL_NUMBER)
-        || (fabs(spd[4]/spd[3]-1.0) < SMALL_NUMBER)) {
-    /* degenerate case described below eqn. (39) */
-    Urst.My = Ur.My;
-    Urst.Mz = Ur.Mz;
-    Urst.By = Ur.By;
-    Urst.Bz = Ur.Bz;
-  } else {
-    mfact = Bxi*(ustar-Wr.Vx)/tmp;
-    bfact = (Ur.d*SQR(spd[4]-Wr.Vx)-Bxsq)/(dhll*tmp);
-
-    /* eqn. (30) of Mignone */
-    Urst.My = dhll*Wr.Vy-Ur.By*mfact;
-    /* eqn. (31) of Mignone */
-    Urst.Mz = dhll*Wr.Vz-Ur.Bz*mfact;
-    /* eqn. (32) of Mignone */
-    Urst.By = Ur.By*bfact;
-    /* eqn. (33) of Mignone */
-    Urst.Bz = Ur.Bz*bfact;
-  }
-
-/* Uc* */
-  /* from below eqn. (37) of Mignone */
-  X = sqrtdhll*SIGN(Bxi);
-  /* eqn. (20) of Mignone */
-  Ucst.d = dhll;
-  /* eqn. (24) of Mignone */
-  Ucst.Mx = mxhll;
-  /* eqn. (34) of Mignone */
-  Ucst.My = 0.5*(Ulst.My+Urst.My+X*(Urst.By-Ulst.By));
-  /* eqn. (35) of Mignone */
-  Ucst.Mz = 0.5*(Ulst.Mz+Urst.Mz+X*(Urst.Bz-Ulst.Bz));
-  /* eqn. (36) of Mignone */
-  Ucst.By = 0.5*(Ulst.By+Urst.By+(Urst.My-Ulst.My)/X);
-  /* eqn. (37) of Mignone */
-  Ucst.Bz = 0.5*(Ulst.Bz+Urst.Bz+(Urst.Mz-Ulst.Mz)/X);
-
-/*--- Step 7. ------------------------------------------------------------------
- * Compute flux
- */
-
-  if(spd[1] >= 0.0) {
-/* return (Fl+Sl*(Ulst-Ul)), eqn. (38b) of Mignone */
-    pFlux->d  = Fl.d  + spd[0]*(Ulst.d  - Ul.d);
-    pFlux->Mx = Fl.Mx + spd[0]*(Ulst.Mx - Ul.Mx);
-    pFlux->My = Fl.My + spd[0]*(Ulst.My - Ul.My);
-    pFlux->Mz = Fl.Mz + spd[0]*(Ulst.Mz - Ul.Mz);
-    pFlux->By = Fl.By + spd[0]*(Ulst.By - Ul.By);
-    pFlux->Bz = Fl.Bz + spd[0]*(Ulst.Bz - Ul.Bz);
-  }
-  else if (spd[3] <= 0.0) {
-/* return (Fr+Sr*(Urst-Ur)), eqn. (38d) of Mignone */
-    pFlux->d  = Fr.d  + spd[4]*(Urst.d  - Ur.d);
-    pFlux->Mx = Fr.Mx + spd[4]*(Urst.Mx - Ur.Mx);
-    pFlux->My = Fr.My + spd[4]*(Urst.My - Ur.My);
-    pFlux->Mz = Fr.Mz + spd[4]*(Urst.Mz - Ur.Mz);
-    pFlux->By = Fr.By + spd[4]*(Urst.By - Ur.By);
-    pFlux->Bz = Fr.Bz + spd[4]*(Urst.Bz - Ur.Bz);
-  }
-  else {
-/* return Fcst, eqn. (38c) of Mignone, using eqn. (24) */
-    pFlux->d = dhll*ustar;
-    pFlux->Mx = fmxhll;
-    pFlux->My = Ucst.My*ustar - Bxi*Ucst.By;
-    pFlux->Mz = Ucst.Mz*ustar - Bxi*Ucst.Bz;
-    pFlux->By = Ucst.By*ustar - Bxi*Ucst.My/Ucst.d;
-    pFlux->Bz = Ucst.Bz*ustar - Bxi*Ucst.Mz/Ucst.d;
-  }
-
-/* Fluxes of passively advected scalars, computed from density flux */
-#if (NSCALARS > 0)
-  if (pFlux->d >= 0.0) {
-    for (n=0; n<NSCALARS; n++) pFlux->s[n] = pFlux->d*Wl.r[n];
-  } else {
-    for (n=0; n<NSCALARS; n++) pFlux->s[n] = pFlux->d*Wr.r[n];
-  }
-#endif
-
-  return;
+  std::cout.precision(std::numeric_limits<double>::max_digits10);
+  std::cout
+    << "The Fluxes are:" << std::endl
+    << "Density Flux     = " << fluxes.d  << std::endl
+    << "Energy Flux      = " << fluxes.E  << std::endl
+    << "Momentum X Flux  = " << fluxes.Mx << std::endl
+    << "Momentum Y Flux  = " << fluxes.My << std::endl
+    << "Momentum Z Flux  = " << fluxes.Mz << std::endl
+    << "Magnetic X Flux  = " << fluxes.Bx << std::endl
+    << "Magnetic Y Flux  = " << fluxes.By << std::endl
+    << "Magnetic Z Flux  = " << fluxes.Bz << std::endl
+  ;
 }
 
-#endif /* ISOTHERMAL */
-#endif /* SPECIAL_RELATIVITY */
-#endif /* HLLD_FLUX */
+int main()
+{
+  // constants
+  double const gamma  = 1.4;
+  double const Bx     = 1.;
+
+  // Generate the conserved variables
+  Cons1DS conservedLeft, conservedRight;
+
+  conservedLeft.d  = 1.123456789;
+  conservedLeft.E  = 1.;
+  conservedLeft.Mx = 1.;
+  conservedLeft.My = 1.;
+  conservedLeft.Mz = 1.;
+  conservedLeft.Bx = Bx;
+  conservedLeft.By = 1.;
+  conservedLeft.Bz = 1.;
+
+  conservedRight.d  = 1.;
+  conservedRight.E  = 1.;
+  conservedRight.Mx = 1.;
+  conservedRight.My = 1.;
+  conservedRight.Mz = 1.;
+  conservedRight.Bx = Bx;
+  conservedRight.By = 1.;
+  conservedRight.Bz = 1.;
+
+  // Generate the conserved variables
+  Prim1DS primitiveLeft  = Cons1D_to_Prim1D(conservedLeft,  Bx, gamma);
+  Prim1DS primitiveRight = Cons1D_to_Prim1D(conservedRight, Bx, gamma);
+
+  // Declare Fluxes
+  Cons1DS outFlux;
+
+  // Compute fluxes
+  fluxes(conservedLeft, conservedRight, primitiveLeft, primitiveRight, Bx, outFlux, gamma);
+
+  // Return Values
+  printFluxes(outFlux);
+
+  return 0;
+}
