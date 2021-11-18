@@ -165,6 +165,8 @@ void printState(std::string const &state)
 // =============================================================================
 void printResults(Cons1DS const &conservedLeft,
                   Cons1DS const &conservedRight,
+                  Prim1DS const &primLeft,
+                  Prim1DS const &primRight,
                   Cons1DS const &fluxes,
                   std::string const &name)
 {
@@ -174,18 +176,18 @@ void printResults(Cons1DS const &conservedLeft,
 
     std::cout
         << "Test Name: " << name << std::endl
-        << " ------------------------------------------------------------------------------------" << std::endl
-        << " | " << std::setw(8) << "Field"    << " | " << spacer << "Conserved Left" << " | " << spacer << "Conserved Right" << " | " << spacer << "Fluxes"   << " | " << std::endl
-        << " |----------|-----------------------|-----------------------|-----------------------|" << std::endl
-        << " | " << std::setw(8) << "Density"  << " | " << spacer << conservedLeft.d  << " | " << spacer << conservedRight.d  << " | "  << spacer << fluxes.d  << " | " << std::endl
-        << " | " << std::setw(8) << "Energy"   << " | " << spacer << conservedLeft.E  << " | " << spacer << conservedRight.E  << " | "  << spacer << fluxes.E  << " | " << std::endl
-        << " | " << std::setw(8) << "Momentum" << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | "  << spacer << fluxes.Mx << " | " << std::endl
-        << " | " << std::setw(8) << "Momentum" << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | "  << spacer << fluxes.My << " | " << std::endl
-        << " | " << std::setw(8) << "Momentum" << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | "  << spacer << fluxes.Mz << " | " << std::endl
-        << " | " << std::setw(8) << "Magnetic" << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
-        << " | " << std::setw(8) << "Magnetic" << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
-        << " | " << std::setw(8) << "Magnetic" << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
-        << " ------------------------------------------------------------------------------------" << std::endl
+        << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
+        << " | " << std::setw(15) << "Field"             << " | " << spacer << "Conserved Left" << " | " << spacer << "Conserved Right" << " | " << spacer << "Primitive Left" << " | " << spacer << "Primitive Right" << " | " << spacer << "Fluxes"   << " | " << std::endl
+        << " |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|" << std::endl
+        << " | " << std::setw(15) << "Density"           << " | " << spacer << conservedLeft.d  << " | " << spacer << conservedRight.d  << " | " << spacer << primLeft.d  << " | " << spacer << primRight.d  << " | "  << spacer << fluxes.d  << " | " << std::endl
+        << " | " << std::setw(15) << "Energy/Pressure"   << " | " << spacer << conservedLeft.E  << " | " << spacer << conservedRight.E  << " | " << spacer << primLeft.P  << " | " << spacer << primRight.P  << " | "  << spacer << fluxes.E  << " | " << std::endl
+        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | " << spacer << primLeft.Vx << " | " << spacer << primRight.Vx << " | "  << spacer << fluxes.Mx << " | " << std::endl
+        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | " << spacer << primLeft.Vy << " | " << spacer << primRight.Vy << " | "  << spacer << fluxes.My << " | " << std::endl
+        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | " << spacer << primLeft.Vz << " | " << spacer << primRight.Vz << " | "  << spacer << fluxes.Mz << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | " << spacer << primLeft.Bx << " | " << spacer << primRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | " << spacer << primLeft.By << " | " << spacer << primRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | " << spacer << primLeft.Bz << " | " << spacer << primRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
+        << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
     ;
 }
 // =============================================================================
@@ -541,7 +543,8 @@ int main()
 {
     // Vectors to store input and output for each test
     std::vector<std::string> names;
-    std::vector<Cons1DS> leftConserved, rightConserved, outFlux;
+    std::vector<Prim1DS> leftPrim, rightPrim;
+    std::vector<Cons1DS> outFlux;
     std::vector<double> gamma;
     std::vector<double> Bx;
 
@@ -559,10 +562,10 @@ int main()
     // | MagZ     | 0.0  |  0.0   |
     // =========================================================================
     // All ones
-    names.push_back("all ones");
-    Bx.push_back(1);
-    leftConserved.push_back(Cons1DS( 1., 1., 1., 1., 1., Bx.back(), 1., 1.));
-    rightConserved.push_back(Cons1DS(1., 1., 1., 1., 1., Bx.back(), 1., 1.));
+    names.push_back("Brio & Wu, Left vs. Right");
+    Bx.push_back(0.75);
+    leftPrim.push_back(Prim1DS( 1., 1., 1., 1., 1., Bx.back(), 1., 1.));
+    rightPrim.push_back(Prim1DS(1., 1., 1., 1., 1., Bx.back(), 1., 1.));
     gamma.push_back(1.4);
 
     // =========================================================================
@@ -570,8 +573,8 @@ int main()
     // =========================================================================
 
     // Check that everything is the same length
-    if ( not ((names.size() == leftConserved.size())
-               and (names.size() == rightConserved.size())
+    if ( not ((names.size() == leftPrim.size())
+               and (names.size() == rightPrim.size())
                and (names.size() == gamma.size())
                and (names.size() == Bx.size())
              )
@@ -584,20 +587,25 @@ int main()
     for (size_t i = 0; i < names.size(); i++)
     {
         // Generate the conserved variables
-        Prim1DS primitiveLeft  = Cons1D_to_Prim1D(leftConserved.at(i),  Bx.at(i), gamma.at(i));
-        Prim1DS primitiveRight = Cons1D_to_Prim1D(rightConserved.at(i), Bx.at(i), gamma.at(i));
+        Cons1DS leftConserved  = Prim1D_to_Cons1D(leftPrim.at(i),  Bx.at(i), gamma.at(i));
+        Cons1DS rightConserved = Prim1D_to_Cons1D(rightPrim.at(i), Bx.at(i), gamma.at(i));
 
         // Compute fluxes
-        fluxes(leftConserved.at(i),
-               rightConserved.at(i),
-               primitiveLeft,
-               primitiveRight,
+        fluxes(leftConserved,
+               rightConserved,
+               leftPrim.at(i),
+               rightPrim.at(i),
                Bx.at(i),
                outFlux.at(i),
                gamma.at(i));
 
         // Return Values
-        printResults(leftConserved.at(i), rightConserved.at(i), outFlux.at(i), names.at(i));
+        printResults(leftConserved,
+                     rightConserved,
+                     leftPrim.at(i),
+                     rightPrim.at(i),
+                     outFlux.at(i),
+                     names.at(i));
     }
 
     return 0;
