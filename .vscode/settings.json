@@ -126,5 +126,5 @@
         "variant": "cpp",
         "semaphore": "cpp"
     },
-    "python.pythonPath": "/ihome/crc/install/python/anaconda3.8-2020.11/bin/python"
+    "python.pythonPath": "/Users/Bob/opt/anaconda3/bin/python"
 }
