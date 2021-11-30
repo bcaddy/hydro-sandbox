@@ -1,196 +1,8 @@
-#include <cmath>
-// #include <stdio.h>
-// #include <stdlib.h>
 #include <vector>
 #include <algorithm>
-#include <iostream>
-#include <iomanip>
-#include <limits>
-#include <string>
 #include <stdexcept>
 
-// #include "../defs.h"
-// #include "../athena.h"
-// #include "../globals.h"
-// #include "prototypes.h"
-// #include "../prototypes.h"
-
-// =============================================================================
-#define SMALL_NUMBER 1e-8
-#define TINY_NUMBER 1e-20
-double SQR(double const &A){return A*A;};
-// =============================================================================
-
-// =============================================================================
-struct Cons1DS
-{
-    double d;
-    double E;
-    double Mx;
-    double My;
-    double Mz;
-    double Bx;
-    double By;
-    double Bz;
-    Cons1DS()
-        :
-        d (std::numeric_limits<double>::quiet_NaN()),
-        E (std::numeric_limits<double>::quiet_NaN()),
-        Mx(std::numeric_limits<double>::quiet_NaN()),
-        My(std::numeric_limits<double>::quiet_NaN()),
-        Mz(std::numeric_limits<double>::quiet_NaN()),
-        Bx(std::numeric_limits<double>::quiet_NaN()),
-        By(std::numeric_limits<double>::quiet_NaN()),
-        Bz(std::numeric_limits<double>::quiet_NaN())
-    {};
-    Cons1DS(double const &dInput,
-            double const &EInput,
-            double const &MxInput,
-            double const &MyInput,
-            double const &MzInput,
-            double const &BxInput,
-            double const &ByInput,
-            double const &BzInput)
-        :
-        d (dInput),
-        E (EInput),
-        Mx(MxInput),
-        My(MyInput),
-        Mz(MzInput),
-        Bx(BxInput),
-        By(ByInput),
-        Bz(BzInput)
-    {};
-};
-// =============================================================================
-
-// =============================================================================
-struct Prim1DS
-{
-    double d;
-    double P;
-    double Vx;
-    double Vy;
-    double Vz;
-    double Bx;
-    double By;
-    double Bz;
-    Prim1DS()
-        :
-        d (std::numeric_limits<double>::quiet_NaN()),
-        P (std::numeric_limits<double>::quiet_NaN()),
-        Vx(std::numeric_limits<double>::quiet_NaN()),
-        Vy(std::numeric_limits<double>::quiet_NaN()),
-        Vz(std::numeric_limits<double>::quiet_NaN()),
-        Bx(std::numeric_limits<double>::quiet_NaN()),
-        By(std::numeric_limits<double>::quiet_NaN()),
-        Bz(std::numeric_limits<double>::quiet_NaN())
-    {};
-    Prim1DS(double const &dInput,
-            double const &PInput,
-            double const &VxInput,
-            double const &VyInput,
-            double const &VzInput,
-            double const &BxInput,
-            double const &ByInput,
-            double const &BzInput)
-        :
-        d (dInput),
-        P (PInput),
-        Vx(VxInput),
-        Vy(VyInput),
-        Vz(VzInput),
-        Bx(BxInput),
-        By(ByInput),
-        Bz(BzInput)
-    {};
-};
-// =============================================================================
-
-// =============================================================================
-Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
-                         const double &pBx,
-                         double const &Gamma)
-{
-    Prim1DS Prim1D;
-
-    double di = 1.0/pU.d;
-
-    Prim1D.d  = pU.d;
-    Prim1D.Vx = pU.Mx*di;
-    Prim1D.Vy = pU.My*di;
-    Prim1D.Vz = pU.Mz*di;
-
-    Prim1D.P = pU.E - 0.5*(SQR(pU.Mx)+SQR(pU.My)+SQR(pU.Mz))*di;
-    Prim1D.P -= 0.5*(SQR(pBx) + SQR(pU.By) + SQR(pU.Bz));
-    Prim1D.P *= Gamma;
-    Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
-
-    Prim1D.By = pU.By;
-    Prim1D.Bz = pU.Bz;
-
-    return Prim1D;
-}
-// =============================================================================
-
-// =============================================================================
-Cons1DS Prim1D_to_Cons1D(const Prim1DS pW,
-                         const double  pBx,
-                         double const &Gamma)
-{
-  Cons1DS Cons1D;
-
-  Cons1D.d  = pW.d;
-  Cons1D.Mx = pW.d*pW.Vx;
-  Cons1D.My = pW.d*pW.Vy;
-  Cons1D.Mz = pW.d*pW.Vz;
-
-  Cons1D.E = pW.P/Gamma + 0.5 * pW.d * (SQR(pW.Vx) + SQR(pW.Vy) + SQR(pW.Vz));
-  Cons1D.E += 0.5*(SQR(pBx) + SQR(pW.By) + SQR(pW.Bz));
-
-  Cons1D.By = pW.By;
-  Cons1D.Bz = pW.Bz;
-
-  return Cons1D;
-}
-// =============================================================================
-
-// =============================================================================
-void printState(std::string const &state)
-{
-    std::cout << std::endl << "State = " << state << std::endl;
-}
-// =============================================================================
-
-// =============================================================================
-void printResults(Cons1DS const &conservedLeft,
-                  Cons1DS const &conservedRight,
-                  Prim1DS const &primLeft,
-                  Prim1DS const &primRight,
-                  Cons1DS const &fluxes,
-                  std::string const &name)
-{
-    int maxWidth = std::numeric_limits<double>::max_digits10;
-    std::cout.precision(maxWidth);
-    auto spacer = std::setw(maxWidth+4);
-
-    std::cout
-        << "Test Name: " << name << std::endl
-        << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
-        << " | " << std::setw(15) << "Field"             << " | " << spacer << "Conserved Left" << " | " << spacer << "Conserved Right" << " | " << spacer << "Primitive Left" << " | " << spacer << "Primitive Right" << " | " << spacer << "Conserved Fluxes"   << " | " << std::endl
-        << " |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|" << std::endl
-        << " | " << std::setw(15) << "Density"           << " | " << spacer << conservedLeft.d  << " | " << spacer << conservedRight.d  << " | " << spacer << primLeft.d  << " | " << spacer << primRight.d  << " | "  << spacer << fluxes.d  << " | " << std::endl
-        << " | " << std::setw(15) << "Energy/Pressure"   << " | " << spacer << conservedLeft.E  << " | " << spacer << conservedRight.E  << " | " << spacer << primLeft.P  << " | " << spacer << primRight.P  << " | "  << spacer << fluxes.E  << " | " << std::endl
-        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | " << spacer << primLeft.Vx << " | " << spacer << primRight.Vx << " | "  << spacer << fluxes.Mx << " | " << std::endl
-        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | " << spacer << primLeft.Vy << " | " << spacer << primRight.Vy << " | "  << spacer << fluxes.My << " | " << std::endl
-        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | " << spacer << primLeft.Vz << " | " << spacer << primRight.Vz << " | "  << spacer << fluxes.Mz << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | " << spacer << primLeft.Bx << " | " << spacer << primRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | " << spacer << primLeft.By << " | " << spacer << primRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | " << spacer << primLeft.Bz << " | " << spacer << primRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
-        << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
-    ;
-}
-// =============================================================================
+#include "hlld-standalone-utils.h"
 
 // =============================================================================
 void fluxes(const Cons1DS Ul,    // Left conserved state
@@ -199,7 +11,8 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
             const Prim1DS Wr,    // Right primitive state
             const double Bxi,    // Mag field normal to interface
             Cons1DS &pFlux,      // Output flux
-            double const &Gamma) // Gamma
+            double const &Gamma, // Gamma
+            std::string &stateString)  // State that was used
 {
     Cons1DS Ulst,Uldst,Urdst,Urst;       /* Conserved variable for all states */
     Prim1DS Wlst,Wrst;                   /* Primitive variables for all states */
@@ -296,13 +109,13 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 
     if(spd[0] >= 0.0){
         pFlux = Fl;
-        printState("L");
+        stateString = "L";
         return;
     }
 
     if(spd[4] <= 0.0){
         pFlux = Fr;
-        printState("R");
+        stateString = "R";
         return;
     }
 
@@ -481,7 +294,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 
     if(spd[1] >= 0.0) {
 /* return Fl* */
-        printState("L*");
+        stateString = "L*";
         pFlux.d  = Fl.d  + spd[0]*(Ulst.d  - Ul.d);
         pFlux.Mx = Fl.Mx + spd[0]*(Ulst.Mx - Ul.Mx);
         pFlux.My = Fl.My + spd[0]*(Ulst.My - Ul.My);
@@ -492,7 +305,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
     }
     else if(spd[2] >= 0.0) {
 /* return Fl** */
-        printState("L**");
+        stateString = "L**";
         tmp = spd[1] - spd[0];
         pFlux.d  = Fl.d  - spd[0]*Ul.d  - tmp*Ulst.d  + spd[1]*Uldst.d;
         pFlux.Mx = Fl.Mx - spd[0]*Ul.Mx - tmp*Ulst.Mx + spd[1]*Uldst.Mx;
@@ -504,7 +317,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
     }
     else if(spd[3] > 0.0) {
 /* return Fr** */
-        printState("R**");
+        stateString = "R**";
         tmp = spd[3] - spd[4];
         pFlux.d  = Fr.d  - spd[4]*Ur.d  - tmp*Urst.d  + spd[3]*Urdst.d;
         pFlux.Mx = Fr.Mx - spd[4]*Ur.Mx - tmp*Urst.Mx + spd[3]*Urdst.Mx;
@@ -516,7 +329,7 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
     }
     else {
 /* return Fr* */
-        printState("R*");
+        stateString = "R*";
         pFlux.d  = Fr.d  + spd[4]*(Urst.d  - Ur.d);
         pFlux.Mx = Fr.Mx + spd[4]*(Urst.Mx - Ur.Mx);
         pFlux.My = Fr.My + spd[4]*(Urst.My - Ur.My);
@@ -541,107 +354,44 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 // =============================================================================
 int main()
 {
-    // Vectors to store input and output for each test
-    std::vector<std::string> names;
-    std::vector<Prim1DS> leftPrim, rightPrim;
-    std::vector<Cons1DS> outFlux;
-    std::vector<double> gamma;
-    std::vector<double> Bx;
 
-    // =========================================================================
-    // Brio & Wu
-    // Initial Conditions
-    // | Field    | Left | Right  |
-    // | Density  | 1.0  |  0.125 |
-    // | Pressure | 1.0  |  0.1   |
-    // | VelX     | 0.0  |  0.0   |
-    // | VelY     | 0.0  |  0.0   |
-    // | VelZ     | 0.0  |  0.0   |
-    // | MagX     | 0.75 |  0.75  |
-    // | MagY     | 1.0  | -1.0   |
-    // | MagZ     | 0.0  |  0.0   |
-    // =========================================================================
-    double bwGamma = 2.;
+    // Get all the different test cases. All of these are vectors
+    auto [names, leftPrimitive, rightPrimitive, gamma] = generateTestCases();
 
-    names.push_back("Brio & Wu, Left vs. Right");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 1., 1., 0., 0., 0., Bx.back(), 1., 0.));
-    rightPrim.push_back(Prim1DS(0.125, 0.1, 0., 0., 0., Bx.back(), -1., 0.));
-    gamma.push_back(bwGamma);
-
-    names.push_back("Brio & Wu, Fast Rarefaction Left");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 1., 1., 0., 0., 0., Bx.back(), 1., 0.));
-    rightPrim.push_back(Prim1DS(0.65, 0., 0., 0., 0., Bx.back(), 0., 0.));
-    gamma.push_back(bwGamma);
-
-    names.push_back("Brio & Wu, Compound Wave Left");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    gamma.push_back(bwGamma);
-
-    names.push_back("Brio & Wu, Compound Wave Right");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    gamma.push_back(bwGamma);
-
-    names.push_back("Brio & Wu, Contact Discontinuity");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    gamma.push_back(bwGamma);
-
-    names.push_back("Brio & Wu, Slow Shock");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    gamma.push_back(bwGamma);
-
-    names.push_back("Brio & Wu, Fast Rarefaction Right");
-    Bx.push_back(0.75);
-    leftPrim.push_back(Prim1DS( 0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    rightPrim.push_back(Prim1DS(0., 0., 0., 0., 0., Bx.back(), 0., 0.));
-    gamma.push_back(bwGamma);
-    // =========================================================================
-    // End Brio & Wu
-    // =========================================================================
-
-    // Check that everything is the same length
-    if ( not ((names.size() == leftPrim.size())
-               and (names.size() == rightPrim.size())
-               and (names.size() == gamma.size())
-               and (names.size() == Bx.size())
-             )
-       )
-    {
-        throw std::invalid_argument("Not all vectors are the same size");
-    }
-
-    outFlux.resize(names.size());
+    std::vector<Cons1DS> outFlux(names.size());
     for (size_t i = 0; i < names.size(); i++)
     {
+        std::string stateUsed;
+
         // Generate the conserved variables
-        Cons1DS leftConserved  = Prim1D_to_Cons1D(leftPrim.at(i),  Bx.at(i), gamma.at(i));
-        Cons1DS rightConserved = Prim1D_to_Cons1D(rightPrim.at(i), Bx.at(i), gamma.at(i));
+        Cons1DS leftConserved  = Prim1D_to_Cons1D(leftPrimitive.at(i), gamma.at(i));
+        Cons1DS rightConserved = Prim1D_to_Cons1D(rightPrimitive.at(i), gamma.at(i));
+
+        // Check that left and right Bx are the same
+        if ((leftPrimitive.at(i)).Bx != (rightPrimitive.at(i)).Bx)
+        {
+            throw std::invalid_argument("Right and left Bx are not the same. Name = " + names.at(i));
+        }
 
         // Compute fluxes
         fluxes(leftConserved,
                rightConserved,
-               leftPrim.at(i),
-               rightPrim.at(i),
-               Bx.at(i),
+               leftPrimitive.at(i),
+               rightPrimitive.at(i),
+               (leftPrimitive.at(i)).Bx,
                outFlux.at(i),
-               gamma.at(i));
+               gamma.at(i),
+               stateUsed);
 
         // Return Values
         printResults(leftConserved,
                      rightConserved,
-                     leftPrim.at(i),
-                     rightPrim.at(i),
+                     leftPrimitive.at(i),
+                     rightPrimitive.at(i),
                      outFlux.at(i),
-                     names.at(i));
+                     names.at(i),
+                     stateUsed,
+                     gamma.at(i));
     }
 
     return 0;
