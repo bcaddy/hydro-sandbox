@@ -159,7 +159,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // Brio & Wu Shock Tube
     // =========================================================================
-    if (false)
+    if (true)
     {
         // Setup the constants
         double const gamma = 2.;
@@ -260,7 +260,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // Dai & Woodward Shock Tube
     // =========================================================================
-    if (false)
+    if (true)
     {
         double const gamma = 5./3.;
         double const coef = 1. / (std::sqrt(4 * M_PI));
@@ -373,7 +373,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // Ryu & Jones 4d Shock Tube
     // =========================================================================
-    if (false)
+    if (true)
     {
         double const gamma = 5./3.;
         double const Bx = 0.7;
@@ -472,7 +472,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // EFR
     // =========================================================================
-    if (false)
+    if (true)
     {
         double const gamma = 5./3.;
         double const V0 = 2.;
@@ -580,23 +580,23 @@ std::tuple<std::vector<std::string>,
         // (rho_side * S_side * Sm - Bx^2) < (small_number * total_pressure_side * density_side * S_side * (S_side - S^star_side))
         double const gamma = 5./3.;
 
-        double const rhoL      = 0.0;
+        double const rhoL      = 1.0;
         double const pressureL = 1.0;
-        double const vxL       = 0.0;
-        double const vyL       = 0.0;
-        double const vzL       = 0.0;
-        double const bxL       = 0.0;
-        double const byL       = 0.0;
-        double const bzL       = 0.0;
+        double const vxL       = 1.0e-9;
+        double const vyL       = 1.0e-9;
+        double const vzL       = 1.0e-9;
+        double const bxL       = 30000.0;
+        double const byL       = 1.0;
+        double const bzL       = 1.0;
 
-        double const rhoR      = 0.0;
-        double const pressureR = 1.0;
-        double const vxR       = 0.0;
-        double const vyR       = 0.0;
-        double const vzR       = 0.0;
-        double const bxR       = 0.0;
-        double const byR       = 0.0;
-        double const bzR       = 0.0;
+        double const rhoR      = rhoL;
+        double const pressureR = pressureL;
+        double const vxR       = vxL;
+        double const vyR       = vyL;
+        double const vzR       = vzL;
+        double const bxR       = bxL;
+        double const byR       = byL;
+        double const bzR       = bzL;
 
         std::string rootName = "divide by zero error, ";
 
@@ -652,7 +652,7 @@ void printResults(Cons1DS const &conservedLeft,
         << " | " << std::setw(15) << "Vel/Momentum x"    << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | " << spacer << primLeft.Vx << " | " << spacer << primRight.Vx << " | "  << spacer << fluxes.Mx << " | " << std::endl
         << " | " << std::setw(15) << "Vel/Momentum y"    << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | " << spacer << primLeft.Vy << " | " << spacer << primRight.Vy << " | "  << spacer << fluxes.My << " | " << std::endl
         << " | " << std::setw(15) << "Vel/Momentum z"    << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | " << spacer << primLeft.Vz << " | " << spacer << primRight.Vz << " | "  << spacer << fluxes.Mz << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic x"        << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | " << spacer << primLeft.Bx << " | " << spacer << primRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic x"        << " | " << spacer << primLeft.Bx      << " | " << spacer << primRight.Bx      << " | " << spacer << primLeft.Bx << " | " << spacer << primRight.Bx << " | "  << spacer << "n/a"     << " | " << std::endl
         << " | " << std::setw(15) << "Magnetic y"        << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | " << spacer << primLeft.By << " | " << spacer << primRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
         << " | " << std::setw(15) << "Magnetic x"        << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | " << spacer << primLeft.Bz << " | " << spacer << primRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
         << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl

@@ -162,7 +162,6 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 //   }
     if (fabs(Ul.d*sdl*sdml-Bxsq) < SMALL_NUMBER*ptst) {
         /* Degenerate case */
-        std::cout << "degenerate state left side" << std::endl;
         Ulst.My = Ulst.d * Wl.Vy;
         Ulst.Mz = Ulst.d * Wl.Vz;
 
@@ -211,7 +210,6 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 //   }
     if (fabs(Ur.d*sdr*sdmr-Bxsq) < SMALL_NUMBER*ptst) {
         /* Degenerate case */
-        std::cout << "degenerate state right side" << std::endl;
         Urst.My = Urst.d * Wr.Vy;
         Urst.Mz = Urst.d * Wr.Vz;
 
