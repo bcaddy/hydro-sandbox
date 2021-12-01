@@ -87,7 +87,7 @@
             "program": "${workspaceFolder}/Athena-Code/a.out",
             "args": [],
             "stopAtEntry": true,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}/Athena-Code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
