@@ -84,7 +84,7 @@
             "name": "C++: a.out",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/euler1D-VL/a.out",
+            "program": "${workspaceFolder}/Athena-Code/a.out",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",

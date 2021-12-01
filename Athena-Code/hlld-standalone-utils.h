@@ -159,6 +159,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // Brio & Wu Shock Tube
     // =========================================================================
+    if (false)
     {
         // Setup the constants
         double const gamma = 2.;
@@ -259,6 +260,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // Dai & Woodward Shock Tube
     // =========================================================================
+    if (false)
     {
         double const gamma = 5./3.;
         double const coef = 1. / (std::sqrt(4 * M_PI));
@@ -371,6 +373,7 @@ std::tuple<std::vector<std::string>,
     // =========================================================================
     // Ryu & Jones 4d Shock Tube
     // =========================================================================
+    if (false)
     {
         double const gamma = 5./3.;
         double const Bx = 0.7;
@@ -467,8 +470,9 @@ std::tuple<std::vector<std::string>,
     }
 
     // =========================================================================
-    // Ryu & Jones 4d Shock Tube
+    // EFR
     // =========================================================================
+    if (false)
     {
         double const gamma = 5./3.;
         double const V0 = 2.;
@@ -476,7 +480,7 @@ std::tuple<std::vector<std::string>,
         double const Vz = 0.0;
         double const Bx = 0.0;
         double const Bz = 0.0;
-        std::string rootName = "Ryu & Jones 4d, ";
+        std::string rootName = "EFR, , ";
         Prim1DS leftICs               (1.0,      0.45,     -V0,       Vy, Vz, Bx, 0.5,      Bz);
         Prim1DS leftRarefactionCenter (0.368580, 0.111253, -1.180830, Vy, Vz, Bx, 0.183044, Bz);
         Prim1DS leftVxTurnOver        (0.058814, 0.008819, -0.125475, Vy, Vz, Bx, 0.029215, Bz);
@@ -562,6 +566,51 @@ std::tuple<std::vector<std::string>,
 
     }
 
+    // =========================================================================
+    // Potential Divide by Zero Error Shock Tube
+    // =========================================================================
+    if (true)
+    {
+        // This is the case where:
+        // Sm     = Vx_side
+        // S_side = Vx_side +/- c_f_side
+        // Bx^2 >= gamma * pressure_side
+        // By_side = Bz_side = 0
+        // Which simplifies (according to Athena solver) to
+        // (rho_side * S_side * Sm - Bx^2) < (small_number * total_pressure_side * density_side * S_side * (S_side - S^star_side))
+        double const gamma = 5./3.;
+
+        double const rhoL      = 0.0;
+        double const pressureL = 1.0;
+        double const vxL       = 0.0;
+        double const vyL       = 0.0;
+        double const vzL       = 0.0;
+        double const bxL       = 0.0;
+        double const byL       = 0.0;
+        double const bzL       = 0.0;
+
+        double const rhoR      = 0.0;
+        double const pressureR = 1.0;
+        double const vxR       = 0.0;
+        double const vyR       = 0.0;
+        double const vzR       = 0.0;
+        double const bxR       = 0.0;
+        double const byR       = 0.0;
+        double const bzR       = 0.0;
+
+        std::string rootName = "divide by zero error, ";
+
+        Prim1DS leftICs (rhoL, pressureL, vxL, vyL, vzL, bxL, byL, bzL);
+        Prim1DS rightICs(rhoR, pressureR, vxR, vyR, vzR, bxR, byR, bzR);
+
+        // Compare ICs
+        names.push_back(rootName);
+        leftPrimitive.push_back (leftICs);
+        rightPrimitive.push_back(rightICs);
+        gammaVector.push_back(gamma);
+    }
+
+
     // Check that everything is the same length
     if ( not ((names.size() == leftPrimitive.size())
                and (names.size() == rightPrimitive.size())
@@ -600,12 +649,12 @@ void printResults(Cons1DS const &conservedLeft,
         << " |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|" << std::endl
         << " | " << std::setw(15) << "Density"           << " | " << spacer << conservedLeft.d  << " | " << spacer << conservedRight.d  << " | " << spacer << primLeft.d  << " | " << spacer << primRight.d  << " | "  << spacer << fluxes.d  << " | " << std::endl
         << " | " << std::setw(15) << "Energy/Pressure"   << " | " << spacer << conservedLeft.E  << " | " << spacer << conservedRight.E  << " | " << spacer << primLeft.P  << " | " << spacer << primRight.P  << " | "  << spacer << fluxes.E  << " | " << std::endl
-        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | " << spacer << primLeft.Vx << " | " << spacer << primRight.Vx << " | "  << spacer << fluxes.Mx << " | " << std::endl
-        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | " << spacer << primLeft.Vy << " | " << spacer << primRight.Vy << " | "  << spacer << fluxes.My << " | " << std::endl
-        << " | " << std::setw(15) << "Momentum"          << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | " << spacer << primLeft.Vz << " | " << spacer << primRight.Vz << " | "  << spacer << fluxes.Mz << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | " << spacer << primLeft.Bx << " | " << spacer << primRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | " << spacer << primLeft.By << " | " << spacer << primRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
-        << " | " << std::setw(15) << "Magnetic"          << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | " << spacer << primLeft.Bz << " | " << spacer << primRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
+        << " | " << std::setw(15) << "Vel/Momentum x"    << " | " << spacer << conservedLeft.Mx << " | " << spacer << conservedRight.Mx << " | " << spacer << primLeft.Vx << " | " << spacer << primRight.Vx << " | "  << spacer << fluxes.Mx << " | " << std::endl
+        << " | " << std::setw(15) << "Vel/Momentum y"    << " | " << spacer << conservedLeft.My << " | " << spacer << conservedRight.My << " | " << spacer << primLeft.Vy << " | " << spacer << primRight.Vy << " | "  << spacer << fluxes.My << " | " << std::endl
+        << " | " << std::setw(15) << "Vel/Momentum z"    << " | " << spacer << conservedLeft.Mz << " | " << spacer << conservedRight.Mz << " | " << spacer << primLeft.Vz << " | " << spacer << primRight.Vz << " | "  << spacer << fluxes.Mz << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic x"        << " | " << spacer << conservedLeft.Bx << " | " << spacer << conservedRight.Bx << " | " << spacer << primLeft.Bx << " | " << spacer << primRight.Bx << " | "  << spacer << fluxes.Bx << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic y"        << " | " << spacer << conservedLeft.By << " | " << spacer << conservedRight.By << " | " << spacer << primLeft.By << " | " << spacer << primRight.By << " | "  << spacer << fluxes.By << " | " << std::endl
+        << " | " << std::setw(15) << "Magnetic x"        << " | " << spacer << conservedLeft.Bz << " | " << spacer << conservedRight.Bz << " | " << spacer << primLeft.Bz << " | " << spacer << primRight.Bz << " | "  << spacer << fluxes.Bz << " | " << std::endl
         << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
     ;
 }
