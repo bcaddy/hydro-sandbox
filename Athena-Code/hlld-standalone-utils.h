@@ -116,7 +116,7 @@ Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
     Prim1D.P = pU.E - 0.5*(SQR(pU.Mx)+SQR(pU.My)+SQR(pU.Mz))*di;
     Prim1D.P -= 0.5*(SQR(pBx) + SQR(pU.By) + SQR(pU.Bz));
     Prim1D.P *= Gamma;
-    // Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
+    Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
 
     Prim1D.By = pU.By;
     Prim1D.Bz = pU.Bz;
