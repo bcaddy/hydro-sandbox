@@ -116,7 +116,7 @@ Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
     Prim1D.P = pU.E - 0.5*(SQR(pU.Mx)+SQR(pU.My)+SQR(pU.Mz))*di;
     Prim1D.P -= 0.5*(SQR(pBx) + SQR(pU.By) + SQR(pU.Bz));
     Prim1D.P *= Gamma;
-    Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
+    // Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
 
     Prim1D.By = pU.By;
     Prim1D.Bz = pU.Bz;
@@ -657,12 +657,13 @@ std::tuple<std::vector<std::string>,
     {
         double const gamma = 5./3.;
         std::string rootName = "Special Cases, ";
-        Prim1DS zeroes               ( 0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        Prim1DS ones                 ( 1.0,  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-        Prim1DS negPressure          ( 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-        Prim1DS negPressureDensity   (-1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-        Prim1DS negDensity           (-1.0,  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-
+        Prim1DS zeroes               ( 0.0,  0.0,       0.0,  0.0,  0.0, 0.0, 0.0, 0.0);
+        Prim1DS ones                 ( 1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0);
+        Prim1DS negPressure          ( 1.0, -1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0);
+        Prim1DS negPressureDensity   (-1.0, -1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0);
+        Prim1DS negDensity           (-1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0);
+        Prim1DS negEnergy            ( 1.0, -4.0*gamma, 1.0,  1.0,  1.0, 1.0, 1.0, 1.0);
+        Prim1DS negDensityEnergy     (-1.0, -gamma,    -1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
 
         // Set states
         names.push_back(rootName + "Zeroes");
@@ -718,6 +719,36 @@ std::tuple<std::vector<std::string>,
         names.push_back(rootName + "Negative density & pressure, both sides");
         leftPrimitive.push_back (negPressureDensity);
         rightPrimitive.push_back(negPressureDensity);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative energy, right side");
+        leftPrimitive.push_back (ones);
+        rightPrimitive.push_back(negEnergy);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative energy, left side");
+        leftPrimitive.push_back (negEnergy);
+        rightPrimitive.push_back(ones);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative energy, both sides");
+        leftPrimitive.push_back (negEnergy);
+        rightPrimitive.push_back(negEnergy);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density & energy, right side");
+        leftPrimitive.push_back (ones);
+        rightPrimitive.push_back(negDensityEnergy);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density & energy, left side");
+        leftPrimitive.push_back (negDensityEnergy);
+        rightPrimitive.push_back(ones);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density & energy, both sides");
+        leftPrimitive.push_back (negDensityEnergy);
+        rightPrimitive.push_back(negDensityEnergy);
         gammaVector.push_back(gamma);
     }
 
