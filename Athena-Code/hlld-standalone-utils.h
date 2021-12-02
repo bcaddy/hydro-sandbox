@@ -187,7 +187,7 @@ std::tuple<std::vector<std::string>,
         rightPrimitive.push_back(leftICs);
         gammaVector.push_back(gamma);
 
-        names.push_back(rootName + "initial conditions double left");
+        names.push_back(rootName + "initial conditions double right");
         leftPrimitive.push_back (rightICs);
         rightPrimitive.push_back(rightICs);
         gammaVector.push_back(gamma);
@@ -299,7 +299,7 @@ std::tuple<std::vector<std::string>,
         rightPrimitive.push_back(leftICs);
         gammaVector.push_back(gamma);
 
-        names.push_back(rootName + "initial conditions double left");
+        names.push_back(rootName + "initial conditions double right");
         leftPrimitive.push_back (rightICs);
         rightPrimitive.push_back(rightICs);
         gammaVector.push_back(gamma);
@@ -419,7 +419,7 @@ std::tuple<std::vector<std::string>,
         rightPrimitive.push_back(leftICs);
         gammaVector.push_back(gamma);
 
-        names.push_back(rootName + "initial conditions double left");
+        names.push_back(rootName + "initial conditions double right");
         leftPrimitive.push_back (rightICs);
         rightPrimitive.push_back(rightICs);
         gammaVector.push_back(gamma);
@@ -525,7 +525,7 @@ std::tuple<std::vector<std::string>,
         rightPrimitive.push_back(leftICs);
         gammaVector.push_back(gamma);
 
-        names.push_back(rootName + "initial conditions double left");
+        names.push_back(rootName + "initial conditions double right");
         leftPrimitive.push_back (rightICs);
         rightPrimitive.push_back(rightICs);
         gammaVector.push_back(gamma);

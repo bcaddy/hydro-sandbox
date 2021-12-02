@@ -17,7 +17,7 @@ Test Name: Brio & Wu, initial conditions double left
 
 State = L**
 Gamma = 2
-Test Name: Brio & Wu, initial conditions double left
+Test Name: Brio & Wu, initial conditions double right
  -------------------------------------------------------------------------------------------------------------------------------------------
  |           Field |        Conserved Left |       Conserved Right |        Primitive Left |       Primitive Right |      Conserved Fluxes | 
  |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|
@@ -273,7 +273,7 @@ Test Name: Dai & Woodward, initial conditions double left
 
 State = L**
 Gamma = 1.6666666666666667
-Test Name: Dai & Woodward, initial conditions double left
+Test Name: Dai & Woodward, initial conditions double right
  -------------------------------------------------------------------------------------------------------------------------------------------
  |           Field |        Conserved Left |       Conserved Right |        Primitive Left |       Primitive Right |      Conserved Fluxes | 
  |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|
@@ -561,7 +561,7 @@ Test Name: Ryu & Jones 4d, initial conditions double left
 
 State = L**
 Gamma = 1.6666666666666667
-Test Name: Ryu & Jones 4d, initial conditions double left
+Test Name: Ryu & Jones 4d, initial conditions double right
  -------------------------------------------------------------------------------------------------------------------------------------------
  |           Field |        Conserved Left |       Conserved Right |        Primitive Left |       Primitive Right |      Conserved Fluxes | 
  |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|
@@ -817,7 +817,7 @@ Test Name: EFR, , initial conditions double left
 
 State = L
 Gamma = 1.6666666666666667
-Test Name: EFR, , initial conditions double left
+Test Name: EFR, , initial conditions double right
  -------------------------------------------------------------------------------------------------------------------------------------------
  |           Field |        Conserved Left |       Conserved Right |        Primitive Left |       Primitive Right |      Conserved Fluxes | 
  |-----------------|-----------------------|-----------------------|-----------------------|-----------------------|-----------------------|
