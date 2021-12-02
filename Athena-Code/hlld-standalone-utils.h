@@ -182,6 +182,16 @@ std::tuple<std::vector<std::string>,
         Prim1DS rightICs              (0.128,    0.1,       0.0,       0.0,      Vz, Bx, -1.0,      Bz);
 
         // Compare ICs
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (leftICs);
+        rightPrimitive.push_back(leftICs);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (rightICs);
+        rightPrimitive.push_back(rightICs);
+        gammaVector.push_back(gamma);
+
         names.push_back(rootName + "initial conditions interface");
         leftPrimitive.push_back (leftICs);
         rightPrimitive.push_back(rightICs);
@@ -284,6 +294,16 @@ std::tuple<std::vector<std::string>,
         Prim1DS rightICs               (1.0,     0.2,      0.0,       0.0,       1.0,      Bx,      4*coef,   2*coef);
 
         // Compare ICs
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (leftICs);
+        rightPrimitive.push_back(leftICs);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (rightICs);
+        rightPrimitive.push_back(rightICs);
+        gammaVector.push_back(gamma);
+
         names.push_back(rootName + "initial conditions interface");
         leftPrimitive.push_back (leftICs);
         rightPrimitive.push_back(rightICs);
@@ -394,6 +414,16 @@ std::tuple<std::vector<std::string>,
         Prim1DS rightICs                  (0.3,      0.2,       0.0,      0.0,          1.0,          Bx, 1.0,           0.0);
 
         // Compare ICs
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (leftICs);
+        rightPrimitive.push_back(leftICs);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (rightICs);
+        rightPrimitive.push_back(rightICs);
+        gammaVector.push_back(gamma);
+
         names.push_back(rootName + "initial conditions interface");
         leftPrimitive.push_back (leftICs);
         rightPrimitive.push_back(rightICs);
@@ -490,6 +520,16 @@ std::tuple<std::vector<std::string>,
         Prim1DS rightICs              (1.0,      0.45,      V0,       Vy, Vz, Bx, 0.5,      Bz);
 
         // Compare ICs
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (leftICs);
+        rightPrimitive.push_back(leftICs);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "initial conditions double left");
+        leftPrimitive.push_back (rightICs);
+        rightPrimitive.push_back(rightICs);
+        gammaVector.push_back(gamma);
+
         names.push_back(rootName + "initial conditions interface");
         leftPrimitive.push_back (leftICs);
         rightPrimitive.push_back(rightICs);
@@ -610,6 +650,76 @@ std::tuple<std::vector<std::string>,
         gammaVector.push_back(gamma);
     }
 
+    // =========================================================================
+    // Special Cases
+    // =========================================================================
+    if (true)
+    {
+        double const gamma = 5./3.;
+        std::string rootName = "Special Cases, ";
+        Prim1DS zeroes               ( 0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        Prim1DS ones                 ( 1.0,  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        Prim1DS negPressure          ( 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        Prim1DS negPressureDensity   (-1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        Prim1DS negDensity           (-1.0,  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+
+
+        // Set states
+        names.push_back(rootName + "Zeroes");
+        leftPrimitive.push_back (zeroes);
+        rightPrimitive.push_back(zeroes);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Ones");
+        leftPrimitive.push_back (ones);
+        rightPrimitive.push_back(ones);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative pressure, right side");
+        leftPrimitive.push_back (ones);
+        rightPrimitive.push_back(negPressure);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative pressure, left side");
+        leftPrimitive.push_back (negPressure);
+        rightPrimitive.push_back(ones);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative pressure, both sides");
+        leftPrimitive.push_back (negPressure);
+        rightPrimitive.push_back(negPressure);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density, right side");
+        leftPrimitive.push_back (ones);
+        rightPrimitive.push_back(negDensity);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density, left side");
+        leftPrimitive.push_back (negDensity);
+        rightPrimitive.push_back(ones);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density, both sides");
+        leftPrimitive.push_back (negDensity);
+        rightPrimitive.push_back(negDensity);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density & pressure, right side");
+        leftPrimitive.push_back (ones);
+        rightPrimitive.push_back(negPressureDensity);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density & pressure, left side");
+        leftPrimitive.push_back (negPressureDensity);
+        rightPrimitive.push_back(ones);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Negative density & pressure, both sides");
+        leftPrimitive.push_back (negPressureDensity);
+        rightPrimitive.push_back(negPressureDensity);
+        gammaVector.push_back(gamma);
+    }
 
     // Check that everything is the same length
     if ( not ((names.size() == leftPrimitive.size())
