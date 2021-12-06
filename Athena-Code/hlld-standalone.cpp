@@ -52,8 +52,8 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
     Bxsq = Bxi*Bxi;
     pbl = 0.5*(Bxsq + SQR(Wl.By) + SQR(Wl.Bz));
     pbr = 0.5*(Bxsq + SQR(Wr.By) + SQR(Wr.Bz));
-    gpl  = (Gamma-1) * Wl.P;
-    gpr  = (Gamma-1) * Wr.P;
+    gpl  = Gamma * Wl.P;
+    gpr  = Gamma * Wr.P;
     gpbl = gpl + 2.0*pbl;
     gpbr = gpr + 2.0*pbr;
 
