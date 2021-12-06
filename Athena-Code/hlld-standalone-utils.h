@@ -115,7 +115,7 @@ Prim1DS Cons1D_to_Prim1D(const Cons1DS &pU,
 
     Prim1D.P = pU.E - 0.5*(SQR(pU.Mx)+SQR(pU.My)+SQR(pU.Mz))*di;
     Prim1D.P -= 0.5*(SQR(pBx) + SQR(pU.By) + SQR(pU.Bz));
-    Prim1D.P *= Gamma;
+    Prim1D.P *= (Gamma-1);
     Prim1D.P = std::max(Prim1D.P,TINY_NUMBER);
 
     Prim1D.By = pU.By;
@@ -136,7 +136,7 @@ Cons1DS Prim1D_to_Cons1D(const Prim1DS pW,
   Cons1D.My = pW.d*pW.Vy;
   Cons1D.Mz = pW.d*pW.Vz;
 
-  Cons1D.E = pW.P/Gamma + 0.5 * pW.d * (SQR(pW.Vx) + SQR(pW.Vy) + SQR(pW.Vz));
+  Cons1D.E = pW.P/(Gamma-1) + 0.5 * pW.d * (SQR(pW.Vx) + SQR(pW.Vy) + SQR(pW.Vz));
   Cons1D.E += 0.5*(SQR(pW.Bx) + SQR(pW.By) + SQR(pW.Bz));
 
   Cons1D.By = pW.By;
@@ -783,6 +783,15 @@ void printResults(Cons1DS const &conservedLeft,
     std::cout << std::endl;
     std::cout << "State = " << state << std::endl;
     std::cout << "Gamma = " << gamma << std::endl;
+    std::cout << "Fluxes, copy/pastable: ("
+              << fluxes.d  << ", "
+              << fluxes.Mx << ", "
+              << fluxes.My << ", "
+              << fluxes.Mz << ", "
+              << fluxes.E  << ", "
+              << "0.0"     << ", "
+              << fluxes.By << ", "
+              << fluxes.Bz << ")" << std::endl;
     std::cout
         << "Test Name: " << name << std::endl
         << " -------------------------------------------------------------------------------------------------------------------------------------------" << std::endl
