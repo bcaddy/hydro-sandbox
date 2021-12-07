@@ -223,6 +223,11 @@ std::tuple<std::vector<std::string>,
         rightPrimitive.push_back(compoundRightSide);
         gammaVector.push_back(gamma);
 
+        names.push_back(rootName + "Contact");
+        leftPrimitive.push_back (contactLeftSide);
+        rightPrimitive.push_back(contactRightSide);
+        gammaVector.push_back(gamma);
+
         names.push_back(rootName + "Slow shock");
         leftPrimitive.push_back (slowShockLeftSide);
         rightPrimitive.push_back(slowShockRightSide);
@@ -254,6 +259,11 @@ std::tuple<std::vector<std::string>,
         names.push_back(rootName + "Compound, peak to right");
         leftPrimitive.push_back(compoundRightSide);
         rightPrimitive.push_back (compoundPeak);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "Contact");
+        leftPrimitive.push_back (contactRightSide);
+        rightPrimitive.push_back(contactLeftSide);
         gammaVector.push_back(gamma);
 
         names.push_back(rootName + "Slow shock");
