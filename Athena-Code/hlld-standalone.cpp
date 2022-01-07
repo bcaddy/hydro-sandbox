@@ -244,11 +244,6 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
                         Bxi*(Wr.Vx*Bxi+Wr.Vy*Ur.By+Wr.Vz*Ur.Bz - vbstr))/sdmr;
     Wrst = Cons1D_to_Prim1D(Urst,Bxi,Gamma);
 
-printf("\nDensity Flux = %f", Fr.d);
-printf("\nS_R = %f", spd[4]);
-printf("\ndensityStar = %f", Urst.d);
-printf("\ndensity = %f", Ur.d);
-
 /* Ul** and Ur** - if Bx is zero, same as *-states */
 //   if(Bxi == 0.0) {
     if(0.5*Bxsq < SMALL_NUMBER*ptst) {
