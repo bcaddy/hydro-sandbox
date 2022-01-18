@@ -617,7 +617,7 @@ std::tuple<std::vector<std::string>,
     }
 
     // =========================================================================
-    // Potential Divide by Zero Error Shock Tube
+    // Potential Divide by Zero Error/Degenerate state Shock Tube
     // =========================================================================
     if (true)
     {
@@ -632,10 +632,10 @@ std::tuple<std::vector<std::string>,
 
         double const rhoL      = 1.0;
         double const pressureL = 1.0;
-        double const vxL       = 1.0e-9;
-        double const vyL       = 1.0e-9;
-        double const vzL       = 1.0e-9;
-        double const bxL       = 30000.0;
+        double const vxL       = 1.0;
+        double const vyL       = 1.0;
+        double const vzL       = 1.0;
+        double const bxL       = 3.0E4;
         double const byL       = 1.0;
         double const bzL       = 1.0;
 
@@ -648,7 +648,7 @@ std::tuple<std::vector<std::string>,
         double const byR       = byL;
         double const bzR       = bzL;
 
-        std::string rootName = "divide by zero error, ";
+        std::string rootName = "divide by zero error/degenerate state, ";
 
         Prim1DS leftICs (rhoL, pressureL, vxL, vyL, vzL, bxL, byL, bzL);
         Prim1DS rightICs(rhoR, pressureR, vxR, vyR, vzR, bxR, byR, bzR);

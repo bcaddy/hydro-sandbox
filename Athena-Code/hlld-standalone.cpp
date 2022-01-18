@@ -351,83 +351,11 @@ void fluxes(const Cons1DS Ul,    // Left conserved state
 // =============================================================================
 
 // =============================================================================
-// int main()
-// {
-
-//     // Get all the different test cases. All of these are vectors
-//     auto [names, leftPrimitive, rightPrimitive, gamma] = generateTestCases();
-
-//     std::vector<Cons1DS> outFlux(names.size());
-//     for (size_t i = 0; i < names.size(); i++)
-//     {
-//         std::string stateUsed;
-
-//         // Generate the conserved variables
-//         Cons1DS leftConserved  = Prim1D_to_Cons1D(leftPrimitive.at(i), gamma.at(i));
-//         Cons1DS rightConserved = Prim1D_to_Cons1D(rightPrimitive.at(i), gamma.at(i));
-
-//         // Check that left and right Bx are the same
-//         if ((leftPrimitive.at(i)).Bx != (rightPrimitive.at(i)).Bx)
-//         {
-//             throw std::invalid_argument("Right and left Bx are not the same. Name = " + names.at(i));
-//         }
-
-//         // Compute fluxes
-//         fluxes(leftConserved,
-//                rightConserved,
-//                leftPrimitive.at(i),
-//                rightPrimitive.at(i),
-//                (leftPrimitive.at(i)).Bx,
-//                outFlux.at(i),
-//                gamma.at(i),
-//                stateUsed);
-
-//         // Return Values
-//         printResults(leftConserved,
-//                      rightConserved,
-//                      leftPrimitive.at(i),
-//                      rightPrimitive.at(i),
-//                      outFlux.at(i),
-//                      names.at(i),
-//                      stateUsed,
-//                      gamma.at(i));
-//     }
-
-//     return 0;
-// }
-// =============================================================================
-
-
-// =============================================================================
 int main()
 {
 
     // Get all the different test cases. All of these are vectors
-    std::vector<std::string> names;
-    std::vector<Prim1DS> leftPrimitive;
-    std::vector<Prim1DS> rightPrimitive;
-    std::vector<double> gamma;
-
-    // Constant Values
-    double const V0 = 2.;
-    double const Vy = 0.0;
-    double const Vz = 0.0;
-    double const Bx = 0.0;
-    double const Bz = 0.0;
-
-    Prim1DS leftICs               (1.0,      0.45,     -V0,       Vy, Vz, Bx, 0.5,      Bz);
-    Prim1DS leftRarefactionCenter (0.368580, 0.111253, -1.180830, Vy, Vz, Bx, 0.183044, Bz);
-    Prim1DS leftVxTurnOver        (0.058814, 0.008819, -0.125475, Vy, Vz, Bx, 0.029215, Bz);
-    Prim1DS midPoint              (0.034658, 0.006776,  0.000778, Vy, Vz, Bx, 0.017333, Bz);
-    Prim1DS rightVxTurnOver       (0.062587, 0.009521,  0.152160, Vy, Vz, Bx, 0.031576, Bz);
-    Prim1DS rightRarefactionCenter(0.316485, 0.089875,  1.073560, Vy, Vz, Bx, 0.159366, Bz);
-    Prim1DS rightICs              (1.0,      0.45,      V0,       Vy, Vz, Bx, 0.5,      Bz);
-
-    // Compare ICs
-    names.push_back("test case");
-    leftPrimitive.push_back (leftRarefactionCenter);
-    rightPrimitive.push_back(leftVxTurnOver);
-    gamma.push_back(5./3.);
+    auto [names, leftPrimitive, rightPrimitive, gamma] = generateTestCases();
 
     std::vector<Cons1DS> outFlux(names.size());
     for (size_t i = 0; i < names.size(); i++)
@@ -467,4 +395,76 @@ int main()
 
     return 0;
 }
+// =============================================================================
+
+
+// =============================================================================
+// int main()
+// {
+
+//     // Get all the different test cases. All of these are vectors
+//     std::vector<std::string> names;
+//     std::vector<Prim1DS> leftPrimitive;
+//     std::vector<Prim1DS> rightPrimitive;
+//     std::vector<double> gamma;
+
+//     // Constant Values
+//     double const V0 = 2.;
+//     double const Vy = 0.0;
+//     double const Vz = 0.0;
+//     double const Bx = 0.0;
+//     double const Bz = 0.0;
+
+//     Prim1DS leftICs               (1.0,      0.45,     -V0,       Vy, Vz, Bx, 0.5,      Bz);
+//     Prim1DS leftRarefactionCenter (0.368580, 0.111253, -1.180830, Vy, Vz, Bx, 0.183044, Bz);
+//     Prim1DS leftVxTurnOver        (0.058814, 0.008819, -0.125475, Vy, Vz, Bx, 0.029215, Bz);
+//     Prim1DS midPoint              (0.034658, 0.006776,  0.000778, Vy, Vz, Bx, 0.017333, Bz);
+//     Prim1DS rightVxTurnOver       (0.062587, 0.009521,  0.152160, Vy, Vz, Bx, 0.031576, Bz);
+//     Prim1DS rightRarefactionCenter(0.316485, 0.089875,  1.073560, Vy, Vz, Bx, 0.159366, Bz);
+//     Prim1DS rightICs              (1.0,      0.45,      V0,       Vy, Vz, Bx, 0.5,      Bz);
+
+//     // Compare ICs
+//     names.push_back("test case");
+//     leftPrimitive.push_back (leftRarefactionCenter);
+//     rightPrimitive.push_back(leftVxTurnOver);
+//     gamma.push_back(5./3.);
+
+//     std::vector<Cons1DS> outFlux(names.size());
+//     for (size_t i = 0; i < names.size(); i++)
+//     {
+//         std::string stateUsed;
+
+//         // Generate the conserved variables
+//         Cons1DS leftConserved  = Prim1D_to_Cons1D(leftPrimitive.at(i), gamma.at(i));
+//         Cons1DS rightConserved = Prim1D_to_Cons1D(rightPrimitive.at(i), gamma.at(i));
+
+//         // Check that left and right Bx are the same
+//         if ((leftPrimitive.at(i)).Bx != (rightPrimitive.at(i)).Bx)
+//         {
+//             throw std::invalid_argument("Right and left Bx are not the same. Name = " + names.at(i));
+//         }
+
+//         // Compute fluxes
+//         fluxes(leftConserved,
+//                rightConserved,
+//                leftPrimitive.at(i),
+//                rightPrimitive.at(i),
+//                (leftPrimitive.at(i)).Bx,
+//                outFlux.at(i),
+//                gamma.at(i),
+//                stateUsed);
+
+//         // Return Values
+//         printResults(leftConserved,
+//                      rightConserved,
+//                      leftPrimitive.at(i),
+//                      rightPrimitive.at(i),
+//                      outFlux.at(i),
+//                      names.at(i),
+//                      stateUsed,
+//                      gamma.at(i));
+//     }
+
+//     return 0;
+// }
 // =============================================================================
