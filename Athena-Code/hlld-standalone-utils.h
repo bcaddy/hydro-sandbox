@@ -10,7 +10,7 @@
 // =============================================================================
 #define SMALL_NUMBER 1e-8
 #define TINY_NUMBER 1e-20
-#define NSCALARS 1
+#define NSCALARS 3
 double SQR(double const &A){return A*A;};
 // =============================================================================
 
@@ -36,7 +36,7 @@ struct Cons1DS
         Bx(std::numeric_limits<double>::quiet_NaN()),
         By(std::numeric_limits<double>::quiet_NaN()),
         Bz(std::numeric_limits<double>::quiet_NaN()),
-        s(1)
+        s(NSCALARS)
     {};
     Cons1DS(double const &dInput,
             double const &EInput,
@@ -184,21 +184,21 @@ std::tuple<std::vector<std::string>,
         double const Vz = 0.0;
         double const Bx = 0.75;
         double const Bz = 0.0;
-        double const primitiveScalar = 1.1069975296;
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
         std::string rootName = "Brio & Wu, ";
-        Prim1DS leftICs               (1.0,      1.0     ,  0.0,       0.0,      Vz, Bx,  1.0     , Bz, {primitiveScalar});
-        Prim1DS leftFastRareLeftSide  (0.978576, 0.957621,  0.038603, -0.011074, Vz, Bx,  0.970288, Bz, {primitiveScalar});
-        Prim1DS leftFastRareRightSide (0.671655, 0.451115,  0.647082, -0.238291, Vz, Bx,  0.578240, Bz, {primitiveScalar});
-        Prim1DS compoundLeftSide      (0.814306, 0.706578,  0.506792, -0.911794, Vz, Bx, -0.108819, Bz, {primitiveScalar});
-        Prim1DS compoundPeak          (0.765841, 0.624742,  0.523701, -1.383720, Vz, Bx, -0.400787, Bz, {primitiveScalar});
-        Prim1DS compoundRightSide     (0.695211, 0.515237,  0.601089, -1.583720, Vz, Bx, -0.537027, Bz, {primitiveScalar});
-        Prim1DS contactLeftSide       (0.680453, 0.515856,  0.598922, -1.584490, Vz, Bx, -0.533616, Bz, {primitiveScalar});
-        Prim1DS contactRightSide      (0.231160, 0.516212,  0.599261, -1.584820, Vz, Bx, -0.533327, Bz, {primitiveScalar});
-        Prim1DS slowShockLeftSide     (0.153125, 0.191168,  0.086170, -0.683303, Vz, Bx, -0.850815, Bz, {primitiveScalar});
-        Prim1DS slowShockRightSide    (0.117046, 0.087684, -0.238196, -0.165561, Vz, Bx, -0.903407, Bz, {primitiveScalar});
-        Prim1DS rightFastRareLeftSide (0.117358, 0.088148, -0.228756, -0.158845, Vz, Bx, -0.908335, Bz, {primitiveScalar});
-        Prim1DS rightFastRareRightSide(0.124894, 0.099830, -0.003132, -0.002074, Vz, Bx, -0.999018, Bz, {primitiveScalar});
-        Prim1DS rightICs              (0.128,    0.1,       0.0,       0.0,      Vz, Bx, -1.0,      Bz, {primitiveScalar});
+        Prim1DS leftICs               (1.0,      1.0     ,  0.0,       0.0,      Vz, Bx,  1.0     , Bz, primitiveScalar);
+        Prim1DS leftFastRareLeftSide  (0.978576, 0.957621,  0.038603, -0.011074, Vz, Bx,  0.970288, Bz, primitiveScalar);
+        Prim1DS leftFastRareRightSide (0.671655, 0.451115,  0.647082, -0.238291, Vz, Bx,  0.578240, Bz, primitiveScalar);
+        Prim1DS compoundLeftSide      (0.814306, 0.706578,  0.506792, -0.911794, Vz, Bx, -0.108819, Bz, primitiveScalar);
+        Prim1DS compoundPeak          (0.765841, 0.624742,  0.523701, -1.383720, Vz, Bx, -0.400787, Bz, primitiveScalar);
+        Prim1DS compoundRightSide     (0.695211, 0.515237,  0.601089, -1.583720, Vz, Bx, -0.537027, Bz, primitiveScalar);
+        Prim1DS contactLeftSide       (0.680453, 0.515856,  0.598922, -1.584490, Vz, Bx, -0.533616, Bz, primitiveScalar);
+        Prim1DS contactRightSide      (0.231160, 0.516212,  0.599261, -1.584820, Vz, Bx, -0.533327, Bz, primitiveScalar);
+        Prim1DS slowShockLeftSide     (0.153125, 0.191168,  0.086170, -0.683303, Vz, Bx, -0.850815, Bz, primitiveScalar);
+        Prim1DS slowShockRightSide    (0.117046, 0.087684, -0.238196, -0.165561, Vz, Bx, -0.903407, Bz, primitiveScalar);
+        Prim1DS rightFastRareLeftSide (0.117358, 0.088148, -0.228756, -0.158845, Vz, Bx, -0.908335, Bz, primitiveScalar);
+        Prim1DS rightFastRareRightSide(0.124894, 0.099830, -0.003132, -0.002074, Vz, Bx, -0.999018, Bz, primitiveScalar);
+        Prim1DS rightICs              (0.128,    0.1,       0.0,       0.0,      Vz, Bx, -1.0,      Bz, primitiveScalar);
 
         // Compare ICs
         names.push_back(rootName + "initial conditions double left");
@@ -304,24 +304,24 @@ std::tuple<std::vector<std::string>,
         double const gamma = 5./3.;
         double const coef = 1. / (std::sqrt(4 * M_PI));
         double const Bx = 4. * coef;
-        double const primitiveScalar = 1.1069975296;
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
         std::string rootName = "Dai & Woodward, ";
-        Prim1DS leftICs                (1.08,    1.0,      0.0,       0.0,       0.0,      Bx,      3.6*coef, 2*coef  , {primitiveScalar});
-        Prim1DS leftFastShockLeftSide  (1.09406, 0.970815, 1.176560,  0.021003,  0.506113, 1.12838, 1.105355, 0.614087, {primitiveScalar});
-        Prim1DS leftFastShockRightSide (1.40577, 1.494290, 0.693255,  0.210562,  0.611423, 1.12838, 1.457700, 0.809831, {primitiveScalar});
-        Prim1DS leftRotationLeftSide   (1.40086, 1.485660, 0.687774,  0.215124,  0.609161, 1.12838, 1.458735, 0.789960, {primitiveScalar});
-        Prim1DS leftRotationRightSide  (1.40119, 1.486570, 0.687504,  0.330268,  0.334140, 1.12838, 1.588975, 0.475782, {primitiveScalar});
-        Prim1DS leftSlowShockLeftSide  (1.40519, 1.493710, 0.685492,  0.326265,  0.333664, 1.12838, 1.575785, 0.472390, {primitiveScalar});
-        Prim1DS leftSlowShockRightSide (1.66488, 1.984720, 0.578545,  0.050746,  0.250260, 1.12838, 1.344490, 0.402407, {primitiveScalar});
-        Prim1DS contactLeftSide        (1.65220, 1.981250, 0.578296,  0.049683,  0.249962, 1.12838, 1.346155, 0.402868, {primitiveScalar});
-        Prim1DS contactRightSide       (1.49279, 1.981160, 0.578276,  0.049650,  0.249924, 1.12838, 1.346180, 0.402897, {primitiveScalar});
-        Prim1DS rightSlowShockLeftSide (1.48581, 1.956320, 0.573195,  0.035338,  0.245592, 1.12838, 1.370395, 0.410220, {primitiveScalar});
-        Prim1DS rightSlowShockRightSide(1.23813, 1.439000, 0.450361, -0.275532,  0.151746, 1.12838, 1.609775, 0.482762, {primitiveScalar});
-        Prim1DS rightRotationLeftSide  (1.23762, 1.437950, 0.450102, -0.274410,  0.145585, 1.12838, 1.606945, 0.493879, {primitiveScalar});
-        Prim1DS rightRotationRightSide (1.23747, 1.437350, 0.449993, -0.180766, -0.090238, 1.12838, 1.503855, 0.752090, {primitiveScalar});
-        Prim1DS rightFastShockLeftSide (1.22305, 1.409660, 0.424403, -0.171402, -0.085701, 1.12838, 1.447730, 0.723864, {primitiveScalar});
-        Prim1DS rightFastShockRightSide(1.00006, 1.000100, 0.000121, -0.000057, -0.000028, 1.12838, 1.128435, 0.564217, {primitiveScalar});
-        Prim1DS rightICs               (1.0,     0.2,      0.0,       0.0,       1.0,      Bx,      4*coef,   2*coef  , {primitiveScalar});
+        Prim1DS leftICs                (1.08,    1.0,      0.0,       0.0,       0.0,      Bx,      3.6*coef, 2*coef  , primitiveScalar);
+        Prim1DS leftFastShockLeftSide  (1.09406, 0.970815, 1.176560,  0.021003,  0.506113, 1.12838, 1.105355, 0.614087, primitiveScalar);
+        Prim1DS leftFastShockRightSide (1.40577, 1.494290, 0.693255,  0.210562,  0.611423, 1.12838, 1.457700, 0.809831, primitiveScalar);
+        Prim1DS leftRotationLeftSide   (1.40086, 1.485660, 0.687774,  0.215124,  0.609161, 1.12838, 1.458735, 0.789960, primitiveScalar);
+        Prim1DS leftRotationRightSide  (1.40119, 1.486570, 0.687504,  0.330268,  0.334140, 1.12838, 1.588975, 0.475782, primitiveScalar);
+        Prim1DS leftSlowShockLeftSide  (1.40519, 1.493710, 0.685492,  0.326265,  0.333664, 1.12838, 1.575785, 0.472390, primitiveScalar);
+        Prim1DS leftSlowShockRightSide (1.66488, 1.984720, 0.578545,  0.050746,  0.250260, 1.12838, 1.344490, 0.402407, primitiveScalar);
+        Prim1DS contactLeftSide        (1.65220, 1.981250, 0.578296,  0.049683,  0.249962, 1.12838, 1.346155, 0.402868, primitiveScalar);
+        Prim1DS contactRightSide       (1.49279, 1.981160, 0.578276,  0.049650,  0.249924, 1.12838, 1.346180, 0.402897, primitiveScalar);
+        Prim1DS rightSlowShockLeftSide (1.48581, 1.956320, 0.573195,  0.035338,  0.245592, 1.12838, 1.370395, 0.410220, primitiveScalar);
+        Prim1DS rightSlowShockRightSide(1.23813, 1.439000, 0.450361, -0.275532,  0.151746, 1.12838, 1.609775, 0.482762, primitiveScalar);
+        Prim1DS rightRotationLeftSide  (1.23762, 1.437950, 0.450102, -0.274410,  0.145585, 1.12838, 1.606945, 0.493879, primitiveScalar);
+        Prim1DS rightRotationRightSide (1.23747, 1.437350, 0.449993, -0.180766, -0.090238, 1.12838, 1.503855, 0.752090, primitiveScalar);
+        Prim1DS rightFastShockLeftSide (1.22305, 1.409660, 0.424403, -0.171402, -0.085701, 1.12838, 1.447730, 0.723864, primitiveScalar);
+        Prim1DS rightFastShockRightSide(1.00006, 1.000100, 0.000121, -0.000057, -0.000028, 1.12838, 1.128435, 0.564217, primitiveScalar);
+        Prim1DS rightICs               (1.0,     0.2,      0.0,       0.0,       1.0,      Bx,      4*coef,   2*coef  , primitiveScalar);
 
         // Compare ICs
         names.push_back(rootName + "initial conditions double left");
@@ -427,22 +427,22 @@ std::tuple<std::vector<std::string>,
     {
         double const gamma = 5./3.;
         double const Bx = 0.7;
-        double const primitiveScalar = 1.1069975296;
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
         std::string rootName = "Ryu & Jones 4d, ";
-        Prim1DS leftICs                   (1.0,      1.0,       0.0,      0.0,          0.0,          Bx, 0.0,           0.0         , {primitiveScalar});
-        Prim1DS hydroRareLeftSide         (0.990414, 0.984076,  0.012415, 1.458910e-58, 6.294360e-59, Bx, 1.252355e-57,  5.366795e-58, {primitiveScalar});
-        Prim1DS hydroRareRightSide        (0.939477, 0.901182,  0.079800, 1.557120e-41, 7.505190e-42, Bx, 1.823624e-40,  8.712177e-41, {primitiveScalar});
-        Prim1DS switchOnSlowShockLeftSide (0.939863, 0.901820,  0.079142, 1.415730e-02, 7.134030e-03, Bx, 2.519650e-02,  1.290082e-02, {primitiveScalar});
-        Prim1DS switchOnSlowShockRightSide(0.651753, 0.490103,  0.322362, 8.070540e-01, 4.425110e-01, Bx, 6.598380e-01,  3.618000e-01, {primitiveScalar});
-        Prim1DS contactLeftSide           (0.648553, 0.489951,  0.322525, 8.072970e-01, 4.426950e-01, Bx, 6.599295e-01,  3.618910e-01, {primitiveScalar});
-        Prim1DS contactRightSide          (0.489933, 0.489980,  0.322518, 8.073090e-01, 4.426960e-01, Bx, 6.599195e-01,  3.618850e-01, {primitiveScalar});
-        Prim1DS slowShockLeftSide         (0.496478, 0.489823,  0.308418, 8.060830e-01, 4.420150e-01, Bx, 6.686695e-01,  3.666915e-01, {primitiveScalar});
-        Prim1DS slowShockRightSide        (0.298260, 0.198864, -0.016740, 2.372870e-01, 1.287780e-01, Bx, 8.662095e-01,  4.757390e-01, {primitiveScalar});
-        Prim1DS rotationLeftSide          (0.298001, 0.198448, -0.017358, 2.364790e-01, 1.278540e-01, Bx, 8.669425e-01,  4.750845e-01, {primitiveScalar});
-        Prim1DS rotationRightSide         (0.297673, 0.197421, -0.018657, 1.059540e-02, 9.996860e-01, Bx, 9.891580e-01,  1.024949e-04, {primitiveScalar});
-        Prim1DS fastRareLeftSide          (0.297504, 0.197234, -0.020018, 1.137420e-02, 1.000000e+00, Bx, 9.883860e-01, -4.981931e-17, {primitiveScalar});
-        Prim1DS fastRareRightSide         (0.299996, 0.199995, -0.000033, 1.855120e-05, 1.000000e+00, Bx, 9.999865e-01,  1.737190e-16, {primitiveScalar});
-        Prim1DS rightICs                  (0.3,      0.2,       0.0,      0.0,          1.0,          Bx, 1.0,           0.0         , {primitiveScalar});
+        Prim1DS leftICs                   (1.0,      1.0,       0.0,      0.0,          0.0,          Bx, 0.0,           0.0         , primitiveScalar);
+        Prim1DS hydroRareLeftSide         (0.990414, 0.984076,  0.012415, 1.458910e-58, 6.294360e-59, Bx, 1.252355e-57,  5.366795e-58, primitiveScalar);
+        Prim1DS hydroRareRightSide        (0.939477, 0.901182,  0.079800, 1.557120e-41, 7.505190e-42, Bx, 1.823624e-40,  8.712177e-41, primitiveScalar);
+        Prim1DS switchOnSlowShockLeftSide (0.939863, 0.901820,  0.079142, 1.415730e-02, 7.134030e-03, Bx, 2.519650e-02,  1.290082e-02, primitiveScalar);
+        Prim1DS switchOnSlowShockRightSide(0.651753, 0.490103,  0.322362, 8.070540e-01, 4.425110e-01, Bx, 6.598380e-01,  3.618000e-01, primitiveScalar);
+        Prim1DS contactLeftSide           (0.648553, 0.489951,  0.322525, 8.072970e-01, 4.426950e-01, Bx, 6.599295e-01,  3.618910e-01, primitiveScalar);
+        Prim1DS contactRightSide          (0.489933, 0.489980,  0.322518, 8.073090e-01, 4.426960e-01, Bx, 6.599195e-01,  3.618850e-01, primitiveScalar);
+        Prim1DS slowShockLeftSide         (0.496478, 0.489823,  0.308418, 8.060830e-01, 4.420150e-01, Bx, 6.686695e-01,  3.666915e-01, primitiveScalar);
+        Prim1DS slowShockRightSide        (0.298260, 0.198864, -0.016740, 2.372870e-01, 1.287780e-01, Bx, 8.662095e-01,  4.757390e-01, primitiveScalar);
+        Prim1DS rotationLeftSide          (0.298001, 0.198448, -0.017358, 2.364790e-01, 1.278540e-01, Bx, 8.669425e-01,  4.750845e-01, primitiveScalar);
+        Prim1DS rotationRightSide         (0.297673, 0.197421, -0.018657, 1.059540e-02, 9.996860e-01, Bx, 9.891580e-01,  1.024949e-04, primitiveScalar);
+        Prim1DS fastRareLeftSide          (0.297504, 0.197234, -0.020018, 1.137420e-02, 1.000000e+00, Bx, 9.883860e-01, -4.981931e-17, primitiveScalar);
+        Prim1DS fastRareRightSide         (0.299996, 0.199995, -0.000033, 1.855120e-05, 1.000000e+00, Bx, 9.999865e-01,  1.737190e-16, primitiveScalar);
+        Prim1DS rightICs                  (0.3,      0.2,       0.0,      0.0,          1.0,          Bx, 1.0,           0.0         , primitiveScalar);
 
         // Compare ICs
         names.push_back(rootName + "initial conditions double left");
@@ -541,15 +541,15 @@ std::tuple<std::vector<std::string>,
         double const Vz = 0.0;
         double const Bx = 0.0;
         double const Bz = 0.0;
-        double const primitiveScalar = 1.1069975296;
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
         std::string rootName = "EFR, , ";
-        Prim1DS leftICs               (1.0,      0.45,     -V0,       Vy, Vz, Bx, 0.5,      Bz, {primitiveScalar});
-        Prim1DS leftRarefactionCenter (0.368580, 0.111253, -1.180830, Vy, Vz, Bx, 0.183044, Bz, {primitiveScalar});
-        Prim1DS leftVxTurnOver        (0.058814, 0.008819, -0.125475, Vy, Vz, Bx, 0.029215, Bz, {primitiveScalar});
-        Prim1DS midPoint              (0.034658, 0.006776,  0.000778, Vy, Vz, Bx, 0.017333, Bz, {primitiveScalar});
-        Prim1DS rightVxTurnOver       (0.062587, 0.009521,  0.152160, Vy, Vz, Bx, 0.031576, Bz, {primitiveScalar});
-        Prim1DS rightRarefactionCenter(0.316485, 0.089875,  1.073560, Vy, Vz, Bx, 0.159366, Bz, {primitiveScalar});
-        Prim1DS rightICs              (1.0,      0.45,      V0,       Vy, Vz, Bx, 0.5,      Bz, {primitiveScalar});
+        Prim1DS leftICs               (1.0,      0.45,     -V0,       Vy, Vz, Bx, 0.5,      Bz, primitiveScalar);
+        Prim1DS leftRarefactionCenter (0.368580, 0.111253, -1.180830, Vy, Vz, Bx, 0.183044, Bz, primitiveScalar);
+        Prim1DS leftVxTurnOver        (0.058814, 0.008819, -0.125475, Vy, Vz, Bx, 0.029215, Bz, primitiveScalar);
+        Prim1DS midPoint              (0.034658, 0.006776,  0.000778, Vy, Vz, Bx, 0.017333, Bz, primitiveScalar);
+        Prim1DS rightVxTurnOver       (0.062587, 0.009521,  0.152160, Vy, Vz, Bx, 0.031576, Bz, primitiveScalar);
+        Prim1DS rightRarefactionCenter(0.316485, 0.089875,  1.073560, Vy, Vz, Bx, 0.159366, Bz, primitiveScalar);
+        Prim1DS rightICs              (1.0,      0.45,      V0,       Vy, Vz, Bx, 0.5,      Bz, primitiveScalar);
 
         // Compare ICs
         names.push_back(rootName + "initial conditions double left");
@@ -669,11 +669,12 @@ std::tuple<std::vector<std::string>,
         double const bxR       = bxL;
         double const byR       = byL;
         double const bzR       = bzL;
-        double const primitiveScalar = 1.1069975296;
+
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
         std::string rootName = "divide by zero error/degenerate state, ";
 
-        Prim1DS leftICs (rhoL, pressureL, vxL, vyL, vzL, bxL, byL, bzL, {primitiveScalar});
-        Prim1DS rightICs(rhoR, pressureR, vxR, vyR, vzR, bxR, byR, bzR, {primitiveScalar});
+        Prim1DS leftICs (rhoL, pressureL, vxL, vyL, vzL, bxL, byL, bzL, primitiveScalar);
+        Prim1DS rightICs(rhoR, pressureR, vxR, vyR, vzR, bxR, byR, bzR, primitiveScalar);
 
         // Compare ICs
         names.push_back(rootName);
@@ -688,15 +689,15 @@ std::tuple<std::vector<std::string>,
     if (true)
     {
         double const gamma = 5./3.;
-        double const primitiveScalar = 1.1069975296;
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
         std::string rootName = "Special Cases, ";
-        Prim1DS zeroes               ( 0.0,  0.0,       0.0,  0.0,  0.0, 0.0, 0.0, 0.0, {primitiveScalar});
-        Prim1DS ones                 ( 1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, {primitiveScalar});
-        Prim1DS negPressure          ( 1.0, -1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, {primitiveScalar});
-        Prim1DS negPressureDensity   (-1.0, -1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, {primitiveScalar});
-        Prim1DS negDensity           (-1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, {primitiveScalar});
-        Prim1DS negEnergy            ( 1.0, -4.0*gamma, 1.0,  1.0,  1.0, 1.0, 1.0, 1.0, {primitiveScalar});
-        Prim1DS negDensityEnergy     (-1.0, -gamma,    -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, {primitiveScalar});
+        Prim1DS zeroes               ( 0.0,  0.0,       0.0,  0.0,  0.0, 0.0, 0.0, 0.0, primitiveScalar);
+        Prim1DS ones                 ( 1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
+        Prim1DS negPressure          ( 1.0, -1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
+        Prim1DS negPressureDensity   (-1.0, -1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
+        Prim1DS negDensity           (-1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
+        Prim1DS negEnergy            ( 1.0, -4.0*gamma, 1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
+        Prim1DS negDensityEnergy     (-1.0, -gamma,    -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, primitiveScalar);
 
         // Set states
         names.push_back(rootName + "Zeroes");
@@ -842,7 +843,7 @@ void printResults(Cons1DS const &conservedLeft,
     for (size_t i = 0; i < conservedLeft.s.size(); i++)
     {
     std::cout
-        << " | " << std::setw(15) << "Scalar"            << " | " << spacer << conservedLeft.s[i] << " | " << spacer << conservedRight.s[i] << " | " << spacer << primLeft.r[i] << " | " << spacer << primRight.r[i] << " | "  << spacer << fluxes.s[i]  << " | " << std::endl;
+        << " | " << std::setw(15) << "Scalar" << " | " << spacer << conservedLeft.s[i] << " | " << spacer << conservedRight.s[i] << " | " << spacer << primLeft.r[i] << " | " << spacer << primRight.r[i] << " | "  << spacer << fluxes.s[i]  << " | " << std::endl;
     }
     std::cout
         << " | " << std::setw(15) << "Magnetic x"        << " | " << spacer << primLeft.Bx        << " | " << spacer << primRight.Bx        << " | " << spacer << primLeft.Bx   << " | " << spacer << primRight.Bx   << " | "  << spacer << "0.0"     << " | " << std::endl
