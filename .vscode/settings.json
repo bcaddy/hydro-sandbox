@@ -51,6 +51,7 @@
         "*.particleTests": "makefile",
         "*.particles": "makefile",
         "*.mhd": "makefile",
+        "*.frontier": "makefile",
         "iostream": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -150,7 +151,8 @@
         "__tuple": "cpp",
         "ios": "cpp",
         "locale": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "stack": "cpp"
     },
     "python.pythonPath": "/Users/Bob/opt/anaconda3/bin/python"
 }
