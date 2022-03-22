@@ -456,7 +456,7 @@ double MhdSimulation1D::_ctSlope(double const &centerNeg,
                                  double const &facePos,
                                  double const &velocity)
 {
-    // Todo Note that this equation is incorrect in S&G 2009 eq. 14
+    // Todo Note that this equation is incorrect in S&G 2009 eq. 24
     // Upwinding
     if (velocity > 0.0)
     {
