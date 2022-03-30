@@ -1,3 +1,5 @@
+// From athena4.2/src/integrators/integrate_3d_vl.c lines 2295-2503
+
 static void integrate_emf1_corner(const GridS *pG)
 {
   int i,il,iu,j,jl,ju,k,kl,ku;
