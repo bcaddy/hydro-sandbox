@@ -20,6 +20,7 @@
 #include <fstream>
 #include <numeric>
 #include <algorithm>
+#include <cmath>
 
 /*!
  * \brief A class for timing pieces of code
@@ -98,6 +99,18 @@ private:
 
     };
 
+    double _standardDeviation()
+    {
+        double sum = std::accumulate(_timeDiff.begin(), _timeDiff.end(), 0.0);
+        double mean = sum / _timeDiff.size();
+
+        std::vector<double> diff(_timeDiff.size());
+        std::transform(_timeDiff.begin(), _timeDiff.end(), diff.begin(),
+                    std::bind2nd(std::minus<double>(), mean));
+        double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+        return std::sqrt(sq_sum / _timeDiff.size());
+    }
+
 public:
     /*!
      * \brief Start the timer
@@ -141,23 +154,26 @@ public:
         // Compute statistics in nanoseconds
         double totalTime = std::accumulate(_timeDiff.begin(), _timeDiff.end(), 0.);
         double avgTime   = totalTime / static_cast<double>(_timeDiff.size());
+        double stdDev    = _standardDeviation();
         auto   minMax    = std::minmax_element(_timeDiff.begin(),_timeDiff.end());
         double minTime   = *minMax.first ;
         double maxTime   = *minMax.second;
 
         // Convert values
-        std::string totalTimeUnit, avgTimeUnit, minTimeUnit, maxTimeUnit;
+        std::string totalTimeUnit, avgTimeUnit, stdDevTimeUnit, minTimeUnit, maxTimeUnit;
         _converter(totalTime, totalTimeUnit);
         _converter(avgTime,   avgTimeUnit);
+        _converter(stdDev,    stdDevTimeUnit);
         _converter(minTime,   minTimeUnit);
         _converter(maxTime,   maxTimeUnit);
 
         outStream << "Timer name: " << _name << std::endl  << "  " <<
-        "Number of trials: " << _timeDiff.size()           << ", " <<
-        "Total time: "       << totalTime << totalTimeUnit << ", " <<
-        "Average Time: "     << avgTime   << avgTimeUnit   << ", " <<
-        "Fastest Run: "      << minTime   << minTimeUnit   << ", " <<
-        "Slowest Run: "      << maxTime   << maxTimeUnit   << std::endl;
+        "Number of trials: "   << _timeDiff.size()            << ", " <<
+        "Total time: "         << totalTime << totalTimeUnit  << ", " <<
+        "Average Time: "       << avgTime   << avgTimeUnit    << ", " <<
+        "Standard Deviation: " << stdDev    << stdDevTimeUnit << ", " <<
+        "Fastest Run: "        << minTime   << minTimeUnit    << ", " <<
+        "Slowest Run: "        << maxTime   << maxTimeUnit    << std::endl;
     };
 
     /*!

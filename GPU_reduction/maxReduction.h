@@ -100,7 +100,7 @@ Real gpuAtomicMaxReduction()
 
     // Grid Parameters & testing parameters
     // ====================================
-    size_t const size     = std::pow(256, 3);;
+    size_t const size     = std::pow(512, 3);;
     Real   const maxValue = 4;
     std::vector<Real> host_grid(size);
     Real host_max;
