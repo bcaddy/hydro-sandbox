@@ -1,9 +1,10 @@
 #include <limits>
+#include <float.h>
 
 #pragma once
 
 // Done editing for CUDA/HIP
-__inline__ __device__ int warpReduceMax(int val)
+__inline__ __device__ Real warpReduceMax(Real val)
 {
     for (int offset = warpSize/2; offset > 0; offset /= 2)
     {
@@ -12,9 +13,9 @@ __inline__ __device__ int warpReduceMax(int val)
     return val;
 }
 
-__inline__ __device__ int blockReduceMax(int val)
+__inline__ __device__ Real blockReduceMax(Real val)
 {
-    __shared__ int shared[::maxWarpsPerBlock]; // Shared memory for storing the results of each warp-wise partial reduction
+    __shared__ Real shared[::maxWarpsPerBlock]; // Shared memory for storing the results of each warp-wise partial reduction
 
     int lane   = threadIdx.x % warpSize;  // thread ID within the warp,
     int warpId = threadIdx.x / warpSize;  // ID of the warp itself
@@ -33,6 +34,28 @@ __inline__ __device__ int blockReduceMax(int val)
     return val;
 }
 
+__device__ double atomicMax_double(double* address, double val)
+{
+    unsigned long long int* address_as_ull = (unsigned long long int*) address;
+    unsigned long long int old = *address_as_ull, assumed;
+    // Explanation of loop here:
+    // https://stackoverflow.com/questions/16077464/atomicadd-for-double-on-gpu
+    // The loop is to make sure the value at address doesn't change between the
+    // load at the atomic since the entire operation isn't atomic
+
+    // While it appears that this could result in many times more atomic
+    // operations than required, in practice it's only a handful of extra
+    // operation even in the worst case. Running with 16,000 blocks gives ~8-37
+    // atomics after brief testing
+    do {
+        assumed = old;
+        old = atomicCAS(address_as_ull,
+                        assumed,
+                        __double_as_longlong(fmax(val, __longlong_as_double(assumed))));
+    } while (assumed != old);
+    return __longlong_as_double(old);
+}
+
 /*!
  * \brief Find the max of the array
  *
@@ -41,11 +64,10 @@ __inline__ __device__ int blockReduceMax(int val)
  * \param[in] N the number of elements in the `in` array
  * \return __global__
  */
-__global__ void deviceReduceBlockAtomicKernelMax(int *in, int* out, int N)
+__global__ void deviceReduceBlockAtomicKernelMax(Real *in, Real* out, int N)
 {
     // Initialize variable to store the max value
-    int maxVal = INT_MIN;
-    // -DBL_MAX from float.h is what we want eventually
+    Real maxVal = -DBL_MAX;
 
     // Grid stride loop to perform as much of the reduction as possible
     for(int i = blockIdx.x * blockDim.x + threadIdx.x; i < N; i += blockDim.x * gridDim.x)
@@ -60,29 +82,29 @@ __global__ void deviceReduceBlockAtomicKernelMax(int *in, int* out, int N)
     maxVal = blockReduceMax(maxVal);
 
     // Write block level reduced value to the output scalar atomically
-    if (threadIdx.x == 0) atomicMax(out, maxVal);
+    if (threadIdx.x == 0) atomicMax_double(out, maxVal);
 }
 
-int gpuMaxReduction()
+Real gpuMaxReduction()
 {
-    int const numBlocks       = 2;
+    int const numBlocks       = 16000;
     int const threadsPerBlock = 1024;
 
     size_t const size = 256*256*256;
-    int const maxValue = 3;
+    Real const maxValue = 3;
 
-    int host_max;
-    int *dev_vec, *dev_max;
-    std::vector<int> host_vec(size, 1);
-    host_vec.at(137) = maxValue;
+    Real host_max;
+    Real *dev_vec, *dev_max;
+    std::vector<Real> host_vec(size, 1);
+    host_vec.at(256*123*185) = maxValue;
 
-    cudaMalloc(&dev_vec, host_vec.size() * sizeof(int));
-    cudaMalloc(&dev_max, sizeof(int));
-    cudaMemcpy(dev_vec, host_vec.data(), host_vec.size() * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMalloc(&dev_vec, host_vec.size() * sizeof(Real));
+    cudaMalloc(&dev_max, sizeof(Real));
+    cudaMemcpy(dev_vec, host_vec.data(), host_vec.size() * sizeof(Real), cudaMemcpyHostToDevice);
 
     deviceReduceBlockAtomicKernelMax<<<numBlocks, threadsPerBlock>>>(dev_vec, dev_max, host_vec.size());
 
-    cudaMemcpy(&host_max, dev_max, sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&host_max, dev_max, sizeof(Real), cudaMemcpyDeviceToHost);
 
     cudaDeviceSynchronize();
 

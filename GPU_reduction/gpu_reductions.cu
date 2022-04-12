@@ -12,6 +12,7 @@
 // Globals
 #define WARPSIZE 32
 static constexpr int maxWarpsPerBlock = 1024/WARPSIZE; // outside kernel
+typedef double Real;
 
  // External Includes
 
@@ -42,6 +43,6 @@ int	main()
 {
     int sumReduced = gpuSumReduction();
 
-    int maxReduced = gpuMaxReduction();
+    Real maxReduced = gpuMaxReduction();
     return 0;
 }
