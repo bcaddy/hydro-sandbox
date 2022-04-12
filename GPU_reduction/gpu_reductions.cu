@@ -24,6 +24,7 @@ static constexpr int maxWarpsPerBlock = 1024/WARPSIZE; // outside kernel
 
 // Local Includes
 #include "sumReduction.h"
+#include "maxReduction.h"
 
 __global__ void checkDims()
 {
@@ -40,5 +41,7 @@ __global__ void checkDims()
 int	main()
 {
     int sumReduced = gpuSumReduction();
+
+    int maxReduced = gpuMaxReduction();
     return 0;
 }
