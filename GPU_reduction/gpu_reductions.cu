@@ -58,6 +58,7 @@ int	main()
 
     // int sumReduced = gpuSumReduction();
 
+    std::cout << std::endl;
     Real maxReduced = gpuAtomicMaxReduction();
     return 0;
 }

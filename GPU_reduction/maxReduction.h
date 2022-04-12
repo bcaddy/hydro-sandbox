@@ -109,27 +109,27 @@ Real gpuAtomicMaxReduction()
     int const warmUps = 5;
     PerfTimer atomicTimer("AtomicMax Reduction Timer");
 
+    // Fill grid with random values and randomly assign maximum value
+    std::random_device rd;
+    std::mt19937 prng(rd());
+    std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
+    std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
+    for (size_t i = 0; i < host_grid.size(); i++)
+    {
+        host_grid.at(i) = doubleRand(prng);
+    }
+    host_grid.at(intRand(prng)) = maxValue;
+
+
+    // Allocating and copying to device
+    // ================================
+    Real *dev_grid, *dev_max;
+    cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
+    cudaMalloc(&dev_max, sizeof(Real));
+    cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
+
     for (size_t trial = 0; trial < numTrials + warmUps; trial++)
     {
-        // Fill grid with random values and randomly assign maximum value
-        std::random_device rd;
-        std::mt19937 prng(rd());
-        std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
-        std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
-        for (size_t i = 0; i < host_grid.size(); i++)
-        {
-            host_grid.at(i) = doubleRand(prng);
-        }
-        host_grid.at(intRand(prng)) = maxValue;
-
-
-        // Allocating and copying to device
-        // ================================
-        Real *dev_grid, *dev_max;
-        cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
-        cudaMalloc(&dev_max, sizeof(Real));
-        cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
-
         if (trial >= warmUps)
         {
             atomicTimer.startTimer();
