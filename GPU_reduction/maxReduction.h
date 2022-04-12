@@ -1,6 +1,7 @@
 #include <limits>
 #include <float.h>
 #include <random>
+#include "PerfTimer.h"
 
 #pragma once
 
@@ -97,44 +98,68 @@ Real gpuAtomicMaxReduction()
     int const numBlocks  = (prop.maxThreadsPerMultiProcessor * prop.multiProcessorCount) / prop.maxThreadsPerBlock;
     int const threadsPerBlock = prop.maxThreadsPerBlock;
 
-    // Grid Parameters
-    // ===============
+    // Grid Parameters & testing parameters
+    // ====================================
     size_t const size     = std::pow(256, 3);;
     Real   const maxValue = 4;
     std::vector<Real> host_grid(size);
+    Real host_max;
 
-    // Fill grid with random values and randomly assign maximum value
-    std::random_device rd;
-    std::mt19937 prng(rd());
-    std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
-    std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
-    for (size_t i = 0; i < host_grid.size(); i++)
+    int const numTrials = 100;
+    int const warmUps = 5;
+    PerfTimer atomicTimer("AtomicMax Reduction Timer");
+
+    for (size_t trial = 0; trial < numTrials + warmUps; trial++)
     {
-        host_grid.at(i) = doubleRand(prng);
+        // Fill grid with random values and randomly assign maximum value
+        std::random_device rd;
+        std::mt19937 prng(rd());
+        std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
+        std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
+        for (size_t i = 0; i < host_grid.size(); i++)
+        {
+            host_grid.at(i) = doubleRand(prng);
+        }
+        host_grid.at(intRand(prng)) = maxValue;
+
+
+        // Allocating and copying to device
+        // ================================
+        Real *dev_grid, *dev_max;
+        cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
+        cudaMalloc(&dev_max, sizeof(Real));
+        cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
+
+        if (trial >= warmUps)
+        {
+            atomicTimer.startTimer();
+        }
+        // Do the reduction
+        // ================
+        deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
+
+        // Copy back and sync
+        // ==================
+        cudaMemcpy(&host_max, dev_max, sizeof(Real), cudaMemcpyDeviceToHost);
+        cudaDeviceSynchronize();
+
+        if (trial >= warmUps)
+        {
+            atomicTimer.stopTimer();
+        }
+
+        // Check Results
+        // =============
+        if (host_max != maxValue)
+        {
+            std::cout << "The final result should be " << maxValue
+                      << " but is " << host_max << " which is incorrect." << std::endl;
+        }
     }
-    host_grid.at(intRand(prng)) = maxValue;
 
-
-    // Allocating and copying to device
-    // ================================
-    Real *dev_grid, *dev_max, host_max;
-    cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
-    cudaMalloc(&dev_max, sizeof(Real));
-    cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
-
-    // Do the reduction
-    // ================
-    deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
-
-    // Copy back and sync
-    // ==================
-    cudaMemcpy(&host_max, dev_max, sizeof(Real), cudaMemcpyDeviceToHost);
-    cudaDeviceSynchronize();
-
-    // Report Results
-    // ==============
-    std::string result = (host_max == maxValue)? "correct": "incorrect";
-    std::cout << std::endl << "The final result should be " << maxValue << " and is " << host_max << " which is " << result << std::endl;
+    // Report Performance Results
+    // ==========================
+    atomicTimer.reportStats();
 
     return host_max;
 }
