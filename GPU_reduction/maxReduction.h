@@ -64,7 +64,7 @@ __device__ double atomicMax_double(double* address, double val)
  * \param[in] N the number of elements in the `in` array
  * \return __global__
  */
-__global__ void deviceReduceBlockAtomicKernelMax(Real *in, Real* out, int N)
+__global__ void deviceReduceAtomicMax(Real *in, Real* out, int N)
 {
     // Initialize variable to store the max value
     Real maxVal = -DBL_MAX;
@@ -87,27 +87,40 @@ __global__ void deviceReduceBlockAtomicKernelMax(Real *in, Real* out, int N)
 
 Real gpuMaxReduction()
 {
-    int const numBlocks       = 100;
-    int const threadsPerBlock = 1024;
+    // Launch parameters
+    // =================
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
 
-    size_t const size = 256*256*256;
-    Real const maxValue = 3;
+    // Divide the total number of allowed threads by the number of threads per block
+    int const numBlocks  = (prop.maxThreadsPerMultiProcessor * prop.multiProcessorCount) / prop.maxThreadsPerBlock;
+    int const threadsPerBlock = prop.maxThreadsPerBlock;
 
-    Real host_max;
-    Real *dev_vec, *dev_max;
+    // Grid Parameters
+    // ===============
+    size_t const size     = std::pow(256, 3);;
+    Real   const maxValue = 3;
     std::vector<Real> host_vec(size, 1);
     host_vec.at(256*123*185) = maxValue;
 
+    // Allocating and copying to device
+    // ================================
+    Real *dev_vec, *dev_max, host_max;
     cudaMalloc(&dev_vec, host_vec.size() * sizeof(Real));
     cudaMalloc(&dev_max, sizeof(Real));
     cudaMemcpy(dev_vec, host_vec.data(), host_vec.size() * sizeof(Real), cudaMemcpyHostToDevice);
 
-    deviceReduceBlockAtomicKernelMax<<<numBlocks, threadsPerBlock>>>(dev_vec, dev_max, host_vec.size());
+    // Do the reduction
+    // ================
+    deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_vec, dev_max, host_vec.size());
 
+    // Copy back and sync
+    // ==================
     cudaMemcpy(&host_max, dev_max, sizeof(Real), cudaMemcpyDeviceToHost);
-
     cudaDeviceSynchronize();
 
+    // Report Results
+    // ==============
     std::string result = (host_max == maxValue)? "correct": "incorrect";
     std::cout << std::endl << "The final result should be " << maxValue << " and is " << host_max << " which is " << result << std::endl;
 

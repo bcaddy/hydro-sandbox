@@ -41,6 +41,21 @@ __global__ void checkDims()
 
 int	main()
 {
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+
+    std::cout << "prop.maxThreadsPerMultiProcessor = " << prop.maxThreadsPerMultiProcessor << std::endl;
+    std::cout << "prop.multiProcessorCount         = " << prop.multiProcessorCount << std::endl;
+    std::cout << "prop.maxThreadsPerBlock          = " << prop.maxThreadsPerBlock << std::endl;
+
+    int numThreads = prop.maxThreadsPerMultiProcessor * prop.multiProcessorCount;
+    int numBlocks  = numThreads / prop.maxThreadsPerBlock;
+
+    std::cout << std::endl;
+    std::cout << "numThreads = " << numThreads << std::endl;
+    std::cout << "numBlocks  = " << numBlocks << std::endl;
+
+
     int sumReduced = gpuSumReduction();
 
     Real maxReduced = gpuMaxReduction();
