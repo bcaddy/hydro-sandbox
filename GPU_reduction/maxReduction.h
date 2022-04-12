@@ -87,7 +87,39 @@ __global__ void deviceReduceAtomicMax(Real *in, Real* out, int N)
     if (threadIdx.x == 0) atomicMax_double(out, maxVal);
 }
 
-Real gpuAtomicMaxReduction()
+/*!
+ * \brief Find the max of the array
+ *
+ * \param[in] in The input array
+ * \param[out] out The output scalar variable
+ * \param[in] N the number of elements in the `in` array
+ * \return __global__
+ */
+ __global__ void deviceReduceMax(Real *in, Real* out, int N)
+ {
+     // Initialize variable to store the max value
+     Real maxVal = -DBL_MAX;
+
+     // Grid stride loop to perform as much of the reduction as possible
+     for(int i = blockIdx.x * blockDim.x + threadIdx.x; i < N; i += blockDim.x * gridDim.x)
+     {
+         // A transformation could go here
+
+         // Grid stride reduction
+         maxVal = max(maxVal,in[i]);
+     }
+
+     // Reduce the entire block in parallel
+     maxVal = blockReduceMax(maxVal);
+
+     // Write block level reduced value to the output scalar atomically
+     if (threadIdx.x == 0)
+     {
+        out[blockIdx.x] = maxVal;
+     }
+ }
+
+Real gpuAtomicMaxReduction(int numTrials = 100)
 {
     // Launch parameters
     // =================
@@ -105,7 +137,6 @@ Real gpuAtomicMaxReduction()
     std::vector<Real> host_grid(size);
     Real host_max;
 
-    int const numTrials = 100;
     int const warmUps = 5;
     PerfTimer atomicTimer("AtomicMax Reduction Timer");
 
@@ -137,6 +168,83 @@ Real gpuAtomicMaxReduction()
         // Do the reduction
         // ================
         deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
+
+        // Copy back and sync
+        // ==================
+        cudaMemcpy(&host_max, dev_max, sizeof(Real), cudaMemcpyDeviceToHost);
+        cudaDeviceSynchronize();
+
+        if (trial >= warmUps)
+        {
+            atomicTimer.stopTimer();
+        }
+
+        // Check Results
+        // =============
+        if (host_max != maxValue)
+        {
+            std::cout << "The final result should be " << maxValue
+                      << " but is " << host_max << " which is incorrect." << std::endl;
+        }
+    }
+
+    // Report Performance Results
+    // ==========================
+    atomicTimer.reportStats();
+
+    return host_max;
+}
+
+Real gpuMaxReduction(int numTrials = 100)
+{
+    // Launch parameters
+    // =================
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+
+    // Divide the total number of allowed threads by the number of threads per block
+    int const numBlocks  = (prop.maxThreadsPerMultiProcessor * prop.multiProcessorCount) / prop.maxThreadsPerBlock;
+    int const threadsPerBlock = prop.maxThreadsPerBlock;
+
+    // Grid Parameters & testing parameters
+    // ====================================
+    size_t const size     = std::pow(512, 3);;
+    Real   const maxValue = 4;
+    std::vector<Real> host_grid(size);
+    Real host_max;
+
+    int const warmUps = 5;
+    PerfTimer atomicTimer("Max Reduction Timer");
+
+    // Fill grid with random values and randomly assign maximum value
+    std::random_device rd;
+    std::mt19937 prng(rd());
+    std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
+    std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
+    for (size_t i = 0; i < host_grid.size(); i++)
+    {
+        host_grid.at(i) = doubleRand(prng);
+    }
+    host_grid.at(intRand(prng)) = maxValue;
+
+
+    // Allocating and copying to device
+    // ================================
+    Real *dev_grid, *dev_max;
+    cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
+    cudaMalloc(&dev_max, numBlocks*sizeof(Real));
+    cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
+
+    for (size_t trial = 0; trial < numTrials + warmUps; trial++)
+    {
+        if (trial >= warmUps)
+        {
+            atomicTimer.startTimer();
+        }
+        // Do the reduction
+        // ================
+        deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
+        deviceReduceAtomicMax<<<1, threadsPerBlock>>>(dev_max, dev_max, threadsPerBlock);
 
         // Copy back and sync
         // ==================
