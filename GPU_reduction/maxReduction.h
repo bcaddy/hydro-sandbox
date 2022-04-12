@@ -1,5 +1,6 @@
 #include <limits>
 #include <float.h>
+#include <random>
 
 #pragma once
 
@@ -85,7 +86,7 @@ __global__ void deviceReduceAtomicMax(Real *in, Real* out, int N)
     if (threadIdx.x == 0) atomicMax_double(out, maxVal);
 }
 
-Real gpuMaxReduction()
+Real gpuAtomicMaxReduction()
 {
     // Launch parameters
     // =================
@@ -99,20 +100,31 @@ Real gpuMaxReduction()
     // Grid Parameters
     // ===============
     size_t const size     = std::pow(256, 3);;
-    Real   const maxValue = 3;
-    std::vector<Real> host_vec(size, 1);
-    host_vec.at(256*123*185) = maxValue;
+    Real   const maxValue = 4;
+    std::vector<Real> host_grid(size);
+
+    // Fill grid with random values and randomly assign maximum value
+    std::random_device rd;
+    std::mt19937 prng(rd());
+    std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
+    std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
+    for (size_t i = 0; i < host_grid.size(); i++)
+    {
+        host_grid.at(i) = doubleRand(prng);
+    }
+    host_grid.at(intRand(prng)) = maxValue;
+
 
     // Allocating and copying to device
     // ================================
-    Real *dev_vec, *dev_max, host_max;
-    cudaMalloc(&dev_vec, host_vec.size() * sizeof(Real));
+    Real *dev_grid, *dev_max, host_max;
+    cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
     cudaMalloc(&dev_max, sizeof(Real));
-    cudaMemcpy(dev_vec, host_vec.data(), host_vec.size() * sizeof(Real), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
 
     // Do the reduction
     // ================
-    deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_vec, dev_max, host_vec.size());
+    deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
 
     // Copy back and sync
     // ==================
