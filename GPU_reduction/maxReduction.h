@@ -87,7 +87,7 @@ __global__ void deviceReduceBlockAtomicKernelMax(Real *in, Real* out, int N)
 
 Real gpuMaxReduction()
 {
-    int const numBlocks       = 16000;
+    int const numBlocks       = 100;
     int const threadsPerBlock = 1024;
 
     size_t const size = 256*256*256;
