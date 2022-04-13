@@ -1,0 +1,41 @@
+# Results from running on a V100 on C-3PO
+
+# Run 1
+prop.maxThreadsPerMultiProcessor = 2048
+prop.multiProcessorCount         = 80
+prop.maxThreadsPerBlock          = 1024
+
+numThreads = 163840
+numBlocks  = 160
+
+Timer name: AtomicMax Reduction Timer
+  Number of trials: 1000, Total time: 1.28748s, Average Time: 1.28748ms, Standard Deviation: 7.29302µs, Fastest Run: 1.27067ms, Slowest Run: 1.31923ms
+
+Timer name: Max Reduction Timer
+  Number of trials: 1000, Total time: 1.29094s, Average Time: 1.29094ms, Standard Deviation: 6.84559µs, Fastest Run: 1.27254ms, Slowest Run: 1.31207ms
+
+Timer name: DTI Original Timer
+  Number of trials: 1000, Total time: 7.9751s, Average Time: 7.9751ms, Standard Deviation: 72.4559µs, Fastest Run: 7.80672ms, Slowest Run: 8.50795ms
+
+Timer name: DTI New Timer
+  Number of trials: 1000, Total time: 382.29ms, Average Time: 382.29µs, Standard Deviation: 186.041µs, Fastest Run: 357.272µs, Slowest Run: 2.38161ms
+
+# Run 2
+prop.maxThreadsPerMultiProcessor = 2048
+prop.multiProcessorCount         = 80
+prop.maxThreadsPerBlock          = 1024
+
+numThreads = 163840
+numBlocks  = 160
+
+Timer name: AtomicMax Reduction Timer
+  Number of trials: 1000, Total time: 1.28675s, Average Time: 1.28675ms, Standard Deviation: 6.72352µs, Fastest Run: 1.26728ms, Slowest Run: 1.31333ms
+
+Timer name: Max Reduction Timer
+  Number of trials: 1000, Total time: 1.29077s, Average Time: 1.29077ms, Standard Deviation: 8.80753µs, Fastest Run: 1.27375ms, Slowest Run: 1.45683ms
+
+Timer name: DTI Original Timer
+  Number of trials: 1000, Total time: 7.97112s, Average Time: 7.97112ms, Standard Deviation: 55.5687µs, Fastest Run: 7.69729ms, Slowest Run: 8.5001ms
+
+Timer name: DTI New Timer
+  Number of trials: 1000, Total time: 386.332ms, Average Time: 386.332µs, Standard Deviation: 209.528µs, Fastest Run: 357.445µs, Slowest Run: 2.42069ms
