@@ -37,7 +37,7 @@ __inline__ __device__ Real blockReduceMax(Real val)
     return val;
 }
 
-__device__ double atomicMax_double(double* address, double val)
+__inline__ __device__ double atomicMax_double(double* address, double val)
 {
     unsigned long long int* address_as_ull = (unsigned long long int*) address;
     unsigned long long int old = *address_as_ull, assumed;
@@ -59,7 +59,7 @@ __device__ double atomicMax_double(double* address, double val)
     return __longlong_as_double(old);
 }
 
-__device__ void gridReduceMax(Real val, Real* out)
+__inline__ __device__ void gridReduceMax(Real val, Real* out)
 {
     // Reduce the entire block in parallel
     val = blockReduceMax(val);
