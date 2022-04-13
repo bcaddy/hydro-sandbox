@@ -1,11 +1,12 @@
 #pragma once
+#include "gpu.hpp"
 
 // Done editing for CUDA/HIP
 __inline__ __device__ int warpReduceSum(int val)
 {
     for (int offset = warpSize/2; offset > 0; offset /= 2)
     {
-        val += __shfl_down_sync(0xFFFFFFFF,val, offset);
+        val += __shfl_down(val, offset);
     }
     return val;
 }
@@ -74,7 +75,7 @@ int gpuSumReduction()
     cudaMalloc(&dev_sum, sizeof(int));
     cudaMemcpy(dev_vec, host_vec.data(), host_vec.size() * sizeof(int), cudaMemcpyHostToDevice);
 
-    deviceReduceBlockAtomicKernelSum<<<numBlocks, threadsPerBlock>>>(dev_vec, dev_sum, host_vec.size());
+    hipLaunchKernelGGL(deviceReduceBlockAtomicKernelSum, numBlocks, threadsPerBlock, 0, 0, dev_vec, dev_sum, host_vec.size());
 
     cudaMemcpy(&host_sum, dev_sum, sizeof(int), cudaMemcpyDeviceToHost);
 

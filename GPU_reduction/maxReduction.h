@@ -2,15 +2,16 @@
 #include <float.h>
 #include <random>
 #include "PerfTimer.h"
+#include "gpu.hpp"
 
 #pragma once
 
-// Done editing for CUDA/HIP
+
 __inline__ __device__ Real warpReduceMax(Real val)
 {
     for (int offset = warpSize/2; offset > 0; offset /= 2)
     {
-        val = max(val, __shfl_down_sync(0xFFFFFFFF,val, offset));
+        val = max(val, __shfl_down(val, offset));
     }
     return val;
 }
@@ -167,7 +168,7 @@ Real gpuAtomicMaxReduction(int numTrials = 100)
         }
         // Do the reduction
         // ================
-        deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
+        hipLaunchKernelGGL(deviceReduceAtomicMax, numBlocks, threadsPerBlock, 0, 0, dev_grid, dev_max, host_grid.size());
 
         // Copy back and sync
         // ==================
@@ -243,8 +244,8 @@ Real gpuMaxReduction(int numTrials = 100)
         }
         // Do the reduction
         // ================
-        deviceReduceAtomicMax<<<numBlocks, threadsPerBlock>>>(dev_grid, dev_max, host_grid.size());
-        deviceReduceAtomicMax<<<1, threadsPerBlock>>>(dev_max, dev_max, threadsPerBlock);
+        hipLaunchKernelGGL(deviceReduceMax, numBlocks, threadsPerBlock, 0, 0, dev_grid, dev_max, host_grid.size());
+        hipLaunchKernelGGL(deviceReduceMax, 1,         threadsPerBlock, 0, 0, dev_max,  dev_max, threadsPerBlock);
 
         // Copy back and sync
         // ==================

@@ -2,8 +2,8 @@
 .PHONY: clean #tells make that these goals are not files but some other thing
 
 # compiler options, debug and performance
-cudaCompiler = nvcc -g -O3 -std=c++11 -arch sm_70 -fmad=false -I/usr/local/cuda-11.4/include
-hipCompiler = hipcc --offload-arch=gfx90a -g -O3 -std=c++11 -Wall -ferror-limit=1
+cudaCompiler = nvcc -g -O3 -std=c++11 -arch sm_70 -fmad=false -I/usr/local/cuda-11.4/include -DCUDA_BUILD
+hipCompiler = hipcc --offload-arch=gfx90a -g -O3 -std=c++11 -Wall -ferror-limit=1 -DHIP_BUILD
 
 chollaFlags = -DCUDA -DMPI_CHOLLA -DPRECISION=2 -DPPMP -DHLLC -DVL -DDENSITY_FLOOR -DTEMPERATURE_FLOOR -DDE -DCPU_TIME -DOUTPUT -DHDF5 -DMPI_GPU -DPARALLEL_OMP -DN_OMP_THREADS=8 -DO_HIP
 
@@ -14,10 +14,10 @@ binaries = gpu_reductions.exe
 # what has changed simply replace NAME.cpp with NAME.o and $(Helper_SRC) with
 # $(Helper_OBJ). This will generate a lot of object files though
 cuda: gpu_reductions.cu
-	$(cudaCompiler) $? -o $@.exe
+	$(cudaCompiler) $? -o gpu_reductions.exe
 
 hip: gpu_reductions.cu
-	$(hipCompiler) $? -o $@.exe
+	$(hipCompiler) $? -o gpu_reductions.exe
 
 # %.o: %.cu
 # 	$(cudaCompiler) -c $<
