@@ -95,7 +95,7 @@ __global__ void deviceReduceAtomicMax(Real *in, Real* out, int N)
     // not available for use in this kernel. The grid wide barrier can be
     // accomplished by ending this kernel here and then launching a new one or
     // by using cooperative groups. If this becomes a need it can be added later
-    gridReduceMax(val, out);
+    gridReduceMax(maxVal, out);
 }
 
 /*!

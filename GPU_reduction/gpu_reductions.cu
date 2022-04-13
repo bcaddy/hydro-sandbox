@@ -33,6 +33,7 @@ typedef double Real;
 // Local Includes
 // #include "sumReduction.h"
 #include "maxReduction.h"
+#include "timeStepTestOriginal.h"
 
 __global__ void checkDims()
 {
@@ -75,6 +76,9 @@ int	main()
 
     std::cout << std::endl;
     Real maxReduced = gpuMaxReduction(1000);
+
+    std::cout << std::endl;
+    calcDtiOriginal();
 
     // Mark variables as used to avoid warnings
     (void)maxReducedAtomic;
