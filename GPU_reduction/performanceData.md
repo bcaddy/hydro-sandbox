@@ -2,7 +2,7 @@
 
 ## Results from running on a V100 on C-3PO
 
-### Run 1
+### Run 1 - C-3PO
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -23,7 +23,7 @@ Timer name: DTI Original Timer
 Timer name: DTI New Timer
   Number of trials: 1000, Total time: 382.29ms, Average Time: 382.29µs, Standard Deviation: 186.041µs, Fastest Run: 357.272µs, Slowest Run: 2.38161ms
 
-### Run 2
+### Run 2 - C-3PO
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -46,7 +46,7 @@ Timer name: DTI New Timer
 
 ## Results from running on a V100 on CRC H2P PPC-n0
 
-### Run 1
+### Run 1 - CRC
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -67,7 +67,7 @@ Timer name: DTI Original Timer
 Timer name: DTI New Timer
   Number of trials: 1000, Total time: 476.758ms, Average Time: 476.758µs, Standard Deviation: 112.033µs, Fastest Run: 468.648µs, Slowest Run: 4.00577ms
 
-### Run 2
+### Run 2 - CRC
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -90,7 +90,7 @@ Timer name: DTI New Timer
 
 ## Results from running on a single GCD on Crusher
 
-### Run 1
+### Run 1 - Crusher
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 110
@@ -111,7 +111,7 @@ Timer name: DTI Original Timer
 Timer name: DTI New Timer
   Number of trials: 1000, Total time: 55.7436ms, Average Time: 55.7436µs, Standard Deviation: 296.163ns, Fastest Run: 55.297µs, Slowest Run: 59.344µs
 
-### Run 2
+### Run 2 - Crusher
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 110
