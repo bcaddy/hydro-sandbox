@@ -89,6 +89,7 @@ void calcDtiNEW(int numTrials=100)
     size_t const n_fields = 5;
     Real dx = 3, dy = dx, dz = dx;
     Real gamma = 5./3.;
+    Real dti;
 
     std::vector<Real> host_grid(n_cells*n_fields);
 
@@ -121,7 +122,7 @@ void calcDtiNEW(int numTrials=100)
         }
         // Do the reduction
         // ================
-        Real dti = Calc_dt_GPU_NEW(dev_grid, dev_dti, nx, ny, nz, n_ghost, n_fields, dx, dy, dz, gamma, n_cells);
+        dti = Calc_dt_GPU_NEW(dev_grid, dev_dti, nx, ny, nz, n_ghost, n_fields, dx, dy, dz, gamma, n_cells);
 
         cudaDeviceSynchronize();
 
