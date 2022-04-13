@@ -1,6 +1,12 @@
 #pragma once
 #include "gpu.hpp"
 
+// =============================================================================
+// NOTE: This sum reduction is not modified to work properly with HIP and
+// Cholla. It should work but you would be better off basing a new sum reduction
+// off of the max reduction
+// =============================================================================
+
 // Done editing for CUDA/HIP
 __inline__ __device__ int warpReduceSum(int val)
 {

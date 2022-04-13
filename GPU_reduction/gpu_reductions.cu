@@ -31,7 +31,7 @@ typedef double Real;
 #include <string>
 
 // Local Includes
-#include "sumReduction.h"
+// #include "sumReduction.h"
 #include "maxReduction.h"
 
 __global__ void checkDims()

@@ -59,6 +59,15 @@ __device__ double atomicMax_double(double* address, double val)
     return __longlong_as_double(old);
 }
 
+__device__ void gridReduceMax(Real val, Real* out)
+{
+    // Reduce the entire block in parallel
+    val = blockReduceMax(val);
+
+    // Write block level reduced value to the output scalar atomically
+    if (threadIdx.x == 0) atomicMax_double(out, val);
+}
+
 /*!
  * \brief Find the max of the array
  *
@@ -81,11 +90,12 @@ __global__ void deviceReduceAtomicMax(Real *in, Real* out, int N)
         maxVal = max(maxVal,in[i]);
     }
 
-    // Reduce the entire block in parallel
-    maxVal = blockReduceMax(maxVal);
-
-    // Write block level reduced value to the output scalar atomically
-    if (threadIdx.x == 0) atomicMax_double(out, maxVal);
+    // Find the maximum val in the grid and write it to `out`. Note that there
+    // is no execution/memory barrier after this and so the reduced scalar is
+    // not available for use in this kernel. The grid wide barrier can be
+    // accomplished by ending this kernel here and then launching a new one or
+    // by using cooperative groups. If this becomes a need it can be added later
+    gridReduceMax(val, out);
 }
 
 /*!
@@ -119,6 +129,19 @@ __global__ void deviceReduceAtomicMax(Real *in, Real* out, int N)
         out[blockIdx.x] = maxVal;
      }
  }
+
+void reductionLaunchParams(int &numBlocks, int &threadsPerBlock, int const &deviceNum=0)
+{
+    // Launch parameters
+    // =================
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, deviceNum);
+
+    // Divide the total number of allowed threads by the number of threads per block
+    threadsPerBlock =  prop.maxThreadsPerBlock;
+    numBlocks       = (prop.maxThreadsPerMultiProcessor * prop.multiProcessorCount)
+                      / threadsPerBlock;
+}
 
 Real gpuAtomicMaxReduction(int numTrials = 100)
 {
