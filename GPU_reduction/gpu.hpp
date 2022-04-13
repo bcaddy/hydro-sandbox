@@ -41,6 +41,8 @@
 
 
 #ifdef CUDA_BUILD
-    // #define hipLaunchKernelGGL(F,G,B,M,S,...) F<<<G,B,M,S>>>(__VA_ARGS__)  // FIXME not new
+    #define hipLaunchKernelGGL(F,G,B,M,S,...) F<<<G,B,M,S>>>(__VA_ARGS__)
+
+    // New stuff
     #define __shfl_down(...) __shfl_down_sync(0xFFFFFFFF, __VA_ARGS__)
 #endif  // CUDA_BUILD
