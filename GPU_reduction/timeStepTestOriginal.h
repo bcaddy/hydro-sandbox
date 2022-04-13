@@ -105,7 +105,6 @@ void calcDtiOriginal(int numTrials=100)
     size_t const n_fields = 5;
     Real dx = 3, dy = dx, dz = dx;
     Real gamma = 5./3.;
-    Real dti;
     int const ngrid = (n_cells + TPB - 1) / TPB;
 
     std::vector<Real> host_grid(n_cells*n_fields);
@@ -130,7 +129,7 @@ void calcDtiOriginal(int numTrials=100)
     cudaMalloc(&dev_grid, host_grid.size() * sizeof(Real));
     cudaMalloc(&dev_max, sizeof(Real));
     cudaMalloc(&dev_dti_array, ngrid*sizeof(Real));
-    cudaHostAlloc(&host_dti_array, ngrid*sizeof(Real));
+    cudaHostAlloc((void**)&host_dti_array, ngrid*sizeof(Real), cudaHostAllocDefault);
     cudaMemcpy(dev_grid, host_grid.data(), host_grid.size() * sizeof(Real), cudaMemcpyHostToDevice);
 
     for (size_t trial = 0; trial < numTrials + warmUps; trial++)
@@ -141,7 +140,7 @@ void calcDtiOriginal(int numTrials=100)
         }
         // Do the reduction
         // ================
-        dti = Calc_dt_GPU_ORIGINAL(dev_grid, dev_dti_array, host_dti_array, nx, ny, nz, n_ghost, n_fields, dx, dy, dz, gamma, n_cells);
+        Real dti = Calc_dt_GPU_ORIGINAL(dev_grid, dev_dti_array, host_dti_array, nx, ny, nz, n_ghost, n_fields, dx, dy, dz, gamma, n_cells);
 
         cudaDeviceSynchronize();
 
