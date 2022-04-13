@@ -94,7 +94,7 @@ void calcDtiNEW(int numTrials=100)
     std::vector<Real> host_grid(n_cells*n_fields);
 
     int const warmUps = 5;
-    PerfTimer timer("DTI Original Timer");
+    PerfTimer timer("DTI New Timer");
 
     // Fill grid with random values and randomly assign maximum value
     std::random_device rd;
