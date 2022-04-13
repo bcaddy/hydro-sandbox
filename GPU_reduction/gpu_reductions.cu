@@ -34,6 +34,7 @@ typedef double Real;
 // #include "sumReduction.h"
 #include "maxReduction.h"
 #include "timeStepTestOriginal.h"
+#include "timeStepTestNew.h"
 
 __global__ void checkDims()
 {
@@ -69,19 +70,23 @@ int	main()
     std::cout << "numBlocks  = " << numBlocks << std::endl;
 
 
-    // int sumReduced = gpuSumReduction();
+    int trials = 1000;
 
     std::cout << std::endl;
-    Real maxReducedAtomic = gpuAtomicMaxReduction(1000);
+    Real maxReducedAtomic = gpuAtomicMaxReduction(trials);
 
     std::cout << std::endl;
-    Real maxReduced = gpuMaxReduction(1000);
+    Real maxReduced = gpuMaxReduction(trials);
 
     std::cout << std::endl;
-    calcDtiOriginal();
+    calcDtiOriginal(trials);
+
+    std::cout << std::endl;
+    calcDtiNEW(trials);
 
     // Mark variables as used to avoid warnings
     (void)maxReducedAtomic;
     (void)maxReduced;
+
     return 0;
 }
