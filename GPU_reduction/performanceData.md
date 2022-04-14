@@ -2,7 +2,7 @@
 
 ## Results from running on a V100 on C-3PO
 
-### Run 1 - C-3PO
+### 512^3 Run - C-3PO
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -23,7 +23,7 @@ Timer name: DTI Original Timer
 Timer name: DTI New Timer
   Number of trials: 1000, Total time: 382.29ms, Average Time: 382.29µs, Standard Deviation: 186.041µs, Fastest Run: 357.272µs, Slowest Run: 2.38161ms
 
-### Run 2 - C-3PO
+### 256^3 Run - C-3PO
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -33,20 +33,20 @@ numThreads = 163840
 numBlocks  = 160
 
 Timer name: AtomicMax Reduction Timer
-  Number of trials: 1000, Total time: 1.28675s, Average Time: 1.28675ms, Standard Deviation: 6.72352µs, Fastest Run: 1.26728ms, Slowest Run: 1.31333ms
+  Number of trials: 1000, Total time: 177.18ms, Average Time: 177.18µs, Standard Deviation: 8.63067µs, Fastest Run: 169.306µs, Slowest Run: 239.635µs
 
 Timer name: Max Reduction Timer
-  Number of trials: 1000, Total time: 1.29077s, Average Time: 1.29077ms, Standard Deviation: 8.80753µs, Fastest Run: 1.27375ms, Slowest Run: 1.45683ms
+  Number of trials: 1000, Total time: 178.13ms, Average Time: 178.13µs, Standard Deviation: 3.03273µs, Fastest Run: 172.074µs, Slowest Run: 186.373µs
 
 Timer name: DTI Original Timer
-  Number of trials: 1000, Total time: 7.97112s, Average Time: 7.97112ms, Standard Deviation: 55.5687µs, Fastest Run: 7.69729ms, Slowest Run: 8.5001ms
+  Number of trials: 1000, Total time: 1.00592s, Average Time: 1.00592ms, Standard Deviation: 17.7278µs, Fastest Run: 950.118µs, Slowest Run: 1.0389ms
 
 Timer name: DTI New Timer
-  Number of trials: 1000, Total time: 386.332ms, Average Time: 386.332µs, Standard Deviation: 209.528µs, Fastest Run: 357.445µs, Slowest Run: 2.42069ms
+  Number of trials: 1000, Total time: 388.19ms, Average Time: 388.19µs, Standard Deviation: 223.459µs, Fastest Run: 356.062µs, Slowest Run: 2.40895ms
 
 ## Results from running on a V100 on CRC H2P PPC-n0
 
-### Run 1 - CRC
+### 512^3 Run - CRC
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -67,7 +67,7 @@ Timer name: DTI Original Timer
 Timer name: DTI New Timer
   Number of trials: 1000, Total time: 476.758ms, Average Time: 476.758µs, Standard Deviation: 112.033µs, Fastest Run: 468.648µs, Slowest Run: 4.00577ms
 
-### Run 2 - CRC
+### 256^3 Run - CRC
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 80
@@ -77,20 +77,20 @@ numThreads = 163840
 numBlocks  = 160
 
 Timer name: AtomicMax Reduction Timer
-  Number of trials: 1000, Total time: 1.30014s, Average Time: 1.30014ms, Standard Deviation: 8.39229µs, Fastest Run: 1.28702ms, Slowest Run: 1.48747ms
+  Number of trials: 1000, Total time: 188.855ms, Average Time: 188.855µs, Standard Deviation: 3.38397µs, Fastest Run: 182.645µs, Slowest Run: 195.791µs
 
 Timer name: Max Reduction Timer
-  Number of trials: 1000, Total time: 1.3128s, Average Time: 1.3128ms, Standard Deviation: 8.5439µs, Fastest Run: 1.28892ms, Slowest Run: 1.33816ms
+  Number of trials: 1000, Total time: 191.099ms, Average Time: 191.099µs, Standard Deviation: 2.87885µs, Fastest Run: 185.142µs, Slowest Run: 200.409µs
 
 Timer name: DTI Original Timer
-  Number of trials: 1000, Total time: 7.66384s, Average Time: 7.66384ms, Standard Deviation: 31.8569µs, Fastest Run: 7.44163ms, Slowest Run: 7.73476ms
+  Number of trials: 1000, Total time: 958.653ms, Average Time: 958.653µs, Standard Deviation: 4.61462µs, Fastest Run: 949.03µs, Slowest Run: 1.0472ms
 
 Timer name: DTI New Timer
-  Number of trials: 1000, Total time: 485.294ms, Average Time: 485.294µs, Standard Deviation: 157.341µs, Fastest Run: 472.819µs, Slowest Run: 4.00286ms
+  Number of trials: 1000, Total time: 477.213ms, Average Time: 477.213µs, Standard Deviation: 115.592µs, Fastest Run: 467.828µs, Slowest Run: 3.97577ms
 
 ## Results from running on a single GCD on Crusher
 
-### Run 1 - Crusher
+### 512^3 Run - Crusher
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 110
@@ -111,7 +111,7 @@ Timer name: DTI Original Timer
 Timer name: DTI New Timer
   Number of trials: 1000, Total time: 55.7436ms, Average Time: 55.7436µs, Standard Deviation: 296.163ns, Fastest Run: 55.297µs, Slowest Run: 59.344µs
 
-### Run 2 - Crusher
+### 256^3 Run - Crusher
 
 prop.maxThreadsPerMultiProcessor = 2048
 prop.multiProcessorCount         = 110
@@ -121,13 +121,13 @@ numThreads = 225280
 numBlocks  = 220
 
 Timer name: AtomicMax Reduction Timer
-  Number of trials: 1000, Total time: 806.584ms, Average Time: 806.584µs, Standard Deviation: 2.11728µs, Fastest Run: 802.007µs, Slowest Run: 813.42µs
+  Number of trials: 1000, Total time: 143.293ms, Average Time: 143.293µs, Standard Deviation: 1.84799µs, Fastest Run: 142.064µs, Slowest Run: 192.089µs
 
 Timer name: Max Reduction Timer
-  Number of trials: 1000, Total time: 810.639ms, Average Time: 810.639µs, Standard Deviation: 2.12174µs, Fastest Run: 806.025µs, Slowest Run: 818.368µs
+  Number of trials: 1000, Total time: 146.281ms, Average Time: 146.281µs, Standard Deviation: 397.09ns, Fastest Run: 145.349µs, Slowest Run: 148.817µs
 
 Timer name: DTI Original Timer
-  Number of trials: 1000, Total time: 5.77731s, Average Time: 5.77731ms, Standard Deviation: 2.84564µs, Fastest Run: 5.7694ms, Slowest Run: 5.78748ms
+  Number of trials: 1000, Total time: 742.353ms, Average Time: 742.353µs, Standard Deviation: 1.7847µs, Fastest Run: 738.871µs, Slowest Run: 780.781µs
 
 Timer name: DTI New Timer
-  Number of trials: 1000, Total time: 55.8442ms, Average Time: 55.8442µs, Standard Deviation: 1.26596µs, Fastest Run: 55.286µs, Slowest Run: 84.934µs
+  Number of trials: 1000, Total time: 55.7243ms, Average Time: 55.7243µs, Standard Deviation: 3.38105µs, Fastest Run: 55.116µs, Slowest Run: 130.1µs
