@@ -83,7 +83,7 @@ void calcDtiNEW(int numTrials=100)
 {
     // Grid Parameters & testing parameters
     // ====================================
-    size_t const nx = 512, ny = nx, nz = nx;
+    size_t const nx = 256, ny = nx, nz = nx;
     size_t const n_ghost = 4;
     size_t const n_cells  = (nx+n_ghost)*(ny+n_ghost)*(nz+n_ghost);
     size_t const n_fields = 5;
