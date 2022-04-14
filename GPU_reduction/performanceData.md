@@ -1,5 +1,21 @@
 # Performance comparison of various reductions and timestepping implementations on different hardware and systems
 
+## Summary Tables
+
+All run statistics are the result of 1,000 runs with 5 runs for warmup
+beforehand. The "atomic" vs. non-atomic reductions differ only in how the final
+grid reduction is done. In the "atomic" case it's done with atomic operations
+and the non-atomic case uses a second kernel launch
+
+### 512^3 Grid Test
+
+| System: C-3PO/V100  | Average Time | Standard Deviation | Fastest Run | Slowest Run | Speedup |
+|---------------------|--------------|--------------------|-------------|-------------|---------|
+| Atomic Max          | 1.28748ms    |   7.29302µs        | 1.27067ms   |             |         |
+| Non-Atomic Max      | 1.29094ms    |   6.84559µs        | 1.27254ms   |             |         |
+| Original DTI Kernel | 7.9751ms     |  72.4559µs         | 7.80672ms   |             |         |
+| New DTI Kernel      | 382.29µs     | 186.041µs          | 357.272µs   |             |         |
+
 ## Results from running on a V100 on C-3PO
 
 ### 512^3 Run - C-3PO
