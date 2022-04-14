@@ -69,24 +69,34 @@ int	main()
     std::cout << "numThreads = " << numThreads << std::endl;
     std::cout << "numBlocks  = " << numBlocks << std::endl;
 
-
-    int trials = 1000;
-
-    std::cout << std::endl;
-    Real maxReducedAtomic = gpuAtomicMaxReduction(trials);
+    // Testing variables
+    int const trials   = 1000;
+    int const gridSize = 512;
 
     std::cout << std::endl;
-    Real maxReduced = gpuMaxReduction(trials);
+    std::cout << "number of trials = " << trials   << std::endl;
+    std::cout << "Grid size        = " << gridSize << std::endl;
+
+    // output variables
+    Real maxReducedAtomic, maxReduced, oldDTI, newDTI;
 
     std::cout << std::endl;
-    calcDtiOriginal(trials);
+    maxReducedAtomic = gpuAtomicMaxReduction(trials, gridSize);
 
     std::cout << std::endl;
-    calcDtiNEW(trials);
+    maxReduced = gpuMaxReduction(trials, gridSize);
 
-    // Mark variables as used to avoid warnings
-    (void)maxReducedAtomic;
-    (void)maxReduced;
+    std::cout << std::endl;
+    oldDTI = calcDtiOriginal(trials, gridSize);
+
+    std::cout << std::endl;
+    newDTI = calcDtiNEW(trials, gridSize);
+
+    std::cout << std::endl;
+    std::cout << "maxReducedAtomic = " << maxReducedAtomic << std::endl;
+    std::cout << "maxReduced       = " << maxReduced       << std::endl;
+    std::cout << "oldDTI           = " << oldDTI           << std::endl;
+    std::cout << "newDTI           = " << newDTI           << std::endl;
 
     return 0;
 }

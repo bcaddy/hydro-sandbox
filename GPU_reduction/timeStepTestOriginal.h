@@ -19,7 +19,7 @@ __device__ __host__ Real hydroInverseCrossingTime(Real const &E, Real const &d, 
 }
 
 
-__global__ void Calc_dt_3D(Real *dev_conserved, int nx, int ny, int nz, int n_ghost, int n_fields, Real dx, Real dy, Real dz, Real *dti_array, Real gamma)
+__global__ void Calc_dt_3D_ORIGINAL(Real *dev_conserved, int nx, int ny, int nz, int n_ghost, int n_fields, Real dx, Real dy, Real dz, Real *dti_array, Real gamma)
 {
     __shared__ Real max_dti[TPB];
 
@@ -81,7 +81,7 @@ Real Calc_dt_GPU_ORIGINAL(Real *dev_conserved, Real *dev_dti_array, Real *host_d
 
 
     // compute dt and store in dev_dti_array
-    hipLaunchKernelGGL(Calc_dt_3D, dim1dGrid, dim1dBlock, 0, 0, dev_conserved, nx, ny, nz, n_ghost, n_fields, dx, dy, dz, dev_dti_array, gamma);
+    hipLaunchKernelGGL(Calc_dt_3D_ORIGINAL, dim1dGrid, dim1dBlock, 0, 0, dev_conserved, nx, ny, nz, n_ghost, n_fields, dx, dy, dz, dev_dti_array, gamma);
 
     // copy dev_dti_array to host_dti_array
     cudaMemcpy(host_dti_array, dev_dti_array, ngrid*sizeof(Real), cudaMemcpyDeviceToHost);
@@ -95,13 +95,13 @@ Real Calc_dt_GPU_ORIGINAL(Real *dev_conserved, Real *dev_dti_array, Real *host_d
 }
 
 
-void calcDtiOriginal(int numTrials=100)
+Real calcDtiOriginal(int numTrials, int const gridSize)
 {
     // Grid Parameters & testing parameters
     // ====================================
-    size_t const nx = 512, ny = nx, nz = nx;
     size_t const n_ghost = 4;
-    size_t const n_cells  = (nx+n_ghost)*(ny+n_ghost)*(nz+n_ghost);
+    size_t const nx = gridSize+2*n_ghost, ny = nx, nz = nx;
+    size_t const n_cells  = nx*ny*nz;
     size_t const n_fields = 5;
     Real dx = 3, dy = dx, dz = dx;
     Real gamma = 5./3.;
@@ -114,10 +114,8 @@ void calcDtiOriginal(int numTrials=100)
     PerfTimer timer("DTI Original Timer");
 
     // Fill grid with random values and randomly assign maximum value
-    std::random_device rd;
-    std::mt19937 prng(rd());
+    std::mt19937 prng(2);
     std::uniform_real_distribution<double> doubleRand(1, 5);
-    std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
     for (size_t i = 0; i < host_grid.size(); i++)
     {
         host_grid.at(i) = doubleRand(prng);
@@ -135,6 +133,7 @@ void calcDtiOriginal(int numTrials=100)
 
     for (size_t trial = 0; trial < numTrials + warmUps; trial++)
     {
+        cudaDeviceSynchronize();
         if (trial >= warmUps)
         {
             timer.startTimer();
@@ -154,4 +153,6 @@ void calcDtiOriginal(int numTrials=100)
     // Report Performance Results
     // ==========================
     timer.reportStats();
+
+    return dti;
 }

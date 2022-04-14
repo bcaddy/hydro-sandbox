@@ -143,7 +143,7 @@ void reductionLaunchParams(int &numBlocks, int &threadsPerBlock, int const &devi
                       / threadsPerBlock;
 }
 
-Real gpuAtomicMaxReduction(int numTrials = 100)
+Real gpuAtomicMaxReduction(int const numTrials, int const gridSize)
 {
     // Launch parameters
     // =================
@@ -156,7 +156,7 @@ Real gpuAtomicMaxReduction(int numTrials = 100)
 
     // Grid Parameters & testing parameters
     // ====================================
-    size_t const size     = std::pow(512, 3);;
+    size_t const size     = std::pow(gridSize, 3);;
     Real   const maxValue = 4;
     std::vector<Real> host_grid(size);
     Real host_max;
@@ -165,8 +165,7 @@ Real gpuAtomicMaxReduction(int numTrials = 100)
     PerfTimer atomicTimer("AtomicMax Reduction Timer");
 
     // Fill grid with random values and randomly assign maximum value
-    std::random_device rd;
-    std::mt19937 prng(rd());
+    std::mt19937 prng(2);
     std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
     std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
     for (size_t i = 0; i < host_grid.size(); i++)
@@ -185,6 +184,7 @@ Real gpuAtomicMaxReduction(int numTrials = 100)
 
     for (size_t trial = 0; trial < numTrials + warmUps; trial++)
     {
+        cudaDeviceSynchronize();
         if (trial >= warmUps)
         {
             atomicTimer.startTimer();
@@ -219,7 +219,7 @@ Real gpuAtomicMaxReduction(int numTrials = 100)
     return host_max;
 }
 
-Real gpuMaxReduction(int numTrials = 100)
+Real gpuMaxReduction(int const numTrials, int const gridSize)
 {
     // Launch parameters
     // =================
@@ -232,7 +232,7 @@ Real gpuMaxReduction(int numTrials = 100)
 
     // Grid Parameters & testing parameters
     // ====================================
-    size_t const size     = std::pow(512, 3);;
+    size_t const size     = std::pow(gridSize, 3);;
     Real   const maxValue = 4;
     std::vector<Real> host_grid(size);
     Real host_max;
@@ -241,8 +241,7 @@ Real gpuMaxReduction(int numTrials = 100)
     PerfTimer atomicTimer("Max Reduction Timer");
 
     // Fill grid with random values and randomly assign maximum value
-    std::random_device rd;
-    std::mt19937 prng(rd());
+    std::mt19937 prng(2);
     std::uniform_real_distribution<double> doubleRand(-std::abs(maxValue)-1, std::abs(maxValue) - 1);
     std::uniform_int_distribution<int> intRand(0, host_grid.size()-1);
     for (size_t i = 0; i < host_grid.size(); i++)
@@ -261,6 +260,7 @@ Real gpuMaxReduction(int numTrials = 100)
 
     for (size_t trial = 0; trial < numTrials + warmUps; trial++)
     {
+        cudaDeviceSynchronize();
         if (trial >= warmUps)
         {
             atomicTimer.startTimer();
