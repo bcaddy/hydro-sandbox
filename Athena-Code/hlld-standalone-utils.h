@@ -698,6 +698,8 @@ std::tuple<std::vector<std::string>,
         Prim1DS negDensity           (-1.0,  1.0,       1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
         Prim1DS negEnergy            ( 1.0, -4.0*gamma, 1.0,  1.0,  1.0, 1.0, 1.0, 1.0, primitiveScalar);
         Prim1DS negDensityEnergy     (-1.0, -gamma,    -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, primitiveScalar);
+        Prim1DS constantNonMagnetic  (1e4 , 1.380658E-5,  0,    0,    0,   0,   0,   0, primitiveScalar);
+        Prim1DS constantMagnetic     (1e4 , 1.380658E-5,  0,    0,    0,   1,   1,   1, primitiveScalar);
 
         // Set states
         names.push_back(rootName + "Zeroes");
@@ -783,6 +785,16 @@ std::tuple<std::vector<std::string>,
         names.push_back(rootName + "Negative density & energy, both sides");
         leftPrimitive.push_back (negDensityEnergy);
         rightPrimitive.push_back(negDensityEnergy);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "constant, non-magnetic, both sides");
+        leftPrimitive.push_back (constantNonMagnetic);
+        rightPrimitive.push_back(constantNonMagnetic);
+        gammaVector.push_back(gamma);
+
+        names.push_back(rootName + "constant, magnetic, both sides");
+        leftPrimitive.push_back (constantMagnetic);
+        rightPrimitive.push_back(constantMagnetic);
         gammaVector.push_back(gamma);
     }
 
