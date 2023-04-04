@@ -52,6 +52,8 @@
         "*.particles": "makefile",
         "*.mhd": "makefile",
         "*.frontier": "makefile",
+        "*.cooling": "makefile",
+        "*.cu": "cuda-cpp",
         "iostream": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -152,7 +154,8 @@
         "ios": "cpp",
         "locale": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "enzo_HLLD_DE.C": "cpp"
     },
     "python.pythonPath": "/Users/Bob/opt/anaconda3/bin/python"
 }

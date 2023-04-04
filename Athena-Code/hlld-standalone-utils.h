@@ -798,6 +798,67 @@ std::tuple<std::vector<std::string>,
         gammaVector.push_back(gamma);
     }
 
+    // =========================================================================
+    // Slow Wave
+    // =========================================================================
+    if (true)
+    {
+        double const gamma = 5./3.;
+        std::vector<double> const primitiveScalar{1.1069975296, 2.2286185018, 3.3155141875};
+        std::string rootName = "Slow Wave, ";
+                             // density,                 pressure,                 vx,                       vy,                        vz,                       bx,                       by                       bz
+        Prim1DS d1x24y8z1Left  (9.99999578369940800e-01, 5.99999604719165469e-01,  3.06845842308595149e-07,  -3.29102186545041658e-07,  -1.40543412312595288e-07, -1.00830760525824781e+00, 1.33748715203836221e+00, 6.66666666864243807e-01, primitiveScalar);
+        Prim1DS d1x24y8z1Right (9.99999740361491529e-01, 5.99999717307593938e-01,  1.88954706118984418e-07,  -2.02660093009158738e-07,  -8.65461919597331865e-08, -1.00830760525824781e+00, 1.33748711664489872e+00, 6.66666666788330531e-01, primitiveScalar);
+
+        Prim1DS d1x25y8z1Left  (9.99999740361491529e-01, 5.99999767424534647e-01,  1.88954706118984418e-07,  -2.02660093009158738e-07,  -8.65461919597331865e-08, -1.00830753070221624e+00, 1.33748711664489872e+00, 6.66666666788330531e-01, primitiveScalar);
+        Prim1DS d1x25y8z1Right (9.99999912330804541e-01, 5.99999886947733430e-01,  6.38021852746659053e-08,  -6.84299272959588418e-08,  -2.92230677269006975e-08, -1.00830753070221624e+00, 1.33748707907140951e+00, 6.66666666707751432e-01, primitiveScalar);
+
+        Prim1DS d2x25y8z1Left  (9.99999740361491529e-01, 5.99999775534172164e-01,  -2.02660093009158738e-07,  -8.65461919597331865e-08,  1.88954706118984418e-07, 1.33748707944666245e+00,  6.66666666788330531e-01, -1.00830756798023202e+00, primitiveScalar);
+        Prim1DS d2x25y8z1Right (1.00000008766919546e+00, 6.00000052498661063e-01,  6.84299152975658845e-08,  2.92230626029751865e-08,  -6.38021740876937582e-08, 1.33748707944666245e+00, 6.66666666625574722e-01, -1.00830741439869565e+00, primitiveScalar);
+
+        Prim1DS d2x25y7z1Left  (9.99999432581396897e-01, 5.99999463755143347e-01,  -4.42897099354745221e-07,  -1.89139641702584852e-07,  4.12945094453028048e-07, 1.33748715384313499e+00, 6.66666666932556495e-01, -1.00830770408238379e+00, primitiveScalar);
+        Prim1DS d2x25y7z1Right (9.99999740361491529e-01, 5.99999709197956421e-01,  -2.02660093009158738e-07,  -8.65461919597331865e-08,  1.88954706118984418e-07, 1.33748715384313499e+00, 6.66666666788330531e-01, -1.00830756798023202e+00, primitiveScalar);
+
+        Prim1DS d3x25y8z1Left  (9.99999740361491529e-01, 5.99999742401522540e-01,  -8.65461919597331865e-08,  1.88954706118984418e-07,  -2.02660093009158738e-07, 6.66666666708550792e-01, -1.00830756798023202e+00, 1.33748711664489872e+00, primitiveScalar);
+        Prim1DS d3x25y8z1Right (1.00000008766919546e+00, 6.00000086955448708e-01,  2.92230626029751865e-08,  -6.38021740876937582e-08,  6.84299152975658845e-08, 6.66666666708550792e-01, -1.00830741439870053e+00, 1.33748704076179936e+00, primitiveScalar);
+
+        Prim1DS d3x25y8z0Left  (9.99999432581396897e-01, 5.99999436990800383e-01,  -1.89139641702584852e-07,  4.12945094453028048e-07,  -4.42897099354745221e-07, 6.66666666868110269e-01, -1.00830770408239090e+00, 1.33748718389162624e+00, primitiveScalar);
+        Prim1DS d3x25y8z0Right (9.99999740361491529e-01, 5.99999742330607155e-01,  -8.65461919597331865e-08,  1.88954706118984418e-07,  -2.02660093009158738e-07, 6.66666666868110269e-01, -1.00830756798023202e+00, 1.33748711664489872e+00, primitiveScalar);
+
+
+        // Set states
+        names.push_back(rootName + "d1x24y8z1");
+        leftPrimitive.push_back (d1x24y8z1Left);
+        rightPrimitive.push_back(d1x24y8z1Right);
+        gammaVector.push_back(gamma);
+
+        // names.push_back(rootName + "d1x25y8z1");
+        // leftPrimitive.push_back (d1x25y8z1Left);
+        // rightPrimitive.push_back(d1x25y8z1Right);
+        // gammaVector.push_back(gamma);
+
+        // names.push_back(rootName + "d2x25y8z1");
+        // leftPrimitive.push_back (d2x25y8z1Left);
+        // rightPrimitive.push_back(d2x25y8z1Right);
+        // gammaVector.push_back(gamma);
+
+        // names.push_back(rootName + "d2x25y7z1");
+        // leftPrimitive.push_back (d2x25y7z1Left);
+        // rightPrimitive.push_back(d2x25y7z1Right);
+        // gammaVector.push_back(gamma);
+
+        // names.push_back(rootName + "d3x25y8z1");
+        // leftPrimitive.push_back (d3x25y8z1Left);
+        // rightPrimitive.push_back(d3x25y8z1Right);
+        // gammaVector.push_back(gamma);
+
+        // names.push_back(rootName + "d3x25y8z0");
+        // leftPrimitive.push_back (d3x25y8z0Left);
+        // rightPrimitive.push_back(d3x25y8z0Right);
+        // gammaVector.push_back(gamma);
+
+
+    }
     // Check that everything is the same length
     if ( not ((names.size() == leftPrimitive.size())
                and (names.size() == rightPrimitive.size())
